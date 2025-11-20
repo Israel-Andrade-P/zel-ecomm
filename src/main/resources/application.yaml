@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: zel-e-comm
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecomm
+    username: zel
+    password: cheese
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
