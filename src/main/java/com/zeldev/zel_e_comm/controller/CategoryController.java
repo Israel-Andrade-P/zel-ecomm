@@ -32,4 +32,10 @@ public class CategoryController {
     public void delete(@PathVariable("id") Long id) {
         service.deleteById(id);
     }
+
+    @PutMapping("/admin/update/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@RequestBody CategoryRequest request, @PathVariable("id") Long id) {
+        service.updateById(request, id);
+    }
 }

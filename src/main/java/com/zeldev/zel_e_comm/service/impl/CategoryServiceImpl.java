@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
+import com.zeldev.zel_e_comm.exception.CategoryNotFoundException;
 import com.zeldev.zel_e_comm.mapper.CategoryMapper;
 import com.zeldev.zel_e_comm.model.CategoryEntity;
 import com.zeldev.zel_e_comm.repository.CategoryRepository;
@@ -19,7 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void createCategory(CategoryRequest category) {
-        categoryRepository.save(CategoryEntity.builder().name(category.name()).build());
+        categoryRepository.save(mapper.toCategoryEntity(category));
     }
 
     @Override
@@ -30,5 +31,18 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteById(Long id) {
         categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateById(CategoryRequest request, Long id) {
+        var categoryDB = getById(id);
+        if (!request.name().isBlank() && !request.name().equals(categoryDB.getName())) {
+            categoryDB.setName(request.name());
+        }
+        categoryRepository.save(categoryDB);
+    }
+
+    private CategoryEntity getById(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category with ID: " + id + " doesn't exist"));
     }
 }
