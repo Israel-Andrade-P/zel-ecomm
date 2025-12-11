@@ -2,7 +2,7 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
-import com.zeldev.zel_e_comm.exception.CategoryNotFoundException;
+import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.mapper.CategoryMapper;
 import com.zeldev.zel_e_comm.model.CategoryEntity;
 import com.zeldev.zel_e_comm.repository.CategoryRepository;
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteById(Long id) {
-        categoryRepository.deleteById(id);
+        categoryRepository.delete(getById(id));
     }
 
     @Override
@@ -43,6 +43,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private CategoryEntity getById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category with ID: " + id + " doesn't exist"));
+        return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id, "Category"));
     }
 }

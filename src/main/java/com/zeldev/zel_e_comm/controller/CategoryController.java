@@ -3,6 +3,7 @@ package com.zeldev.zel_e_comm.controller;
 import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 import com.zeldev.zel_e_comm.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CategoryController {
 
     @PostMapping("/admin/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody CategoryRequest request) {
+    public void create(@RequestBody @Valid CategoryRequest request) {
         service.createCategory(request);
     }
 

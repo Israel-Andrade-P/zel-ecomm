@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS categories (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    CONSTRAINT categories_name_uk UNIQUE (name)
+);
