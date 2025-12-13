@@ -1,16 +1,14 @@
 package com.zeldev.zel_e_comm.service;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
+import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 
-import java.util.List;
-
 public interface CategoryService {
-    void createCategory(CategoryRequest category);
+    CategoryDTO createCategory(CategoryDTO category);
 
-    List<CategoryResponse> getAll();
+    CategoryResponse getAll();
 
     void deleteById(Long id);
 
-    void updateById(CategoryRequest request, Long id);
+    void updateById(CategoryDTO request, Long id);
 }

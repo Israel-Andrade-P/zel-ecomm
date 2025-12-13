@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.controller;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
+import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 import com.zeldev.zel_e_comm.service.CategoryService;
 import jakarta.validation.Valid;
@@ -19,12 +19,12 @@ public class CategoryController {
 
     @PostMapping("/admin/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid CategoryRequest request) {
-        service.createCategory(request);
+    public ResponseEntity<CategoryDTO> create(@RequestBody @Valid CategoryDTO request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createCategory(request));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CategoryResponse>> getAll() {
+    public ResponseEntity<CategoryResponse> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
@@ -36,7 +36,7 @@ public class CategoryController {
 
     @PutMapping("/admin/update/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody CategoryRequest request, @PathVariable("id") Long id) {
+    public void update(@RequestBody CategoryDTO request, @PathVariable("id") Long id) {
         service.updateById(request, id);
     }
 }
