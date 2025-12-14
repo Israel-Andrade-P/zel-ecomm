@@ -6,9 +6,9 @@ import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 public interface CategoryService {
     CategoryDTO createCategory(CategoryDTO category);
 
-    CategoryResponse getAll();
+    CategoryResponse getAll(Integer page, Integer size, String sortBy, String sortOrder);
 
-    void deleteById(Long id);
+    CategoryDTO deleteById(Long id);
 
-    void updateById(CategoryDTO request, Long id);
+    CategoryDTO updateById(CategoryDTO request, Long id);
 }

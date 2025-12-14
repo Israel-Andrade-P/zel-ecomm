@@ -9,7 +9,13 @@ import com.zeldev.zel_e_comm.repository.CategoryRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,24 +30,38 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getAll() {
-        var categories = categoryRepository.findAll();
+    public CategoryResponse getAll(Integer page, Integer size, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Page<CategoryEntity> categoryPage = categoryRepository.findAll(pageDetails);
+
+        List<CategoryEntity> categories = categoryPage.getContent();
         if (categories.isEmpty()) throw new APIException("No categories have been added yet :(");
-        return CategoryResponse.builder().categories(categories.stream().map(c -> modelMapper.map(c, CategoryDTO.class)).toList()).build();
+        return CategoryResponse.builder()
+                .categories(categories.stream().map(c -> modelMapper.map(c, CategoryDTO.class)).toList())
+                .pageNumber(categoryPage.getNumber())
+                .pageSize(categoryPage.getSize())
+                .totalElements(categoryPage.getTotalElements())
+                .totalPages(categoryPage.getTotalPages())
+                .lastPage(categoryPage.isLast())
+                .build();
     }
 
     @Override
-    public void deleteById(Long id) {
-        categoryRepository.delete(getById(id));
+    public CategoryDTO deleteById(Long id) {
+        CategoryDTO categoryDto = modelMapper.map(getById(id), CategoryDTO.class);
+        categoryRepository.deleteById(id);
+        return categoryDto;
     }
 
     @Override
-    public void updateById(CategoryDTO request, Long id) {
+    public CategoryDTO updateById(CategoryDTO request, Long id) {
         var categoryDB = getById(id);
         if (!request.getName().isBlank() && !request.getName().equals(categoryDB.getName())) {
             categoryDB.setName(request.getName());
         }
-        categoryRepository.save(categoryDB);
+        CategoryEntity savedCategory = categoryRepository.save(categoryDB);
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
     private CategoryEntity getById(Long id) {
