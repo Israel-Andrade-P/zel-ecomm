@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.model;
 
+import com.zeldev.zel_e_comm.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,10 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class CategoryEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CategoryEntity extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 }

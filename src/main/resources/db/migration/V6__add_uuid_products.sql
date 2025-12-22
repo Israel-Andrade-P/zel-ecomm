@@ -1,0 +1,2 @@
+ALTER TABLE products
+ADD COLUMN public_id UUID NOT NULL UNIQUE;

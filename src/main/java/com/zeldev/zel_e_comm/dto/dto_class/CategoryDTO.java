@@ -1,4 +1,4 @@
-package com.zeldev.zel_e_comm.dto.request;
+package com.zeldev.zel_e_comm.dto.dto_class;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
