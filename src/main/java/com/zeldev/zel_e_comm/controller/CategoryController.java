@@ -31,13 +31,13 @@ public class CategoryController {
         return ResponseEntity.ok(service.getAll(page, size, sortBy, sortOrder));
     }
 
-    @DeleteMapping("/admin/delete/{id}")
-    public ResponseEntity<CategoryDTO> delete(@PathVariable("id") Long id) {
-        return ResponseEntity.status(OK).body(service.deleteById(id));
+    @DeleteMapping("/admin/delete/{name}")
+    public ResponseEntity<CategoryDTO> delete(@PathVariable("name") String name) {
+        return ResponseEntity.status(OK).body(service.deleteById(name));
     }
 
-    @PutMapping("/admin/update/{id}")
-    public ResponseEntity<CategoryDTO> update(@RequestBody CategoryDTO request, @PathVariable("id") Long id) {
-        return ResponseEntity.status(OK).body(service.updateById(request, id));
+    @PutMapping("/admin/update/{name}")
+    public ResponseEntity<CategoryDTO> update(@RequestBody CategoryDTO request, @PathVariable("name") String name) {
+        return ResponseEntity.status(OK).body(service.updateById(request, name));
     }
 }
