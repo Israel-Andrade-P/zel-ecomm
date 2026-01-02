@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -37,5 +39,20 @@ public class ProductController {
     @GetMapping("/public/products/keyword/{keyword}")
     public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable("keyword") String keyword) {
         return ResponseEntity.status(OK).body(productService.getProductsByKeyword(keyword));
+    }
+
+    @PutMapping("/admin/products/{product_id}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO request, @PathVariable("product_id") String product_id) {
+        return ResponseEntity.status(OK).body(productService.updateProduct(request,product_id));
+    }
+
+    @DeleteMapping("/admin/products/{product_id}")
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable("product_id") String product_id) {
+        return ResponseEntity.status(OK).body(productService.deleteProduct(product_id));
+    }
+
+    @PutMapping("/admin/products/{product_id}/image")
+    public ResponseEntity<ProductDTO> updateImage(@PathVariable("product_id") String product_id, @RequestParam(name = "image") MultipartFile image) throws IOException {
+        return ResponseEntity.status(OK).body(productService.updateImage(product_id, image));
     }
 }
