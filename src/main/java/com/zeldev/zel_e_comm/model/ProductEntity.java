@@ -20,12 +20,20 @@ public class ProductEntity extends BaseEntity {
     private UUID publicId;
     private String name;
     private String description;
+    private String image;
     private Integer quantity;
     private BigDecimal price;
+    private Double discount;
     private BigDecimal specialPrice;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
+
+    public BigDecimal calculateSpecialPrice() {
+        return price.subtract(
+                price.multiply(BigDecimal.valueOf(discount)).divide(BigDecimal.valueOf(100))
+        );
+    }
 
     @PrePersist
     private void initPublicId() {

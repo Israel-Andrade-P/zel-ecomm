@@ -22,11 +22,10 @@ public class ProductDTO {
     private String name;
     private String description;
     private String image;
-    private String category;
     @NotNull(message = "Quantity must be at least 1")
     @PositiveOrZero(message = "Quantity must be at least 1")
     private Integer quantity;
     private BigDecimal price;
+    private Double discount;
     private BigDecimal specialPrice;
-    private BigDecimal discount;
 }

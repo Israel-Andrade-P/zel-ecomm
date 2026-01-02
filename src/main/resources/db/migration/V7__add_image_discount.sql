@@ -1,0 +1,3 @@
+ALTER TABLE products
+ADD COLUMN image VARCHAR(200),
+ADD COLUMN discount BIGINT;

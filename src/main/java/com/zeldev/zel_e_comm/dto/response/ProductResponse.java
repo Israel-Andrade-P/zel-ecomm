@@ -1,10 +1,7 @@
 package com.zeldev.zel_e_comm.dto.response;
 
 import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,6 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProductResponse {
     private List<ProductDTO> content;
 }
