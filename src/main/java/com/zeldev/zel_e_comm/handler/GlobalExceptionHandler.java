@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.handler;
 
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
+import org.postgresql.util.PSQLException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,5 +41,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(
                 new ErrorResponse(400, BAD_REQUEST, "Invalid fields", errors)
         );
+    }
+
+    @ExceptionHandler(PSQLException.class)
+    public ResponseEntity<ErrorResponse> handlePsql(PSQLException exp) {
+        if ("23505".equals(exp.getSQLState())) {
+            return ResponseEntity
+                    .status(CONFLICT)
+                    .body(new ErrorResponse(409, CONFLICT, "Product already exists"));
+        }
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Unexpected database error"));
     }
 }
