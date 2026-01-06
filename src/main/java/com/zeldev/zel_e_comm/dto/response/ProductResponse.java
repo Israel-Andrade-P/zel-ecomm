@@ -5,11 +5,13 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Builder
-public class ProductResponse {
-    private List<ProductDTO> content;
-}
+public record ProductResponse (
+        List<ProductDTO> content,
+        Integer pageNumber,
+        Integer pageSize,
+        Long totalElements,
+        Integer totalPages,
+        boolean lastPage
+){}

@@ -5,15 +5,14 @@ import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface ProductService {
     ProductDTO create(ProductDTO request, String category);
-    ProductResponse getAllProducts();
+    ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder);
 
-    ProductResponse getProductsByCategory(String id);
+    ProductResponse getProductsByCategory(String id, Integer page, Integer size, String sortBy, String sortOrder);
 
-    ProductResponse getProductsByKeyword(String keyword);
+    ProductResponse getProductsByKeyword(String keyword, Integer page, Integer size, String sortBy, String sortOrder);
 
     ProductDTO updateProduct(ProductDTO productDTO, String productId);
 

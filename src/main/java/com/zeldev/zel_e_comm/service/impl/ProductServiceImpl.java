@@ -13,6 +13,10 @@ import com.zeldev.zel_e_comm.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,27 +46,60 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getAllProducts() {
-        List<ProductEntity> products = productRepository.findAll();
-        if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return ProductResponse.builder().content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList()).build();
-    }
+    public ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
+                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
+        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Page<ProductEntity> productPage = productRepository.findAll(pageDetails);
 
-    @Override
-    public ProductResponse getProductsByCategory(String id) {
-        List<ProductEntity> products = productRepository.findByCategory_IdOrderByPriceAsc(categoryService.getByName(id).getId());
+        List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
         return ProductResponse.builder()
                 .content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList())
+                .totalPages(productPage.getTotalPages())
+                .totalElements(productPage.getTotalElements())
+                .lastPage(productPage.isLast())
+                .pageNumber(productPage.getNumber())
+                .pageSize(productPage.getSize())
                 .build();
     }
 
     @Override
-    public ProductResponse getProductsByKeyword(String keyword) {
-        List<ProductEntity> products = productRepository.findByNameLikeIgnoreCase("%" + keyword + "%");
+    public ProductResponse getProductsByCategory(String id, Integer page, Integer size, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
+                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
+        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Page<ProductEntity> productPage = productRepository.findByCategory_IdOrderByPriceAsc(categoryService.getByName(id).getId(), pageDetails);
+        List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
         return ProductResponse.builder()
                 .content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList())
+                .totalPages(productPage.getTotalPages())
+                .totalElements(productPage.getTotalElements())
+                .lastPage(productPage.isLast())
+                .pageNumber(productPage.getNumber())
+                .pageSize(productPage.getSize())
+                .build();
+    }
+
+    @Override
+    public ProductResponse getProductsByKeyword(String keyword, Integer page, Integer size, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
+                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
+        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Page<ProductEntity> productPage = productRepository.findByNameLikeIgnoreCase("%" + keyword + "%", pageDetails);
+        List<ProductEntity> products = productPage.getContent();
+        if (products.isEmpty()) throw new APIException("No products have been added yet :(");
+        return ProductResponse.builder()
+                .content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList())
+                .totalPages(productPage.getTotalPages())
+                .totalElements(productPage.getTotalElements())
+                .lastPage(productPage.isLast())
+                .pageNumber(productPage.getNumber())
+                .pageSize(productPage.getSize())
                 .build();
     }
 
