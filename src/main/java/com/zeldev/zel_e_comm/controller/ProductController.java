@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 import static com.zeldev.zel_e_comm.constants.Constants.*;
-import static com.zeldev.zel_e_comm.constants.Constants.SORT_DIR;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -60,6 +59,7 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getProductsByKeyword(keyword, page, size, sortBy, sortOrder));
     }
 
+    //@PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/products/{product_id}")
     public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO request, @PathVariable("product_id") String product_id) {
         return ResponseEntity.status(OK).body(productService.updateProduct(request,product_id));

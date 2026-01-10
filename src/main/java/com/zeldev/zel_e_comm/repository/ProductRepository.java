@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.repository;
 
-import com.zeldev.zel_e_comm.model.ProductEntity;
+import com.zeldev.zel_e_comm.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

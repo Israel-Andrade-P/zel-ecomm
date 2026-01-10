@@ -1,4 +1,4 @@
-package com.zeldev.zel_e_comm.model;
+package com.zeldev.zel_e_comm.entity;
 
 
 import com.zeldev.zel_e_comm.common.BaseEntity;
@@ -23,11 +23,14 @@ public class ProductEntity extends BaseEntity {
     private String image;
     private Integer quantity;
     private BigDecimal price;
-    private Double discount;
+    private Integer discount;
     private BigDecimal specialPrice;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private UserEntity user;
 
     public BigDecimal calculateSpecialPrice() {
         return price.subtract(

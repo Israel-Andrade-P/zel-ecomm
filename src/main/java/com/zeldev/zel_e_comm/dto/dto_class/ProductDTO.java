@@ -1,6 +1,5 @@
 package com.zeldev.zel_e_comm.dto.dto_class;
 
-import com.zeldev.zel_e_comm.model.CategoryEntity;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -26,6 +25,6 @@ public class ProductDTO {
     @PositiveOrZero(message = "Quantity must be at least 1")
     private Integer quantity;
     private BigDecimal price;
-    private Double discount;
+    private Integer discount;
     private BigDecimal specialPrice;
 }

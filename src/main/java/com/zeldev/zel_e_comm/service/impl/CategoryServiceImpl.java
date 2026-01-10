@@ -4,7 +4,7 @@ import com.zeldev.zel_e_comm.dto.dto_class.CategoryDTO;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
-import com.zeldev.zel_e_comm.model.CategoryEntity;
+import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.repository.CategoryRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
 import lombok.RequiredArgsConstructor;

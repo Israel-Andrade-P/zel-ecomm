@@ -1,4 +1,4 @@
-package com.zeldev.zel_e_comm.model;
+package com.zeldev.zel_e_comm.entity;
 
 import com.zeldev.zel_e_comm.common.BaseEntity;
 import jakarta.persistence.*;
