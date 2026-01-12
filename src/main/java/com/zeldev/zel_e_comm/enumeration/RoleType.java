@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum RoleType {
-    ROLE_USER("Regular user"),
-    ROLE_SELLER("Seller"),
-    ROLE_ADMIN("Has admin privileges");
+    USER("Default user role"),
+    SELLER("Seller permissions"),
+    ADMIN("System administrator");
 
     private final String description;
 

@@ -23,7 +23,7 @@ public class UserEntity extends BaseEntity {
     private String email;
     @Column(name = "password", nullable = false, length = 200)
     private String password;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
                inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();

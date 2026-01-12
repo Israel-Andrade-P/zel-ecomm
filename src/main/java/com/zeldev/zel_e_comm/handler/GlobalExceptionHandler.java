@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         if ("23505".equals(exp.getSQLState())) {
             return ResponseEntity
                     .status(CONFLICT)
-                    .body(new ErrorResponse(409, CONFLICT, "Product already exists"));
+                    .body(new ErrorResponse(409, CONFLICT, "Entity already exists"));
         }
         return ResponseEntity
                 .status(INTERNAL_SERVER_ERROR)

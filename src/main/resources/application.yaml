@@ -14,8 +14,9 @@ spring:
 project:
   path:
     images: ./images
-#jwt:
-#  expiration: 86400000
-#  secret: O94xB3Mg2ayT+SM+8ExVuN+obkkpntc7EwowKBPXFchlNPWY06ggerto53XC8q0H+G56YWrG9LAInLFfjBrKFA==
+jwt:
+  expiration: 86400000
+  secret: O94xB3Mg2ayT+SM+8ExVuN+obkkpntc7EwowKBPXFchlNPWY06ggerto53XC8q0H+G56YWrG9LAInLFfjBrKFA==
+  cookie: zel_ecomm
 
 
