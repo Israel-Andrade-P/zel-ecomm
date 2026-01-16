@@ -5,6 +5,7 @@ import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
 import com.zeldev.zel_e_comm.jwt.JwtUtils;
 import com.zeldev.zel_e_comm.security.UserSecurity;
+import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +28,7 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserService userService;
+    private final AuthService authService;
     private final AuthenticationManager authManager;
     private final JwtUtils jwtUtils;
 
@@ -52,7 +53,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO request) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.registerUser(request));
+        return ResponseEntity.status(HttpStatus.OK).body(authService.createUser(request));
     }
 
     @GetMapping("/username")

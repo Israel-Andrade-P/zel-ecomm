@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class AddressEntity extends BaseEntity {
+public class LocationEntity extends BaseEntity {
     @Column(name = "street", nullable = false, length = 150)
     private String street;
     @Column(name = "city", nullable = false, length = 50)
