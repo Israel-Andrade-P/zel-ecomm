@@ -4,9 +4,8 @@ import com.zeldev.zel_e_comm.dto.dto_class.LoginRequest;
 import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
 import com.zeldev.zel_e_comm.jwt.JwtUtils;
-import com.zeldev.zel_e_comm.security.UserSecurity;
+import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.service.AuthService;
-import com.zeldev.zel_e_comm.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

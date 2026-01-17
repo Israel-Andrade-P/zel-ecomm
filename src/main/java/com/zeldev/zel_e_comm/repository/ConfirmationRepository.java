@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ConfirmationRepository extends JpaRepository<ConfirmationEntity, Long> {
     @Query(
             """
-                    SELECT c FROM ConfirmationEntity c WHERE c.keyCode=:key
+                    SELECT c FROM ConfirmationEntity c WHERE c.confKey=:key
                     """
     )
     Optional<ConfirmationEntity> findByKey(String key);

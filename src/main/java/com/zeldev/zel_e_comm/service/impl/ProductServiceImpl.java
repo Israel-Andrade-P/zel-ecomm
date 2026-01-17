@@ -2,16 +2,16 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
-import com.zeldev.zel_e_comm.exception.APIException;
-import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
+import com.zeldev.zel_e_comm.exception.APIException;
+import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.ProductRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
 import com.zeldev.zel_e_comm.service.FileService;
 import com.zeldev.zel_e_comm.service.ProductService;
+import com.zeldev.zel_e_comm.util.ProductUtils;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,25 +24,28 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static com.zeldev.zel_e_comm.util.ProductUtils.*;
+import static com.zeldev.zel_e_comm.util.ProductUtils.buildProductEntity;
+import static com.zeldev.zel_e_comm.util.ProductUtils.toDTO;
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final FileService fileService;
-    private final ModelMapper mapper;
     @Value("${project.path.images}")
     private String path;
 
     @Override
     public ProductDTO create(ProductDTO request, String categoryName) {
-        ProductEntity entity = mapper.map(request, ProductEntity.class);
+        ProductEntity entity = buildProductEntity(request);
         CategoryEntity category = categoryService.getByName(categoryName);
         entity.setCategory(category);
         entity.setSpecialPrice(entity.calculateSpecialPrice());
         entity.setImage("default.png");
         ProductEntity saved = productRepository.save(entity);
-        return mapper.map(saved, ProductDTO.class);
+        return toDTO(saved);
     }
 
     @Override
@@ -55,14 +58,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return ProductResponse.builder()
-                .content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList())
-                .totalPages(productPage.getTotalPages())
-                .totalElements(productPage.getTotalElements())
-                .lastPage(productPage.isLast())
-                .pageNumber(productPage.getNumber())
-                .pageSize(productPage.getSize())
-                .build();
+        return buildProductResponse(productPage, products);
     }
 
     @Override
@@ -74,14 +70,7 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductEntity> productPage = productRepository.findByCategory_IdOrderByPriceAsc(categoryService.getByName(id).getId(), pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return ProductResponse.builder()
-                .content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList())
-                .totalPages(productPage.getTotalPages())
-                .totalElements(productPage.getTotalElements())
-                .lastPage(productPage.isLast())
-                .pageNumber(productPage.getNumber())
-                .pageSize(productPage.getSize())
-                .build();
+        return buildProductResponse(productPage, products);
     }
 
     @Override
@@ -93,47 +82,40 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductEntity> productPage = productRepository.findByNameLikeIgnoreCase("%" + keyword + "%", pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return ProductResponse.builder()
-                .content(products.stream().map(p -> mapper.map(p, ProductDTO.class)).toList())
-                .totalPages(productPage.getTotalPages())
-                .totalElements(productPage.getTotalElements())
-                .lastPage(productPage.isLast())
-                .pageNumber(productPage.getNumber())
-                .pageSize(productPage.getSize())
-                .build();
+        return buildProductResponse(productPage, products);
     }
 
     @Override
     public ProductDTO updateProduct(ProductDTO productDTO, String productId) {
         ProductEntity productDB = findByPublicId(productId);
-        if (!productDTO.getName().isBlank()) {
-            productDB.setName(productDTO.getName());
+        if (!productDTO.name().isBlank()) {
+            productDB.setName(productDTO.name());
         }
-        if (!productDTO.getDescription().isBlank()) {
-            productDB.setDescription(productDTO.getDescription());
+        if (!productDTO.description().isBlank()) {
+            productDB.setDescription(productDTO.description());
         }
-        if (productDTO.getPrice() != null) {
-            productDB.setPrice(productDTO.getPrice());
+        if (productDTO.price() != null) {
+            productDB.setPrice(productDTO.price());
             productDB.setSpecialPrice(productDB.calculateSpecialPrice());
         }
-        if (productDTO.getDiscount() != null) {
-            productDB.setDiscount(productDTO.getDiscount());
+        if (productDTO.discount() != null) {
+            productDB.setDiscount(productDTO.discount());
             productDB.setSpecialPrice(productDB.calculateSpecialPrice());
         }
-        if (productDTO.getQuantity() != null) {
-            productDB.setQuantity(productDTO.getQuantity());
+        if (productDTO.quantity() != null) {
+            productDB.setQuantity(productDTO.quantity());
         }
 
 
         productRepository.save(productDB);
-        return mapper.map(productDB, ProductDTO.class);
+        return toDTO(productDB);
     }
 
     @Override
     public ProductDTO deleteProduct(String productId) {
         ProductEntity productDB = findByPublicId(productId);
         productRepository.delete(productDB);
-        return mapper.map(productDB, ProductDTO.class);
+        return toDTO(productDB);
     }
 
     @Override
@@ -141,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productDB = findByPublicId(productId);
         String filename = fileService.uploadImage(path, image);
         productDB.setImage(filename);
-        return mapper.map(productRepository.save(productDB), ProductDTO.class);
+        return toDTO(productRepository.save(productDB));
     }
 
     private ProductEntity findByPublicId(String publicId) {
