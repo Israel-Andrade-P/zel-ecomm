@@ -1,5 +1,9 @@
-package com.zeldev.zel_e_comm.jwt;
+package com.zeldev.zel_e_comm.filter;
 
+import com.zeldev.zel_e_comm.domain.CustomAuthentication;
+import com.zeldev.zel_e_comm.domain.TokenData;
+import com.zeldev.zel_e_comm.domain.UserSecurity;
+import com.zeldev.zel_e_comm.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,9 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -19,23 +21,28 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class AuthTokenFilter extends OncePerRequestFilter {
-    private final JwtUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+public class TokenCheckFilter extends OncePerRequestFilter {
+    private final JwtService jwtService;
+    private static final Logger logger = LoggerFactory.getLogger(TokenCheckFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getServletPath().contains("/api/v1/auth")){
+            filterChain.doFilter(request, response);
+            return;
+        }
         logger.debug("Custom filter called for URI: {}", request.getRequestURI());
+
+        String jwt = jwtService.getJwtFromCookie(request);
+
         try {
-            String jwt = jwtUtils.getJwtFromCookie(request);
-            if (jwt != null && jwtUtils.validateToken(jwt)) {
-                String username = jwtUtils.getUsernameFromToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            if (jwt != null && jwtService.validateToken(jwt)) {
+                var user = jwtService.getTokenData(jwt, TokenData::getUser);
+                var userSec = new UserSecurity(user, null);
+                var auth = CustomAuthentication.authenticated(userSec, userSec.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                logger.debug("Roles from authenticated user: {}", userDetails.getAuthorities());
+                logger.debug("Roles from authenticated user: {}", userSec.getAuthorities());
             }
         }catch (Exception exp) {
             logger.error("Couldn't set auth object for user: {}", exp.getMessage());

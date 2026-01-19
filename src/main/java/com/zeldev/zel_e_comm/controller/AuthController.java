@@ -2,17 +2,17 @@ package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
+import com.zeldev.zel_e_comm.dto.dto_class.KeyRequest;
 import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
-import com.zeldev.zel_e_comm.jwt.JwtUtils;
 import com.zeldev.zel_e_comm.service.AuthService;
+import com.zeldev.zel_e_comm.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,8 +31,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final AuthenticationManager authManager;
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtService;
 
 //    @PostMapping("/login")
 //    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -65,8 +64,8 @@ public class AuthController {
     }
 
     @PostMapping("/new_key")
-    public ResponseEntity<String> getNewKey(@RequestBody String email) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.getNewKey(email));
+    public ResponseEntity<String> getNewKey(@RequestBody KeyRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(authService.getNewKey(request));
     }
 
     @GetMapping("/username")
@@ -84,7 +83,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-        ResponseCookie emptyCookie = jwtUtils.generateEmptyCookie();
+        ResponseCookie emptyCookie = jwtService.generateEmptyCookie();
         return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, emptyCookie.toString()).body("Signed out!");
     }
 }

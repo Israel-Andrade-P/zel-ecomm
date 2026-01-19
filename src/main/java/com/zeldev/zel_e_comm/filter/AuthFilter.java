@@ -14,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +35,7 @@ import static com.zeldev.zel_e_comm.util.UserUtils.fromUserSecurity;
 public class AuthFilter extends AbstractAuthenticationProcessingFilter {
     private final AuthService authService;
     private final JwtService jwtService;
+
     public AuthFilter(CustomAuthenticationManager manager, AuthService authService, JwtService jwtService) {
         super(
                 request -> LOGIN_PATH.equals(request.getServletPath())
@@ -62,7 +64,9 @@ public class AuthFilter extends AbstractAuthenticationProcessingFilter {
         var user = fromUserSecurity((UserSecurity) authentication.getPrincipal());
         authService.updateLoginAttempt(user.getEmail(), LOGIN_SUCCESS);
         String token = jwtService.createToken(user, Token::getAccess);
-        var loginResponse = new LoginResponse(token, user.getRoles());
+
+        var loginResponse = new LoginResponse(user.getEmail(), user.getRoles());
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtService.generateJwtCookie(token).toString());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.OK.value());
         var out = response.getOutputStream();

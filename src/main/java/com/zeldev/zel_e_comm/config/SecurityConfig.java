@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.config;
 
 import com.zeldev.zel_e_comm.filter.AuthFilter;
+import com.zeldev.zel_e_comm.filter.TokenCheckFilter;
 import com.zeldev.zel_e_comm.security.CustomAuthenticationManager;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
@@ -25,10 +26,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
     //private final AuthEntryPointJwt authEntryPointJwt;
-    //private final JwtUtils jwtUtils;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthFilter authFilter) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthFilter authFilter, TokenCheckFilter tokenCheckFilter) {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
                 req -> req
@@ -38,15 +38,10 @@ public class SecurityConfig {
         http.sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
         //http.exceptionHandling(exp -> exp.authenticationEntryPoint(authEntryPointJwt));
         http.addFilterBefore(authFilter, AuthorizationFilter.class);
-        //http.addFilterBefore(authTokenFilter(), AuthorizationFilter.class);
+        http.addFilterBefore(tokenCheckFilter, AuthorizationFilter.class);
 
         return http.build();
     }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) {
-//        return builder.getAuthenticationManager();
-//    }
 
     @Bean
     public AuthFilter authFilter(CustomAuthenticationManager manager, AuthService authService, JwtService jwtService) {
@@ -58,8 +53,8 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public AuthTokenFilter authTokenFilter() {
-//        return new AuthTokenFilter(jwtUtils, userDetailsService);
-//    }
+    @Bean
+    public TokenCheckFilter tokenCheckFilter(JwtService jwtService) {
+        return new TokenCheckFilter(jwtService);
+    }
 }

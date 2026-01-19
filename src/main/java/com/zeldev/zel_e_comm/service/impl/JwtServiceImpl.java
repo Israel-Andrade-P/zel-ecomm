@@ -1,6 +1,5 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.constants.Constants;
 import com.zeldev.zel_e_comm.domain.Token;
 import com.zeldev.zel_e_comm.domain.TokenData;
 import com.zeldev.zel_e_comm.enumeration.TokenType;
@@ -13,9 +12,13 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import javax.crypto.SecretKey;
 import java.util.*;
@@ -43,7 +46,7 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
             Jwts.builder()
                     .header().add(Map.of(TYPE, JWT_TYPE))
                     .and()
-                    .audience().add(Constants.ZEL_DEV_INC)
+                    .audience().add(ZEL_DEV_INC)
                     .and()
                     .id(UUID.randomUUID().toString())
                     .issuedAt(from(now()))
@@ -53,7 +56,7 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
     private final BiFunction<User, TokenType, String> buildToken = (user, type) ->
             Objects.equals(type, ACCESS) ? builder.get()
                     .subject(user.getEmail())
-                    .claim(ROLES, user.getRoles())
+                    .claim(ROLES, user.getRoles().toString())
                     .expiration(from(now().plusSeconds(getExpiration())))
                     .compact() : builder.get()
                     .subject(user.getEmail())
@@ -85,20 +88,40 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
 
     @Override
     public <T> T getTokenData(String token, Function<TokenData, T> tokenDataFunction) {
-//        return tokenDataFunction.apply(
-//                TokenData.builder()
-//                        .valid(Objects.equals(userService.getUserByEmail(subject.apply(token)).getEmail(), getClaims.apply(token).getSubject()) &&
-//                                getClaimsValue(token, Claims::getExpiration).after(new Date()))
-//                        .authorities(authorities.apply(token))
-//                        .claims(getClaims.apply(token))
-//                        .user(userService.getUserByEmail(subject.apply(token)))
-//                        .build()
-        //);
-        return null;
+        return tokenDataFunction.apply(
+                TokenData.builder()
+                        .valid(validateToken(token))
+                        .authorities(authorities.apply(token))
+                        .claims(getClaims.apply(token))
+                        .user(userService.getUserByEmail(subject.apply(token)))
+                        .build()
+        );
     }
     @Override
-    public Boolean validateToken(String jwt)
-    {
-        return getTokenData(jwt, TokenData::getValid);
+    public Boolean validateToken(String jwt) {
+        return getClaims.apply(jwt).getAudience().contains(ZEL_DEV_INC);
+    }
+
+    @Override
+    public ResponseCookie generateJwtCookie(String token) {
+        return ResponseCookie.from(getJwtCookie(), token)
+                .path("/api")
+                .maxAge(24 * 60 * 60)
+                .httpOnly(false)
+                .build();
+    }
+
+    @Override
+    public ResponseCookie generateEmptyCookie() {
+        return ResponseCookie.from(getJwtCookie(), "")
+                .path("/api")
+                .build();
+    }
+
+    @Override
+    public String getJwtFromCookie(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, getJwtCookie());
+        if (cookie == null) return null;
+        return cookie.getValue();
     }
 }

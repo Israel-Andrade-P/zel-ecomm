@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.service;
 
+import com.zeldev.zel_e_comm.dto.dto_class.KeyRequest;
 import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.entity.CredentialEntity;
 import com.zeldev.zel_e_comm.enumeration.LoginType;
@@ -15,6 +16,6 @@ public interface AuthService {
     CredentialEntity getCredentialByUserId(Long userId);
     User getUserByEmail(String email);
 
-    @Nullable String getNewKey(String email);
+    @Nullable String getNewKey(KeyRequest keyRequest);
     //LocationEntity getLocationByUserId(Long userId);
 }

@@ -11,4 +11,6 @@ public class JwtConfig {
     private String secret;
     @Value("${jwt.expiration}")
     private Long expiration;
+    @Value("${jwt.cookie}")
+    private String jwtCookie;
 }

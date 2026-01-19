@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.cache.CacheStore;
+import com.zeldev.zel_e_comm.dto.dto_class.KeyRequest;
 import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.entity.ConfirmationEntity;
 import com.zeldev.zel_e_comm.entity.CredentialEntity;
@@ -88,8 +89,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public @Nullable String getNewKey(String email) {
-        var user = getUserEntityByEmail(email);
+    public @Nullable String getNewKey(KeyRequest request) {
+        var user = getUserEntityByEmail(request.email());
         confirmationRepository.save(new ConfirmationEntity(user, suppliesKey.get()));
         return "New key generated!";
     }
