@@ -5,6 +5,7 @@ public class Constants {
     public static final String PAGE_SIZE = "50";
     public static final String SORT_ENTITY_BY = "name";
     public static final String SORT_DIR = "asc";
+    public static final Integer EXPIRATION = 30;
     public static final String ZEL_DEV_INC = "ZelDev.Inc";
     public static final String ROLES = "Roles";
     public static final String AUTHORITY_DELIMITER = ",";
@@ -13,5 +14,6 @@ public class Constants {
     public static final String PASSWORD_PROTECTED = "PASSWORD_PROTECTED";
     public static final String[] WHITE_LIST =
             {"/api/v1/auth/**", "/v3/api-docs/**","/swagger-ui/**",
-                    "swagger-ui.html", "/api-docs/**", "/swagger-resources/**", "/aggregate/**", "/actuator/**"};
+                    "/swagger-ui.html", "/api-docs/**", "/swagger-resources/**", "/aggregate/**", "/actuator/**"};
+    public static final String ACCOUNT_VERIFIED_MESSAGE = "Your account has been verified";
 }

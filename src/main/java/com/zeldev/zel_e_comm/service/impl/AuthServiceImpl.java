@@ -8,11 +8,12 @@ import com.zeldev.zel_e_comm.entity.RoleEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.LoginType;
 import com.zeldev.zel_e_comm.enumeration.RoleType;
-import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
-import com.zeldev.zel_e_comm.exception.RoleDoesntExistException;
+import com.zeldev.zel_e_comm.exception.*;
+import com.zeldev.zel_e_comm.model.User;
 import com.zeldev.zel_e_comm.repository.*;
 import com.zeldev.zel_e_comm.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static com.zeldev.zel_e_comm.constants.Constants.EXPIRATION;
 import static com.zeldev.zel_e_comm.util.LocationUtils.buildLocation;
-import static com.zeldev.zel_e_comm.util.UserUtils.buildUserEntity;
-import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
+import static com.zeldev.zel_e_comm.util.UserUtils.*;
 import static java.time.LocalDateTime.now;
 
 @Service
@@ -48,7 +49,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void verifyAccount(String key) {
-
+        var confirmationEntity = getConfirmationByKey(key);
+        isKeyValid(confirmationEntity);
+        var userEntity = getUserEntityByEmail(confirmationEntity.getUser().getEmail());
+        userEntity.setEnabled(true);
+        userRepository.save(userEntity);
+        confirmationRepository.delete(confirmationEntity);
     }
 
     @Override
@@ -76,13 +82,37 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
+    @Override
+    public User getUserByEmail(String email) {
+        return fromUserEntity(getUserEntityByEmail(email));
+    }
+
+    @Override
+    public @Nullable String getNewKey(String email) {
+        var user = getUserEntityByEmail(email);
+        confirmationRepository.save(new ConfirmationEntity(user, suppliesKey.get()));
+        return "New key generated!";
+    }
+
+    private ConfirmationEntity getConfirmationByKey(String key) {
+        return confirmationRepository.findByKey(key)
+                .orElseThrow(() -> new CustomInvalidKeyException("The key is invalid"));
+    }
+
+    private void isKeyValid(ConfirmationEntity confirmationEntity) {
+        if (confirmationEntity.getCreatedAt().plusMinutes(EXPIRATION).isBefore(now())){
+            confirmationRepository.delete(confirmationEntity);
+            throw new ConfirmationKeyExpiredException("The confirmation key is expired. Please request a new key");
+        }
+    }
+
     private UserEntity getUserEntityByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(email, "User"));
     }
 
     @Override
     public CredentialEntity getCredentialByUserId(Long userId) {
-        return null;
+        return credentialRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
     }
 
     private UserEntity createNewUser(UserDTO user) {

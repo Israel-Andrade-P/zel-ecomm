@@ -3,6 +3,8 @@ package com.zeldev.zel_e_comm.service;
 import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.entity.CredentialEntity;
 import com.zeldev.zel_e_comm.enumeration.LoginType;
+import com.zeldev.zel_e_comm.model.User;
+import org.jspecify.annotations.Nullable;
 
 public interface AuthService {
 
@@ -11,5 +13,8 @@ public interface AuthService {
     //User getUserByEmail(String email);
     void updateLoginAttempt(String email, LoginType loginType);
     CredentialEntity getCredentialByUserId(Long userId);
+    User getUserByEmail(String email);
+
+    @Nullable String getNewKey(String email);
     //LocationEntity getLocationByUserId(Long userId);
 }

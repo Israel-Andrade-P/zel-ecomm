@@ -25,13 +25,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         var customAuth = (CustomAuthentication) authentication;
         var user = (UserSecurity) userDetailsService.loadUserByUsername(customAuth.getEmail());
-        if (user != null){
-            validAccount.accept(user);
-
-            if (encoder.matches(customAuth.getPassword(), user.getPassword())){
-                return CustomAuthentication.authenticated(user, user.getAuthorities());
-            }else throw new BadCredentialsException("Email and/or password is incorrect. Please try again");
-        }else throw new GenericException("User not found");
+        validAccount.accept(user);
+        if (encoder.matches(customAuth.getPassword(), user.getPassword())){
+            return CustomAuthentication.authenticated(user, user.getAuthorities());
+        }else throw new BadCredentialsException("Email and/or password is incorrect. Please try again");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.handler;
 
 import com.zeldev.zel_e_comm.exception.APIException;
+import com.zeldev.zel_e_comm.exception.ConfirmationKeyExpiredException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.ResponseEntity;
@@ -53,5 +54,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Unexpected database error"));
+    }
+
+    @ExceptionHandler(ConfirmationKeyExpiredException.class)
+    public ResponseEntity<ErrorResponse> handler(ConfirmationKeyExpiredException exp) {
+        return ResponseEntity.badRequest().body(
+                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
+        );
     }
 }
