@@ -1,5 +1,7 @@
 package com.zeldev.zel_e_comm.service.impl;
 
+import com.zeldev.zel_e_comm.domain.CustomAuthentication;
+import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
@@ -7,9 +9,8 @@ import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.ProductRepository;
-import com.zeldev.zel_e_comm.service.CategoryService;
-import com.zeldev.zel_e_comm.service.FileService;
-import com.zeldev.zel_e_comm.service.ProductService;
+import com.zeldev.zel_e_comm.repository.UserRepository;
+import com.zeldev.zel_e_comm.service.*;
 import com.zeldev.zel_e_comm.util.ProductUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,13 +35,16 @@ import static com.zeldev.zel_e_comm.util.ProductUtils.toDTO;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final UserRepository userRepository;
     private final FileService fileService;
     @Value("${project.path.images}")
     private String path;
 
     @Override
-    public ProductDTO create(ProductDTO request, String categoryName) {
+    public ProductDTO create(ProductDTO request, String categoryName, Authentication loggedUser) {
+        var user = userRepository.findByEmail(((UserSecurity) loggedUser.getPrincipal()).getUsername()).orElseThrow(() -> new ResourceNotFoundException("email", "user"));
         ProductEntity entity = buildProductEntity(request);
+        entity.setUser(user);
         CategoryEntity category = categoryService.getByName(categoryName);
         entity.setCategory(category);
         entity.setSpecialPrice(entity.calculateSpecialPrice());
@@ -126,7 +131,8 @@ public class ProductServiceImpl implements ProductService {
         return toDTO(productRepository.save(productDB));
     }
 
-    private ProductEntity findByPublicId(String publicId) {
+    @Override
+    public ProductEntity findByPublicId(String publicId) {
         return productRepository.findByPublicId(UUID.fromString(publicId)).orElseThrow(() -> new ResourceNotFoundException(publicId, "Product"));
     }
 }

@@ -6,6 +6,7 @@ import com.zeldev.zel_e_comm.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +23,8 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/admin/categories/{category_name}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody @Valid ProductDTO request, @PathVariable("category_name") String categoryName) {
-        return ResponseEntity.status(CREATED).body(productService.create(request, categoryName));
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody @Valid ProductDTO request, @PathVariable("category_name") String categoryName, Authentication loggedUser) {
+        return ResponseEntity.status(CREATED).body(productService.create(request, categoryName, loggedUser));
     }
 
     @GetMapping("/public/products")

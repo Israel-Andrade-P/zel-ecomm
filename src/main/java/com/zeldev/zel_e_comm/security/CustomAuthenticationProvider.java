@@ -2,7 +2,6 @@ package com.zeldev.zel_e_comm.security;
 
 import com.zeldev.zel_e_comm.domain.CustomAuthentication;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
-import com.zeldev.zel_e_comm.exception.GenericException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
