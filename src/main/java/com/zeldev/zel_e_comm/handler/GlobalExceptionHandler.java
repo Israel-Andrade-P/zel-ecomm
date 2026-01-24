@@ -3,6 +3,7 @@ package com.zeldev.zel_e_comm.handler;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ConfirmationKeyExpiredException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,7 +17,9 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handler(ResourceNotFoundException exp) {
         return ResponseEntity.badRequest().body(
@@ -61,5 +64,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(
                 new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
         );
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
+        log.error("Illegal application state: {}", ex.getMessage());
+
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Server error"));
     }
 }

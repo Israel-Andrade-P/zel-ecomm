@@ -2,11 +2,12 @@ package com.zeldev.zel_e_comm.util;
 
 import com.zeldev.zel_e_comm.dto.dto_class.CartDTO;
 import com.zeldev.zel_e_comm.entity.CartEntity;
+import com.zeldev.zel_e_comm.entity.UserEntity;
 
 public class CartUtils {
-    public static CartEntity buildCart() {
+    public static CartEntity buildCart(UserEntity user) {
         return CartEntity.builder()
-                .user(AuthUtils.getLoggedInUser())
+                .user(user)
                 .build();
     }
 

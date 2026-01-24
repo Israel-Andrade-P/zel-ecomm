@@ -17,8 +17,8 @@ public class CartItemServiceImpl implements CartItemService {
     private final CartItemRepository cartItemRepository;
 
     @Override
-    public CartItemEntity createItem(ProductEntity product, CartEntity cart) {
-        return cartItemRepository.save(buildCartItem(product, cart));
+    public CartItemEntity createItem(ProductEntity product, CartEntity cart, Integer quantity) {
+        return cartItemRepository.save(buildCartItem(product, cart, quantity));
     }
 
     @Override

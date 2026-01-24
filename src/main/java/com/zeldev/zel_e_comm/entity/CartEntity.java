@@ -19,6 +19,7 @@ public class CartEntity extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+    @Builder.Default
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItemEntity> cartItems = new HashSet<>();
 
@@ -29,4 +30,10 @@ public class CartEntity extends BaseEntity {
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public void addItem(CartItemEntity item) {
+        cartItems.add(item);
+        item.setCart(this);
+    }
+
 }
