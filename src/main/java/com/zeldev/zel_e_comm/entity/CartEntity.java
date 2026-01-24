@@ -35,5 +35,4 @@ public class CartEntity extends BaseEntity {
         cartItems.add(item);
         item.setCart(this);
     }
-
 }

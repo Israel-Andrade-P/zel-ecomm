@@ -20,6 +20,8 @@ public class CartItemUtils {
 
     public static CartItemDTO toDTO(CartItemEntity itemEntity) {
         return CartItemDTO.builder()
+                .productId(itemEntity.getProduct().getPublicId().toString())
+                .productName(itemEntity.getProduct().getName())
                 .price(itemEntity.getPrice())
                 .quantity(itemEntity.getQuantity())
                 .discount(itemEntity.getDiscount())

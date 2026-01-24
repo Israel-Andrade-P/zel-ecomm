@@ -4,6 +4,7 @@ import com.zeldev.zel_e_comm.entity.CartEntity;
 import com.zeldev.zel_e_comm.entity.CartItemEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.CartItemAlreadyAddedException;
+import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.CartItemRepository;
 import com.zeldev.zel_e_comm.service.CartItemService;
 import lombok.RequiredArgsConstructor;
@@ -28,4 +29,21 @@ public class CartItemServiceImpl implements CartItemService {
                     throw new CartItemAlreadyAddedException(String.format("%s is already in the shopping cart", cartItem.getProduct().getName()));
                 });
     }
+
+    @Override
+    public void updateQuantity(CartEntity cart, ProductEntity product, Integer quantity) {
+        var item = getCartItemByCartAndProduct(cart, product);
+        item.setQuantity(item.getQuantity() + quantity);
+        item.setPrice(product.getPrice());
+        item.setDiscount(product.getDiscount());
+        var updatedItem = cartItemRepository.save(item);
+        if (updatedItem.getQuantity() == 0) cartItemRepository.delete(updatedItem);
+    }
+
+
+    private CartItemEntity getCartItemByCartAndProduct(CartEntity cart, ProductEntity product) {
+        return cartItemRepository.findCartItemEntityByProductIdAndCartId(cart.getId(), product.getId()).orElseThrow(() -> new ResourceNotFoundException("Cart item", product.getName()));
+    }
+
+
 }

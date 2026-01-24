@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.handler;
 
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ConfirmationKeyExpiredException;
+import com.zeldev.zel_e_comm.exception.InsufficientStockException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
@@ -61,6 +62,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConfirmationKeyExpiredException.class)
     public ResponseEntity<ErrorResponse> handler(ConfirmationKeyExpiredException exp) {
+        return ResponseEntity.badRequest().body(
+                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
+        );
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handler(InsufficientStockException exp) {
         return ResponseEntity.badRequest().body(
                 new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
         );

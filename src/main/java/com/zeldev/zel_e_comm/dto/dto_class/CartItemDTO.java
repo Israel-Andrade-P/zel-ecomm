@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 @Builder
 public record CartItemDTO(
-        CartDTO cart,
-        ProductDTO product,
+        String productId,
+        String productName,
         Integer quantity,
         BigDecimal price,
         Integer discount
