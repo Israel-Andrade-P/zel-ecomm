@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.dto_class.CartDTO;
 import com.zeldev.zel_e_comm.entity.CartEntity;
+import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.InsufficientStockException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
@@ -64,11 +65,16 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public @Nullable CartDTO updateQuantity(String productId, Integer quantity) {
-        var cart = getCartByEmail(authUtils.getLoggedInEmail());
-        var product = productService.findByPublicId(productId);
+        CartEntity cart = getCartByEmail(authUtils.getLoggedInEmail());
+        ProductEntity product = productService.findByPublicId(productId);
         validateQuantity(quantity, product.getQuantity());
         cartItemService.updateQuantity(cart, product, quantity);
         return toDTO(cart);
+    }
+
+    @Override
+    public void deleteItemFromCart(String productId) {
+
     }
 
     private void validateQuantity(Integer requestedQuantity, Integer inStock) {

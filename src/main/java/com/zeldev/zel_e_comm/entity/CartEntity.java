@@ -20,6 +20,10 @@ public class CartEntity extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
     @Builder.Default
+    //orphanRemoval = true -> Only deletes the CartItem entity if the relationship in memory is broken, by calling the removeItem method
+    //it makes the item orphan and therefore Hibernate automatically generates a DELETE query.
+    //Orphan removal is triggered by relationship state changes, not by repository calls. Even calling this cartItemRepository.delete(item)
+    //wouldn't tigger a deletion in DB, cause in memory relationship still exists.
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItemEntity> cartItems = new HashSet<>();
 
@@ -35,4 +39,10 @@ public class CartEntity extends BaseEntity {
         cartItems.add(item);
         item.setCart(this);
     }
+
+    public void removeItem(CartItemEntity item) {
+        cartItems.remove(item);
+        item.setCart(null);
+    }
+
 }

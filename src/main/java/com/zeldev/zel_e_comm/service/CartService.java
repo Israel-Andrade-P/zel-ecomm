@@ -15,4 +15,6 @@ public interface CartService {
 
     @Transactional
     @Nullable CartDTO updateQuantity(String productId, Integer quantity);
+
+    void deleteItemFromCart(String productId);
 }

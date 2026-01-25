@@ -33,11 +33,14 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public void updateQuantity(CartEntity cart, ProductEntity product, Integer quantity) {
         var item = getCartItemByCartAndProduct(cart, product);
-        item.setQuantity(item.getQuantity() + quantity);
+        var newQuantity = item.getQuantity() + quantity;
+        if (newQuantity <= 0) {
+            cart.removeItem(item);
+            return;
+        }
+        item.setQuantity(newQuantity);
         item.setPrice(product.getPrice());
         item.setDiscount(product.getDiscount());
-        var updatedItem = cartItemRepository.save(item);
-        if (updatedItem.getQuantity() == 0) cartItemRepository.delete(updatedItem);
     }
 
 

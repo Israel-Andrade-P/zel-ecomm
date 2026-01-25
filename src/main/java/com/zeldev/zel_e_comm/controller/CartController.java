@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.controller;
 
+import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.dto_class.CartDTO;
 import com.zeldev.zel_e_comm.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -37,4 +38,11 @@ public class CartController {
     public ResponseEntity<CartDTO> updateCartProduct(@PathVariable("product_id") String productId, @PathVariable("operation") String operation) {
         return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, operation.equalsIgnoreCase("delete") ? -1 : 1));
     }
+
+    //IMPLEMENT THIS!
+//    @DeleteMapping("/carts/product/{product_id}")
+//    public ResponseEntity<Response> deleteItem(@PathVariable("product_id") String productId) {
+//        cartService.deleteItemFromCart(productId);
+//        return ResponseEntity.status(OK).body(new Response());
+//    }
 }
