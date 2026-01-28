@@ -3,12 +3,15 @@ package com.zeldev.zel_e_comm.controller;
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.dto_class.CartDTO;
 import com.zeldev.zel_e_comm.service.CartService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.zeldev.zel_e_comm.util.RequestUtils.getResponse;
+import static java.util.Collections.emptyMap;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -40,9 +43,9 @@ public class CartController {
     }
 
     //IMPLEMENT THIS!
-//    @DeleteMapping("/carts/product/{product_id}")
-//    public ResponseEntity<Response> deleteItem(@PathVariable("product_id") String productId) {
-//        cartService.deleteItemFromCart(productId);
-//        return ResponseEntity.status(OK).body(new Response());
-//    }
+    @DeleteMapping("/carts/product/{product_id}")
+    public ResponseEntity<Response> deleteItem(@PathVariable("product_id") String productId, HttpServletRequest request) {
+        cartService.deleteItemFromCart(productId);
+        return ResponseEntity.status(OK).body(getResponse(request, emptyMap(), "Item removed", OK));
+    }
 }

@@ -4,11 +4,14 @@ import com.zeldev.zel_e_comm.entity.CartEntity;
 import com.zeldev.zel_e_comm.entity.CartItemEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.CartItemAlreadyAddedException;
+import com.zeldev.zel_e_comm.exception.InsufficientStockException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.CartItemRepository;
 import com.zeldev.zel_e_comm.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 import static com.zeldev.zel_e_comm.util.CartItemUtils.buildCartItem;
 
@@ -24,7 +27,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public void checkCartItemByCartAndProduct(CartEntity cart, ProductEntity product) {
-        cartItemRepository.findCartItemEntityByProductIdAndCartId(cart.getId(), product.getId())
+        cartItemRepository.findCartItemEntityByProductIdAndCartId(cart.getId(), product.getPublicId())
                 .ifPresent(cartItem -> {
                     throw new CartItemAlreadyAddedException(String.format("%s is already in the shopping cart", cartItem.getProduct().getName()));
                 });
@@ -32,8 +35,9 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public void updateQuantity(CartEntity cart, ProductEntity product, Integer quantity) {
-        var item = getCartItemByCartAndProduct(cart, product);
+        var item = getCartItemByCartAndProduct(cart.getId(), product.getPublicId());
         var newQuantity = item.getQuantity() + quantity;
+        validateQuantity(newQuantity, product.getQuantity());
         if (newQuantity <= 0) {
             cart.removeItem(item);
             return;
@@ -43,10 +47,14 @@ public class CartItemServiceImpl implements CartItemService {
         item.setDiscount(product.getDiscount());
     }
 
-
-    private CartItemEntity getCartItemByCartAndProduct(CartEntity cart, ProductEntity product) {
-        return cartItemRepository.findCartItemEntityByProductIdAndCartId(cart.getId(), product.getId()).orElseThrow(() -> new ResourceNotFoundException("Cart item", product.getName()));
+    @Override
+    public CartItemEntity getCartItemByCartAndProduct(Long cartId, UUID productId) {
+        return cartItemRepository.findCartItemEntityByProductIdAndCartId(cartId, productId).orElseThrow(() -> new ResourceNotFoundException("Cart item", productId.toString()));
     }
 
-
+    @Override
+    public void validateQuantity(Integer requestedQuantity, Integer inStock) {
+        if (inStock == 0) throw new InsufficientStockException("The requested quantity is not available");
+        if (requestedQuantity > inStock) throw new InsufficientStockException("The requested quantity is not available");
+    }
 }
