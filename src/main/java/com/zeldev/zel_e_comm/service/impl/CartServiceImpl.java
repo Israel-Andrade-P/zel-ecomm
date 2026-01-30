@@ -26,6 +26,8 @@ import static com.zeldev.zel_e_comm.util.CartUtils.toDTO;
 @RequiredArgsConstructor
 //Inside a @Transactional method, you do NOT need to call save() after changing a managed entity.
 //Hibernate will detect the changes and issue UPDATE/DELETE automatically at flush time.
+//Each repository call runs in its own tiny transaction, those transactions start and end inside the repository
+//Your service method has no unit of work, mutates detached entities, relies on save() everywhere
 @Transactional
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;

@@ -42,7 +42,6 @@ public class CartController {
         return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, operation.equalsIgnoreCase("delete") ? -1 : 1));
     }
 
-    //IMPLEMENT THIS!
     @DeleteMapping("/carts/product/{product_id}")
     public ResponseEntity<Response> deleteItem(@PathVariable("product_id") String productId, HttpServletRequest request) {
         cartService.deleteItemFromCart(productId);

@@ -11,6 +11,7 @@ import com.zeldev.zel_e_comm.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.zeldev.zel_e_comm.util.CartItemUtils.buildCartItem;
@@ -56,5 +57,15 @@ public class CartItemServiceImpl implements CartItemService {
     public void validateQuantity(Integer requestedQuantity, Integer inStock) {
         if (inStock == 0) throw new InsufficientStockException("The requested quantity is not available");
         if (requestedQuantity > inStock) throw new InsufficientStockException("The requested quantity is not available");
+    }
+
+    @Override
+    public List<CartItemEntity> findActiveCartItemsByProductId(UUID productId) {
+        return cartItemRepository.findActiveCartItemsByProductId(productId);
+    }
+
+    @Override
+    public void deleteByProductPublicId(UUID productId) {
+        cartItemRepository.deleteByProductPublicId(productId);
     }
 }
