@@ -139,10 +139,10 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO deleteProduct(String productId) {
         ProductEntity productDB = findByPublicId(productId);
 
-        // 🔥 remove all cart items that reference this product
+        //remove all cart items that reference this product
         cartItemService.deleteByProductPublicId(productDB.getPublicId());
 
-        // 🔥 now delete the product itself
+        //now delete the product itself
         productRepository.delete(productDB);
 
         return toDTO(productDB);

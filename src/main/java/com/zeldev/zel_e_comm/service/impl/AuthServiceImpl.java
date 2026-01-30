@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import static java.time.LocalDateTime.now;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
@@ -54,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
         isKeyValid(confirmationEntity);
         var userEntity = getUserEntityByEmail(confirmationEntity.getUser().getEmail());
         userEntity.setEnabled(true);
-        userRepository.save(userEntity);
+        //userRepository.save(userEntity);
         confirmationRepository.delete(confirmationEntity);
     }
 
@@ -84,6 +86,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return fromUserEntity(getUserEntityByEmail(email));
     }
@@ -108,11 +111,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserEntity getUserEntityByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(email, "User"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CredentialEntity getCredentialByUserId(Long userId) {
         return credentialRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
     }

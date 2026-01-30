@@ -27,7 +27,17 @@ public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> 
     """)
     List<CartItemEntity> findActiveCartItemsByProductId(UUID productId);
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
+//    Admin deletes product → bulk delete cart items → transaction commits
+//    User calls GET /cart → new transaction → cart loaded from DB
+//    Result:
+//    cartItems collection is loaded fresh
+//    deleted items are gone
+//    getTotalPrice() is correct ✅
+    @Modifying(
+            //clears persistence context
+            clearAutomatically = true,
+            //ensures DB is updated immediately
+            flushAutomatically = true)
     @Query("""
         DELETE FROM CartItemEntity ci
         WHERE ci.product.publicId=?1

@@ -64,7 +64,6 @@ public class CartServiceImpl implements CartService {
     @Transactional(readOnly = true)
     public @Nullable CartDTO getCart() {
         var cart = getCartByEmail(authUtils.getLoggedInEmail());
-        //var cart = cartRepository.findCartByEmailAndCartId(email, cartId).orElseThrow(() -> new ResourceNotFoundException("Cart", "Cart"));
         return toDTO(cart);
     }
 
