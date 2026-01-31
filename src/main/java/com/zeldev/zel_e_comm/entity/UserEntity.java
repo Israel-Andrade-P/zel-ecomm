@@ -40,4 +40,15 @@ public class UserEntity extends BaseEntity {
     private Set<ProductEntity> products = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<LocationEntity> locations = new HashSet<>();
+
+    public void addLocation(LocationEntity location) {
+        locations.add(location);
+        location.setUser(this);
+    }
+
+    public void removeLocation(LocationEntity location) {
+        locations.remove(location);
+        location.setUser(null);
+    }
+
 }

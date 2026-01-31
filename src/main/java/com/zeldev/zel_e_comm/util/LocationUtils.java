@@ -14,4 +14,13 @@ public class LocationUtils {
                 .user(user)
                 .build();
     }
+
+    public static LocationDTO toDTO(LocationEntity entity) {
+        return LocationDTO.builder()
+                .city(entity.getCity())
+                .country(entity.getCountry())
+                .street(entity.getStreet())
+                .zipCode(entity.getZipCode())
+                .build();
+    }
 }
