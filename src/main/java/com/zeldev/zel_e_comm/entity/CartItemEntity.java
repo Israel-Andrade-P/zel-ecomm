@@ -1,10 +1,9 @@
 package com.zeldev.zel_e_comm.entity;
 
-import com.zeldev.zel_e_comm.common.BaseEntity;
+import com.zeldev.zel_e_comm.common.AbstractLineItem;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "cart_items")
@@ -12,15 +11,10 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class CartItemEntity extends BaseEntity {
-    private BigDecimal price;
+@SuperBuilder
+public class CartItemEntity extends AbstractLineItem {
     private Integer discount;
-    private Integer quantity;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "cart_id", nullable = false)
     private CartEntity cart;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private ProductEntity product;
 }

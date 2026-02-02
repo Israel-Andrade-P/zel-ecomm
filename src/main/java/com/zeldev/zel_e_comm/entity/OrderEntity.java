@@ -17,16 +17,22 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class OrderEntity extends BaseEntity {
-    private String orderId;
-    private BigDecimal totalPrice;
+    @Column(name = "public_id", nullable = false, unique = true)
+    private String publicId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus status;
-    @ManyToOne
-    @JoinColumn(name = "location_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "location_id", nullable = false)
     private LocationEntity location;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<OrderItemEntity> orderItems = new HashSet<>();
 
     @Transient

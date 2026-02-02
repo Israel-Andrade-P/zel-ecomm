@@ -39,6 +39,8 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Set<ProductEntity> products = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderEntity> orders = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<LocationEntity> locations = new HashSet<>();
 
     public void addLocation(LocationEntity location) {

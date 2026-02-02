@@ -4,6 +4,8 @@ import com.zeldev.zel_e_comm.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "locations")
 @AllArgsConstructor
@@ -12,6 +14,8 @@ import lombok.*;
 @Setter
 @Builder
 public class LocationEntity extends BaseEntity {
+    @Column(name = "public_id", nullable = false, unique = true)
+    private UUID publicId;
     @Column(name = "street", nullable = false, length = 150)
     private String street;
     @Column(name = "city", nullable = false, length = 50)
@@ -24,4 +28,12 @@ public class LocationEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @PrePersist
+    void ensurePublicId() {
+        if (publicId == null) {
+            publicId = UUID.randomUUID();
+        }
+    }
+
 }
