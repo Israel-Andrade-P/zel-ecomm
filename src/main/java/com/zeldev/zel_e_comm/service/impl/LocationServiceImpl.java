@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.zeldev.zel_e_comm.util.LocationUtils.buildLocation;
 import static com.zeldev.zel_e_comm.util.LocationUtils.toDTO;
@@ -39,6 +40,11 @@ public class LocationServiceImpl implements LocationService {
     @Transactional(readOnly = true)
     public @Nullable List<LocationDTO> getUserLocations() {
         return locationRepository.findLocationsByUserEmail(authUtils.getLoggedInEmail()).stream().map(LocationUtils::toDTO).toList();
+    }
+
+    @Override
+    public @Nullable LocationEntity getByPublicId(UUID publicId) {
+        return locationRepository.findByPublicId(publicId);
     }
 
     @Override
