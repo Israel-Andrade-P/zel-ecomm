@@ -3,6 +3,7 @@ package com.zeldev.zel_e_comm.controller;
 import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.service.ProductService;
+import com.zeldev.zel_e_comm.service.ProductOrchestrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final ProductOrchestrationService orchestrationService;
 
     @PostMapping("/admin/categories/{category_name}/product")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody @Valid ProductDTO request, @PathVariable("category_name") String categoryName, Authentication loggedUser) {
@@ -63,12 +65,12 @@ public class ProductController {
     //@PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/products/{product_id}")
     public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO request, @PathVariable("product_id") String product_id) {
-        return ResponseEntity.status(OK).body(productService.updateProduct(request,product_id));
+        return ResponseEntity.status(OK).body(orchestrationService.updateProductAndSyncCarts(request, product_id));
     }
 
     @DeleteMapping("/admin/products/{product_id}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable("product_id") String product_id) {
-        return ResponseEntity.status(OK).body(productService.deleteProduct(product_id));
+        return ResponseEntity.status(OK).body(orchestrationService.deleteCartItemsAfterProduct(product_id));
     }
 
     @PutMapping("/admin/products/{product_id}/image")

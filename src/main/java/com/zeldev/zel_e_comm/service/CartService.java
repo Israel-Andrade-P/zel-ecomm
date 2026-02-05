@@ -13,6 +13,8 @@ public interface CartService {
 
     @Nullable List<CartDTO> getCarts();
 
+    CartEntity getCartByEmail(String email);
+
     @Nullable CartDTO getCart();
 
     @Transactional

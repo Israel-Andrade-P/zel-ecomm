@@ -8,6 +8,7 @@ import com.zeldev.zel_e_comm.exception.InsufficientStockException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.CartItemRepository;
 import com.zeldev.zel_e_comm.service.CartItemService;
+import com.zeldev.zel_e_comm.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import static com.zeldev.zel_e_comm.util.CartItemUtils.buildCartItem;
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
     private final CartItemRepository cartItemRepository;
+    private final ProductService productService;
 
     @Override
     public CartItemEntity createItem(ProductEntity product, CartEntity cart, Integer quantity) {
@@ -35,28 +37,21 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public void updateQuantity(CartEntity cart, ProductEntity product, Integer quantity) {
-        var item = getCartItemByCartAndProduct(cart.getId(), product.getPublicId());
+    public void updateQuantity(CartEntity cart, String productId, Integer quantity) {
+        UUID uuid = UUID.fromString(productId);
+        var item = getCartItemByCartAndProduct(cart.getId(), uuid);
         var newQuantity = item.getQuantity() + quantity;
-        validateQuantity(newQuantity, product.getQuantity());
+        productService.validateQuantity(newQuantity, uuid);
         if (newQuantity <= 0) {
             cart.removeItem(item);
             return;
         }
         item.setQuantity(newQuantity);
-        item.setPrice(product.getPrice());
-        item.setDiscount(product.getDiscount());
     }
 
     @Override
     public CartItemEntity getCartItemByCartAndProduct(Long cartId, UUID productId) {
         return cartItemRepository.findCartItemEntityByProductIdAndCartId(cartId, productId).orElseThrow(() -> new ResourceNotFoundException("Cart item", productId.toString()));
-    }
-
-    @Override
-    public void validateQuantity(Integer requestedQuantity, Integer inStock) {
-        if (inStock == 0) throw new InsufficientStockException("The requested quantity is not available");
-        if (requestedQuantity > inStock) throw new InsufficientStockException("The requested quantity is not available");
     }
 
     @Override

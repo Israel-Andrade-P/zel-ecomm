@@ -43,7 +43,7 @@ public class CartServiceImpl implements CartService {
 
         cartItemService.checkCartItemByCartAndProduct(cart, product);
 
-        cartItemService.validateQuantity(quantity, product.getQuantity());
+        productService.validateQuantity(quantity, product.getPublicId());
 
         cartRepository.save(cart);
 
@@ -70,8 +70,8 @@ public class CartServiceImpl implements CartService {
     @Override
     public @Nullable CartDTO updateQuantity(String productId, Integer quantity) {
         CartEntity cart = getCartByEmail(authUtils.getLoggedInEmail());
-        ProductEntity product = productService.findByPublicId(productId);
-        cartItemService.updateQuantity(cart, product, quantity);
+        //ProductEntity product = productService.findByPublicId(productId);
+        cartItemService.updateQuantity(cart, productId, quantity);
         return toDTO(cart);
     }
 
@@ -81,12 +81,13 @@ public class CartServiceImpl implements CartService {
         cart.removeItem(cartItemService.getCartItemByCartAndProduct(cart.getId(), UUID.fromString(productId)));
     }
 
+    @Override
+    public CartEntity getCartByEmail(String email) {
+        return cartRepository.findCartByUserEmail(email).orElseThrow(() -> new ResourceNotFoundException("Cart", "Cart"));
+    }
+
     private CartEntity createCart() {
         var user = authUtils.getLoggedInUser();
         return cartRepository.findCartByUserEmail(user.getEmail()).orElseGet(() -> buildCart(user));
-    }
-
-    private CartEntity getCartByEmail(String email) {
-        return cartRepository.findCartByUserEmail(email).orElseThrow(() -> new ResourceNotFoundException("Cart", "Cart"));
     }
 }
