@@ -27,8 +27,7 @@ public class PaymentEntity extends BaseEntity {
     @Column(name = "pg_name", nullable = false)
     private String pgName;
 
-    public PaymentEntity(PaymentMethod paymentMethod, String pgId, String pgStatus, String pgResponseMessage, String pgName) {
-        this.paymentMethod = paymentMethod;
+    public PaymentEntity(String pgId, String pgStatus, String pgResponseMessage, String pgName) {
         this.pgId = pgId;
         this.pgStatus = pgStatus;
         this.pgResponseMessage = pgResponseMessage;

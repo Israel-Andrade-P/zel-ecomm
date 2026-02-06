@@ -78,6 +78,13 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AlreadyPaidException.class)
+    public ResponseEntity<ErrorResponse> handler(AlreadyPaidException exp) {
+        return ResponseEntity.badRequest().body(
+                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
+        );
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
         log.error("Illegal application state: {}", ex.getMessage());

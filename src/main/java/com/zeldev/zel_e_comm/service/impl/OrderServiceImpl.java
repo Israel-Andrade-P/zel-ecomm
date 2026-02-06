@@ -57,12 +57,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public @Nullable OrderResponse getById(String orderId) {
-        OrderEntity order = findByPublicId(orderId);
+    public @Nullable OrderResponse getOrderResponse(String orderId) {
+        OrderEntity order = getOrderEntity(orderId);
         return OrderUtils.toOrderResponse(order, order.getOrderItems(), order.getUser().getEmail(), order.getLocation().getPublicId().toString());
     }
 
-    private OrderEntity findByPublicId(String orderId) {
+    @Override
+    public OrderEntity getOrderEntity(String orderId) {
         return orderRepository.findByPublicId(orderId).orElseThrow(() -> new ResourceNotFoundException(orderId, "Order"));
     }
 }
