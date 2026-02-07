@@ -3,6 +3,7 @@ package com.zeldev.zel_e_comm.controller;
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.dto_class.CartDTO;
 import com.zeldev.zel_e_comm.service.CartService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "Cart APIs", description = "APIs that manage carts")
 public class CartController {
     private final CartService cartService;
 

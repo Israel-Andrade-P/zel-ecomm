@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -33,7 +34,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         }
         logger.debug("Custom filter called for URI: {}", request.getRequestURI());
 
-        String jwt = jwtService.getJwtFromCookie(request);
+        String jwt;
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        //accepting header auth option for swagger docs
+        if (header != null && header.startsWith("Bearer ")) jwt = jwtService.getJwtFromHeader(request);
+        else jwt = jwtService.getJwtFromCookie(request);
 
         try {
             if (jwt != null && jwtService.validateToken(jwt)) {

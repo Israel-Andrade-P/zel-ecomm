@@ -3,6 +3,7 @@ package com.zeldev.zel_e_comm.controller;
 import com.zeldev.zel_e_comm.dto.dto_class.PaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
 import com.zeldev.zel_e_comm.service.PaymentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
+@Tag(name = "Payment APIs", description = "APIs that manage payments")
 public class PaymentController {
     private final PaymentService paymentService;
 

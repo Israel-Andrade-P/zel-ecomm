@@ -15,5 +15,6 @@ public interface JwtService {
     Boolean validateToken(String jwt);
     ResponseCookie generateJwtCookie(String token);
     String getJwtFromCookie(HttpServletRequest request);
+    String getJwtFromHeader(HttpServletRequest request);
     ResponseCookie generateEmptyCookie();
 }

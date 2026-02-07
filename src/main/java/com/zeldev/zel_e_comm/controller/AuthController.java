@@ -7,6 +7,7 @@ import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication APIs", description = "APIs that manage authentication and sessions")
 public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;

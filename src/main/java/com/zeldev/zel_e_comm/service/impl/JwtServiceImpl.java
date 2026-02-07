@@ -15,6 +15,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -123,5 +124,10 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
         Cookie cookie = WebUtils.getCookie(request, getJwtCookie());
         if (cookie == null) return null;
         return cookie.getValue();
+    }
+
+    @Override
+    public String getJwtFromHeader(HttpServletRequest request) {
+        return request.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
     }
 }

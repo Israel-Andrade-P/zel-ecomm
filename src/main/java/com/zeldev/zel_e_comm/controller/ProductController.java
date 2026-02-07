@@ -4,6 +4,8 @@ import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.service.ProductService;
 import com.zeldev.zel_e_comm.service.ProductOrchestrationService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Tag(name = "Product APIs", description = "APIs that manage products")
 public class ProductController {
     private final ProductService productService;
     private final ProductOrchestrationService orchestrationService;
@@ -69,7 +72,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/admin/products/{product_id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable("product_id") String product_id) {
+    public ResponseEntity<ProductDTO> deleteProduct(
+            @Parameter(description = "ID of product to be deleted")
+            @PathVariable("product_id") String product_id) {
         return ResponseEntity.status(OK).body(orchestrationService.deleteCartItemsAfterProduct(product_id));
     }
 

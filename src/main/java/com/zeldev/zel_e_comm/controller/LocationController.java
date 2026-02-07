@@ -4,6 +4,7 @@ import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.dto_class.LocationDTO;
 import com.zeldev.zel_e_comm.service.LocationService;
 import com.zeldev.zel_e_comm.util.RequestUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1/location")
 @RequiredArgsConstructor
+@Tag(name = "Location APIs", description = "APIs that manage locations")
 public class LocationController {
     private final LocationService locationService;
 
