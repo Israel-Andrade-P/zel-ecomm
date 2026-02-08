@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
@@ -26,6 +27,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.zeldev.zel_e_comm.constants.Constants.*;
 import static com.zeldev.zel_e_comm.enumeration.TokenType.ACCESS;
@@ -57,7 +59,7 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
     private final BiFunction<User, TokenType, String> buildToken = (user, type) ->
             Objects.equals(type, ACCESS) ? builder.get()
                     .subject(user.getEmail())
-                    .claim(ROLES, user.getRoles().toString())
+                    .claim(ROLES, user.getRoles())
                     .expiration(from(now().plusSeconds(getExpiration())))
                     .compact() : builder.get()
                     .subject(user.getEmail())
@@ -77,9 +79,14 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
         return getClaims.andThen(claims).apply(token);
     }
 
-    public Function<String, List<GrantedAuthority>> authorities = token ->
-            commaSeparatedStringToAuthorityList(new StringJoiner(AUTHORITY_DELIMITER)
-                    .add(ROLE_PREFIX + getClaims.apply(token).get(ROLES, String.class)).toString());
+    public Function<String, List<GrantedAuthority>> authorities = token -> {
+        List<?> roles = getClaims.apply(token).get(ROLES, List.class);
+        return roles.stream()
+                .map(Object::toString)
+                .map(r -> new SimpleGrantedAuthority(ROLE_PREFIX + r))
+                .collect(Collectors.toList());
+    };
+
 
     @Override
     public String createToken(User user, Function<Token, String> tokenFunction) {

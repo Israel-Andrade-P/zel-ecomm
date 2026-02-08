@@ -7,6 +7,7 @@ import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,34 +36,17 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
 
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-//        Authentication authentication;
-//        try {
-//            authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-//
-//        } catch (Exception exp) {
-//            Map<String, Object> body = new HashMap<>();
-//            body.put("message", "Bad Credentials");
-//            body.put("status", false);
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
-//        }
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        UserDetails userDetails = (UserSecurity) authentication.getPrincipal();
-//        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-//        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-//        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new LoginResponse(userDetails.getUsername(), roles));
-//    }
-
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO request) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.createUser(request));
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<Response> verifyAccount(@RequestParam(name = "key") String key, HttpServletRequest request){
+    public ResponseEntity<Response> verifyAccount(@Parameter(description = "Confirmation key sent to user's email")
+                                                  @RequestParam(name = "key") String key,
+                                                  HttpServletRequest request) {
         authService.verifyAccount(key);
-        return ResponseEntity.ok().body(getResponse(request,emptyMap(),ACCOUNT_VERIFIED_MESSAGE, OK));
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), ACCOUNT_VERIFIED_MESSAGE, OK));
     }
 
     @PostMapping("/new_key")

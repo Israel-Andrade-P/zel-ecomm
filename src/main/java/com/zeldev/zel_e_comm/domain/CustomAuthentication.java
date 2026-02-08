@@ -16,8 +16,6 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
     private String email;
     @Getter
     private String password;
-    @Getter
-    private String role;
     private boolean authenticated;
 
     private CustomAuthentication(String email, String password){
@@ -32,7 +30,6 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
         this.user = user;
         this.email = user.getUsername();
         this.password = PASSWORD_PROTECTED;
-        this.role = user.getAuthorities().toString();
         this.authenticated = true;
     }
 

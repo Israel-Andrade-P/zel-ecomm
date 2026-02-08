@@ -20,19 +20,25 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Tag(name = "Product APIs", description = "APIs that manage products")
 public class ProductController {
     private final ProductService productService;
     private final ProductOrchestrationService orchestrationService;
 
-    @PostMapping("/admin/categories/{category_name}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody @Valid ProductDTO request, @PathVariable("category_name") String categoryName, Authentication loggedUser) {
+    @PostMapping("/seller/categories/{category_name}/product")
+//    @PreAuthorize("hasRole('SELLER')")
+//    @PostAuthorize("returnObject.sellerId == authentication.principal.id")
+    public ResponseEntity<ProductDTO> addProduct(
+            @Parameter(description = "ID of category product belongs to")
+            @RequestBody @Valid ProductDTO request,
+            @PathVariable("category_name") String categoryName,
+            Authentication loggedUser) {
         return ResponseEntity.status(CREATED).body(productService.create(request, categoryName, loggedUser));
     }
 
-    @GetMapping("/public/products")
+    @GetMapping("/products")
     public ResponseEntity<ProductResponse> getAllProducts(
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
             @RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) Integer size,
@@ -42,7 +48,7 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getAllProducts(page, size, sortBy, sortOrder));
     }
 
-    @GetMapping("/public/categories/{category_id}/products")
+    @GetMapping("/categories/{category_id}/products")
     public ResponseEntity<ProductResponse> getProductsByCategory(
             @PathVariable("category_id") String id,
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
@@ -53,7 +59,7 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getProductsByCategory(id, page, size, sortBy, sortOrder));
     }
 
-    @GetMapping("/public/products/keyword/{keyword}")
+    @GetMapping("/products/keyword/{keyword}")
     public ResponseEntity<ProductResponse> getProductsByKeyword(
             @PathVariable("keyword") String keyword,
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
@@ -66,20 +72,23 @@ public class ProductController {
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/products/{product_id}")
+    @PutMapping("/manage/products/{product_id}")
     public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO request, @PathVariable("product_id") String product_id) {
         return ResponseEntity.status(OK).body(orchestrationService.updateProductAndSyncCarts(request, product_id));
     }
 
-    @DeleteMapping("/admin/products/{product_id}")
+    @DeleteMapping("/manage/products/{product_id}")
     public ResponseEntity<ProductDTO> deleteProduct(
             @Parameter(description = "ID of product to be deleted")
             @PathVariable("product_id") String product_id) {
         return ResponseEntity.status(OK).body(orchestrationService.deleteCartItemsAfterProduct(product_id));
     }
 
-    @PutMapping("/admin/products/{product_id}/image")
-    public ResponseEntity<ProductDTO> updateImage(@PathVariable("product_id") String product_id, @RequestParam(name = "image") MultipartFile image) throws IOException {
+    @PutMapping("/manage/products/{product_id}/image")
+    public ResponseEntity<ProductDTO> updateImage(
+            @Parameter(description = "Image file to be uploaded")
+            @PathVariable("product_id") String product_id,
+            @RequestParam(name = "image") MultipartFile image) throws IOException {
         return ResponseEntity.status(OK).body(productService.updateImage(product_id, image));
     }
 }

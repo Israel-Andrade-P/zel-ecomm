@@ -128,7 +128,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Set<RoleEntity> getRoles() {
-        var role = roleRepository.findByRoleName(RoleType.USER)
+        var role = roleRepository.findByRoleName(RoleType.SELLER)
                 .orElseThrow(() -> new RoleDoesntExistException("This role doesn't exist"));
         Set<RoleEntity> roles = new HashSet<>();
         roles.add(role);
