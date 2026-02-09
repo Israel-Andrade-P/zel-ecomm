@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO create(ProductDTO request, String categoryName, Authentication loggedUser) {
         var user = userRepository.findByEmail(((UserSecurity) loggedUser.getPrincipal()).getUsername()).orElseThrow(() -> new ResourceNotFoundException("email", "user"));
         ProductEntity entity = buildProductEntity(request);
-        entity.setUser(user);
+        entity.setSeller(user);
         CategoryEntity category = categoryService.getByName(categoryName);
         entity.setCategory(category);
         entity.setSpecialPrice(entity.calculateSpecialPrice());

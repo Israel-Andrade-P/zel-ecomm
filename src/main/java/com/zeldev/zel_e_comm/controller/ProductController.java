@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +30,7 @@ public class ProductController {
     private final ProductOrchestrationService orchestrationService;
 
     @PostMapping("/seller/categories/{category_name}/product")
-//    @PreAuthorize("hasRole('SELLER')")
-//    @PostAuthorize("returnObject.sellerId == authentication.principal.id")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ProductDTO> addProduct(
             @Parameter(description = "ID of category product belongs to")
             @RequestBody @Valid ProductDTO request,
@@ -71,24 +72,27 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getProductsByKeyword(keyword, page, size, sortBy, sortOrder));
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/manage/products/{product_id}")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO request, @PathVariable("product_id") String product_id) {
-        return ResponseEntity.status(OK).body(orchestrationService.updateProductAndSyncCarts(request, product_id));
+
+    @PutMapping("/manage/products/update/{product_id}")
+    @PreAuthorize("hasRole('ADMIN') or @productSecurity.isOwner(#productId)")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO request, @PathVariable("product_id") String productId) {
+        return ResponseEntity.status(OK).body(orchestrationService.updateProductAndSyncCarts(request, productId));
     }
 
-    @DeleteMapping("/manage/products/{product_id}")
+    @DeleteMapping("/manage/products/delete/{product_id}")
+    @PreAuthorize("hasRole('ADMIN') or @productSecurity.isOwner(#productId)")
     public ResponseEntity<ProductDTO> deleteProduct(
             @Parameter(description = "ID of product to be deleted")
-            @PathVariable("product_id") String product_id) {
-        return ResponseEntity.status(OK).body(orchestrationService.deleteCartItemsAfterProduct(product_id));
+            @PathVariable("product_id") String productId) {
+        return ResponseEntity.status(OK).body(orchestrationService.deleteCartItemsAfterProduct(productId));
     }
 
     @PutMapping("/manage/products/{product_id}/image")
+    @PreAuthorize("hasRole('ADMIN') or @productSecurity.isOwner(#productId)")
     public ResponseEntity<ProductDTO> updateImage(
             @Parameter(description = "Image file to be uploaded")
-            @PathVariable("product_id") String product_id,
+            @PathVariable("product_id") String productId,
             @RequestParam(name = "image") MultipartFile image) throws IOException {
-        return ResponseEntity.status(OK).body(productService.updateImage(product_id, image));
+        return ResponseEntity.status(OK).body(productService.updateImage(productId, image));
     }
 }

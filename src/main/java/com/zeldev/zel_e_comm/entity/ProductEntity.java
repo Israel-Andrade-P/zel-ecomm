@@ -30,7 +30,7 @@ public class ProductEntity extends BaseEntity {
     private CategoryEntity category;
     @ManyToOne
     @JoinColumn(name = "seller_id")
-    private UserEntity user;
+    private UserEntity seller;
 
     public BigDecimal calculateSpecialPrice() {
         return price.subtract(
