@@ -2,9 +2,10 @@ package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
-import com.zeldev.zel_e_comm.dto.dto_class.KeyRequest;
-import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
+import com.zeldev.zel_e_comm.dto.request.KeyRequest;
+import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
+import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,7 +38,7 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO request) {
+    public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.createUser(request));
     }
 

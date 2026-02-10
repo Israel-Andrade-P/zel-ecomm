@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.controller;
 
-import com.zeldev.zel_e_comm.dto.dto_class.LoginRequest;
+import com.zeldev.zel_e_comm.dto.request.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

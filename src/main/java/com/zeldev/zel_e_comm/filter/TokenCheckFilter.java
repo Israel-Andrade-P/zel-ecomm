@@ -44,6 +44,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) jwt = jwtService.getJwtFromHeader(request);
         else jwt = jwtService.getJwtFromCookie(request);
 
+        authenticateUserWithToken(request, jwt);
+
+        filterChain.doFilter(request, response);
+    }
+
+    private void authenticateUserWithToken(HttpServletRequest request, String jwt) {
         try {
             if (jwt != null && jwtService.validateToken(jwt)) {
                 User user = jwtService.getTokenData(jwt, TokenData::getUser);
@@ -58,7 +64,6 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         }catch (Exception exp) {
             logger.error("Couldn't set auth object for user: {}", exp.getMessage());
         }
-        filterChain.doFilter(request, response);
     }
 }
 

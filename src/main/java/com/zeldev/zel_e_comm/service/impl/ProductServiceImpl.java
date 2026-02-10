@@ -1,9 +1,8 @@
 package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.domain.UserSecurity;
-import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
-import com.zeldev.zel_e_comm.entity.CartItemEntity;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
@@ -11,7 +10,6 @@ import com.zeldev.zel_e_comm.exception.InsufficientStockException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.ProductRepository;
 import com.zeldev.zel_e_comm.repository.UserRepository;
-import com.zeldev.zel_e_comm.service.CartItemService;
 import com.zeldev.zel_e_comm.service.CategoryService;
 import com.zeldev.zel_e_comm.service.FileService;
 import com.zeldev.zel_e_comm.service.ProductService;
@@ -28,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.zeldev.zel_e_comm.util.ProductUtils.*;

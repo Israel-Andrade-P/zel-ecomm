@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.service;
 
-import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

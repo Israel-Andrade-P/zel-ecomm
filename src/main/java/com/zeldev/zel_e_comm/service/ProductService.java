@@ -1,14 +1,12 @@
 package com.zeldev.zel_e_comm.service;
 
-import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
-import com.zeldev.zel_e_comm.entity.CartItemEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.UUID;
 
 public interface ProductService {

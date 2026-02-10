@@ -1,4 +1,4 @@
-package com.zeldev.zel_e_comm.dto.dto_class;
+package com.zeldev.zel_e_comm.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record UserDTO(
+public record UserRequest(
         @NotNull(message = "Username field is mandatory")
         @NotEmpty(message = "Username field is mandatory")
         @Size(min = 2, max = 50, message = "Username must be between 2 - 50 characters")

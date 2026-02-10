@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.controller;
 
-import com.zeldev.zel_e_comm.dto.dto_class.PaymentRequest;
+import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
 import com.zeldev.zel_e_comm.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;

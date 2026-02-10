@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.service;
 
-import com.zeldev.zel_e_comm.dto.dto_class.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationDTO;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import org.jspecify.annotations.Nullable;
 

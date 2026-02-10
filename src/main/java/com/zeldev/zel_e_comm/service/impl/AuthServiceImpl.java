@@ -1,8 +1,9 @@
 package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.cache.CacheStore;
-import com.zeldev.zel_e_comm.dto.dto_class.KeyRequest;
-import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
+import com.zeldev.zel_e_comm.dto.request.KeyRequest;
+import com.zeldev.zel_e_comm.dto.request.UserRequest;
+import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.ConfirmationEntity;
 import com.zeldev.zel_e_comm.entity.CredentialEntity;
 import com.zeldev.zel_e_comm.entity.RoleEntity;
@@ -42,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final CacheStore<String, Integer> userCache;
 
     @Override
-    public UserDTO createUser(UserDTO user) {
+    public UserResponse createUser(UserRequest user) {
         UserEntity userEntity = userRepository.save(createNewUser(user));
         credentialRepository.save(new CredentialEntity(userEntity, encoder.encode(user.password())));
         ConfirmationEntity confirmation = confirmationRepository.save(new ConfirmationEntity(userEntity, suppliesKey.get()));
@@ -122,7 +123,7 @@ public class AuthServiceImpl implements AuthService {
         return credentialRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
     }
 
-    private UserEntity createNewUser(UserDTO user) {
+    private UserEntity createNewUser(UserRequest user) {
         var roles = getRoles();
         return buildUserEntity(user, roles);
     }

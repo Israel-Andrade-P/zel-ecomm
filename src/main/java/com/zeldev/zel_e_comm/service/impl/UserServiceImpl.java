@@ -1,30 +1,37 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
-import com.zeldev.zel_e_comm.repository.LocationRepository;
-import com.zeldev.zel_e_comm.repository.RoleRepository;
+import com.zeldev.zel_e_comm.dto.response.UserResponse;
+import com.zeldev.zel_e_comm.entity.UserEntity;
+import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final LocationRepository addressRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder encoder;
-
 
     @Override
-    public UserDTO deleteUser(String email) {
-        return null;
+    @Transactional(readOnly = true)
+    public UserResponse findUser(String username) {
+        return toDTO(getUserByUsername(username));
     }
 
     @Override
-    public UserDTO findUser(String email) {
-        return null;
+    public String deleteUser(String username) {
+        int deleted = userRepository.deleteByUsername(username);
+        if (deleted == 0) throw new UserNotFoundException(String.format("User with username %s not found", username));
+
+        return "User deleted";
+    }
+
+    private UserEntity getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(String.format("User with username %s not found", username)));
     }
 }

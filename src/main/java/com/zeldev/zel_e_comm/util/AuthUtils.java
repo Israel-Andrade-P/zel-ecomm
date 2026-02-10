@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.util;
 
 import com.zeldev.zel_e_comm.domain.CustomAuthentication;
+import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,10 @@ public class AuthUtils {
 
     public String getLoggedInEmail() {
         return getAuthObj().getEmail();
+    }
+
+    public String getLoggedInUsername() {
+        return getAuthObj().getUsername();
     }
 
     public UserEntity getLoggedInUser() {

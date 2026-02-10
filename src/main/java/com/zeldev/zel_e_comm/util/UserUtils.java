@@ -1,7 +1,8 @@
 package com.zeldev.zel_e_comm.util;
 
 import com.zeldev.zel_e_comm.domain.UserSecurity;
-import com.zeldev.zel_e_comm.dto.dto_class.UserDTO;
+import com.zeldev.zel_e_comm.dto.request.UserRequest;
+import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.RoleEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.model.User;
@@ -12,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserUtils {
-    public static UserEntity buildUserEntity(UserDTO user, Set<RoleEntity> roles) {
+    public static UserEntity buildUserEntity(UserRequest user, Set<RoleEntity> roles) {
         return UserEntity.builder()
                 .username(user.username())
                 .email(user.email())
@@ -27,8 +28,8 @@ public class UserUtils {
                 .build();
     }
 
-    public static UserDTO toDTO(UserEntity entity) {
-        return UserDTO.builder()
+    public static UserResponse toDTO(UserEntity entity) {
+        return UserResponse.builder()
                 .username(entity.getUsername())
                 .email(entity.getEmail())
                 .dob(entity.getDob())
@@ -53,7 +54,7 @@ public class UserUtils {
 
     public static User fromUserSecurity(UserSecurity userSecurity) {
         return User.builder()
-                .email(userSecurity.getUsername())
+                .email(userSecurity.getEmail())
                 .roles(userSecurity.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                 .build();
 

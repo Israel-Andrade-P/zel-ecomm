@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.security;
 
 import com.zeldev.zel_e_comm.domain.UserSecurity;
+import com.zeldev.zel_e_comm.model.User;
 import com.zeldev.zel_e_comm.service.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        var user = authService.getUserByEmail(email);
+        User user = authService.getUserByEmail(email);
         return new UserSecurity(user, authService.getCredentialByUserId(user.getId()));
     }
 }

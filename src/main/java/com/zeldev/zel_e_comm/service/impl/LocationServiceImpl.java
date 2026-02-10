@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.dto.dto_class.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationDTO;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.LocationRepository;

@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.util;
 
-import com.zeldev.zel_e_comm.dto.dto_class.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import org.springframework.data.domain.Page;

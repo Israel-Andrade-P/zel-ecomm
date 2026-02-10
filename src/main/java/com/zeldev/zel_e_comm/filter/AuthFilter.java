@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeldev.zel_e_comm.domain.CustomAuthentication;
 import com.zeldev.zel_e_comm.domain.Token;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
-import com.zeldev.zel_e_comm.dto.dto_class.LoginRequest;
+import com.zeldev.zel_e_comm.dto.request.LoginRequest;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
+import com.zeldev.zel_e_comm.model.User;
 import com.zeldev.zel_e_comm.security.CustomAuthenticationManager;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
@@ -61,7 +62,7 @@ public class AuthFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        var user = fromUserSecurity((UserSecurity) authentication.getPrincipal());
+        User user = fromUserSecurity((UserSecurity) authentication.getPrincipal());
         authService.updateLoginAttempt(user.getEmail(), LOGIN_SUCCESS);
         String token = jwtService.createToken(user, Token::getAccess);
 

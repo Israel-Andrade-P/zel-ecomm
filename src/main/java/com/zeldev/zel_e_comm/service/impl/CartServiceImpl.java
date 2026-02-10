@@ -1,8 +1,7 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.dto.dto_class.CartDTO;
+import com.zeldev.zel_e_comm.dto.request.CartDTO;
 import com.zeldev.zel_e_comm.entity.CartEntity;
-import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.CartRepository;

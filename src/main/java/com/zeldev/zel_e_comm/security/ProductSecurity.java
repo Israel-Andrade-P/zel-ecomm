@@ -15,6 +15,6 @@ public class ProductSecurity {
 
     public boolean isOwner(String productId) {
         if (productId == null) return false;
-        return productRepository.existsByIdAndSellerEmail(UUID.fromString(productId), authUtils.getAuthObj().getEmail());
+        return productRepository.existsByIdAndSellerEmail(UUID.fromString(productId), authUtils.getLoggedInEmail());
     }
 }

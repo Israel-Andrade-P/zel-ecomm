@@ -28,7 +28,7 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
     private CustomAuthentication(UserSecurity user, Collection<? extends GrantedAuthority> authorities){
         super(authorities);
         this.user = user;
-        this.email = user.getUsername();
+        this.email = user.getEmail();
         this.password = PASSWORD_PROTECTED;
         this.authenticated = true;
     }
@@ -39,6 +39,10 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
 
     public static CustomAuthentication authenticated(UserSecurity user, Collection<? extends GrantedAuthority> authorities){
         return new CustomAuthentication(user, authorities);
+    }
+
+    public String getUsername() {
+        return user.getUsername();
     }
 
     @Override

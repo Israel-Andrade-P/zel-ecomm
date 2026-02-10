@@ -20,8 +20,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handler(ResourceNotFoundException exp) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(400, NOT_FOUND, exp.getMessage())
+        return ResponseEntity.status(NOT_FOUND).body(
+                new ErrorResponse(404, NOT_FOUND, exp.getMessage())
+        );
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handler(UserNotFoundException exp) {
+        return ResponseEntity.status(NOT_FOUND).body(
+                new ErrorResponse(404, NOT_FOUND, exp.getMessage())
         );
     }
 
