@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.service.impl;
 
+import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.UserStatus;
@@ -7,9 +8,13 @@ import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.JwtService;
 import com.zeldev.zel_e_comm.service.UserService;
+import com.zeldev.zel_e_comm.util.UserUtils;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
 
@@ -24,6 +29,22 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponse findUser(String username) {
         return toDTO(getUserByUsername(username));
+    }
+
+    @Override
+    public @Nullable UserResponse updateUser(UserRequest request, String username) {
+        UserEntity user = getUserByUsername(username);
+
+        if (request.username() != null && !request.username().isBlank()) user.setUsername(request.username());
+        if (request.email() != null && !request.email().isBlank()) user.setEmail(request.email());
+        if (request.telephone() != null && !request.telephone().isBlank()) user.setTelephone(request.telephone());
+
+        return toDTO(user);
+    }
+
+    @Override
+    public @Nullable List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map(UserUtils::toDTO).toList();
     }
 
     @Override

@@ -8,17 +8,25 @@ import com.zeldev.zel_e_comm.security.CustomAuthenticationManager;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.*;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.security.Principal;
+import java.util.function.Supplier;
 
 import static com.zeldev.zel_e_comm.constants.Constants.WHITE_LIST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -39,6 +47,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
                         .requestMatchers("/api/v1/manage/products/**").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/v1/profile/{username}/**").access(
+                                AuthorizationManagers.anyOf(
+                                        new NameMatchesUrlVariable("username"),
+                                        AuthorityAuthorizationManager.hasRole("ADMIN")
+                                )
+                        )
                         .anyRequest().authenticated()
         );
         http.sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
@@ -63,5 +77,21 @@ public class SecurityConfig {
     @Bean
     public TokenCheckFilter tokenCheckFilter(JwtService jwtService, UserRepository userRepository) {
         return new TokenCheckFilter(jwtService, userRepository);
+    }
+
+    private static class NameMatchesUrlVariable implements AuthorizationManager<RequestAuthorizationContext> {
+        private final String pathVariable;
+
+        public NameMatchesUrlVariable(String pathVariable) {
+            this.pathVariable = pathVariable;
+        }
+
+        @Override
+        public @Nullable AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authSupplier, RequestAuthorizationContext reqContext) {
+            Authentication authentication = authSupplier.get();
+            String username = reqContext.getVariables().get(pathVariable);
+
+            return new AuthorizationDecision(username.equals(authentication.getName()));
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.zeldev.zel_e_comm.util.AuthUtils;
 import com.zeldev.zel_e_comm.util.LocationUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,13 +44,13 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public @Nullable LocationEntity getByPublicId(UUID publicId) {
-        return locationRepository.findByPublicId(publicId);
+    public LocationEntity getByPublicId(String publicId) {
+        return findByPublicId(publicId);
     }
 
     @Override
-    public @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String zipCode) {
-        LocationEntity locationDB = getLocationByZipCodeAndUserEmail(zipCode);
+    public @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String publicId) {
+        LocationEntity locationDB = findByPublicId(publicId);
 
         if (locationDTO.city() != null && !locationDTO.city().isBlank()) {
             locationDB.setCity(locationDTO.city());
@@ -71,12 +72,12 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void deleteLocation(String zipCode) {
-        locationRepository.delete(getLocationByZipCodeAndUserEmail(zipCode));
+    public void deleteLocation(String publicId) {
+        locationRepository.delete(findByPublicId(publicId));
     }
 
-    private LocationEntity getLocationByZipCodeAndUserEmail(String zipCode) {
-        return locationRepository.findLocationByZipCodeAndUserEmail(zipCode, authUtils.getLoggedInEmail())
-                .orElseThrow(() -> new ResourceNotFoundException(zipCode, "Location"));
+    private LocationEntity findByPublicId(String publicId) {
+        UUID uuid = UUID.fromString(publicId);
+        return locationRepository.findByPublicId(uuid).orElseThrow(() -> new ResourceNotFoundException(publicId, "Location"));
     }
 }

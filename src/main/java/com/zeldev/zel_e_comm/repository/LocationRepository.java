@@ -25,5 +25,13 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
     Optional<LocationEntity> findLocationByZipCodeAndUserEmail(String zipCode, String email);
 
     @Query("SELECT l FROM LocationEntity l WHERE l.publicId=?1")
-    @Nullable LocationEntity findByPublicId(UUID publicId);
+    Optional<LocationEntity> findByPublicId(UUID publicId);
+
+    @Query(
+            """
+                    SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END\s
+                    FROM LocationEntity l WHERE l.publicId = ?1 AND l.user.email = ?2
+                   \s"""
+    )
+    boolean existsByIdAndUserEmail(UUID publicId, String userEmail);
 }

@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
         Set<CartItemEntity> cartItems = cart.getCartItems();
         if (cartItems.isEmpty()) throw new CartIsEmptyException("Cart is empty");
 
-        LocationEntity location = locationService.getByPublicId(UUID.fromString(request.locationPublicId()));
+        LocationEntity location = locationService.getByPublicId(request.locationPublicId());
 
         OrderEntity order = buildOrder(cart, user, location);
         orderRepository.save(order);

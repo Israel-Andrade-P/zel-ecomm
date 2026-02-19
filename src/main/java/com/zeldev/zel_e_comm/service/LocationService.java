@@ -14,7 +14,7 @@ public interface LocationService {
 
     @Nullable List<LocationDTO> getUserLocations();
 
-    @Nullable LocationEntity getByPublicId(UUID publicId);
+    LocationEntity getByPublicId(String publicId);
 
     @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String zipCode);
 

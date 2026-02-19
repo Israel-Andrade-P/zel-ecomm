@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class CartController {
     }
 
     @GetMapping("/carts")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CartDTO>> getCarts() {
         return ResponseEntity.status(OK).body(cartService.getCarts());
     }
@@ -39,7 +41,7 @@ public class CartController {
         return ResponseEntity.status(OK).body(cartService.getCart());
     }
 
-    @PutMapping("/cart/products/{product_id}/quantity/{operation}")
+    @PutMapping("/carts/products/{product_id}/quantity/{operation}")
     public ResponseEntity<CartDTO> updateCartProduct(@PathVariable("product_id") String productId, @PathVariable("operation") String operation) {
         return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, operation.equalsIgnoreCase("delete") ? -1 : 1));
     }

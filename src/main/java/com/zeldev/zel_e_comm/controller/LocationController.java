@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -18,36 +19,38 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/v1/location")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Tag(name = "Location APIs", description = "APIs that manage locations")
 public class LocationController {
     private final LocationService locationService;
 
-    @PostMapping("/add")
+    @PostMapping("/locations/add")
     public ResponseEntity<LocationDTO> create(@RequestBody @Valid LocationDTO locationDTO) {
         return ResponseEntity.status(CREATED).body(locationService.createLocation(locationDTO));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/admin/locations/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<LocationDTO>> findAll() {
         return ResponseEntity.status(OK).body(locationService.getAll());
     }
 
-    @GetMapping("/user")
+    @GetMapping("/locations/user")
     public ResponseEntity<List<LocationDTO>> getUserLocations() {
         return ResponseEntity.status(OK).body(locationService.getUserLocations());
     }
 
-    @PutMapping("/update/{zip_code}")
+    @PutMapping("/locations/update/{id}")
+    @PreAuthorize("hasRole('ADMIN') || @locationSecurity.isOwner(#publicId)")
     public ResponseEntity<LocationDTO> update(@RequestBody LocationDTO locationDTO,
-                                              @PathVariable("zip_code") String zipCode) {
-        return ResponseEntity.status(OK).body(locationService.updateLocation(locationDTO, zipCode));
+                                              @PathVariable("id") String publicId) {
+        return ResponseEntity.status(OK).body(locationService.updateLocation(locationDTO, publicId));
     }
 
-    @DeleteMapping("/delete/{zip_code}")
-    public ResponseEntity<Response> delete(@PathVariable("zip_code") String zipCode, HttpServletRequest request) {
-        locationService.deleteLocation(zipCode);
+    @DeleteMapping("/locations/delete/{id}")
+    public ResponseEntity<Response> delete(@PathVariable("id") String publicId, HttpServletRequest request) {
+        locationService.deleteLocation(publicId);
         return ResponseEntity.status(OK).body(RequestUtils.getResponse(request, Collections.emptyMap(), "Location deleted", OK));
     }
 }

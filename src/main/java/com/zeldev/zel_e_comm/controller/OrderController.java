@@ -21,6 +21,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
     }
 
+    //todo add auth rules HERE
     @GetMapping("/get/{order_id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable("order_id") String orderId) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrderResponse(orderId));

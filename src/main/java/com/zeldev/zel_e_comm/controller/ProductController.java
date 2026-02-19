@@ -48,7 +48,7 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getAllProducts(page, size, sortBy, sortOrder));
     }
 
-    @GetMapping("/products/seller")
+    @GetMapping("/seller/products")
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ProductResponse> getAllProductsBySeller(
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
