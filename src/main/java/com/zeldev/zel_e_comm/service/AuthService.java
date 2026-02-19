@@ -6,7 +6,6 @@ import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.CredentialEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.LoginType;
-import com.zeldev.zel_e_comm.model.User;
 import org.jspecify.annotations.Nullable;
 
 public interface AuthService {
@@ -17,7 +16,6 @@ public interface AuthService {
     void updateLoginAttempt(String email, LoginType loginType);
     CredentialEntity getCredentialByUserId(Long userId);
     UserEntity getUserEntityByEmail(String email);
-    User getUserByEmail(String email);
 
     @Nullable String getNewKey(KeyRequest keyRequest);
     //LocationEntity getLocationByUserId(Long userId);

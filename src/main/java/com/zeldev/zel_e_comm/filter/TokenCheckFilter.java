@@ -3,7 +3,9 @@ package com.zeldev.zel_e_comm.filter;
 import com.zeldev.zel_e_comm.domain.CustomAuthentication;
 import com.zeldev.zel_e_comm.domain.TokenData;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
-import com.zeldev.zel_e_comm.model.User;
+import com.zeldev.zel_e_comm.entity.UserEntity;
+import com.zeldev.zel_e_comm.exception.UserNotFoundException;
+import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,20 +15,21 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
+
+import static com.zeldev.zel_e_comm.enumeration.UserStatus.ACTIVE;
+import static com.zeldev.zel_e_comm.util.UserUtils.fromUserEntity;
 
 @Component
 @RequiredArgsConstructor
 public class TokenCheckFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
+    private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(TokenCheckFilter.class);
 
     @Override
@@ -50,20 +53,19 @@ public class TokenCheckFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUserWithToken(HttpServletRequest request, String jwt) {
-        try {
-            if (jwt != null && jwtService.validateToken(jwt)) {
-                User user = jwtService.getTokenData(jwt, TokenData::getUser);
-                List<GrantedAuthority> roles = jwtService.getTokenData(jwt, TokenData::getAuthorities);
-                UserSecurity userSec = new UserSecurity(user, null);
-                var auth = CustomAuthentication.authenticated(userSec, roles);
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                logger.debug("Roles from authenticated user: {}", userSec.getAuthorities());
-                logger.info("user roles: {}", auth.getAuthorities());
-            }
-        }catch (Exception exp) {
-            logger.error("Couldn't set auth object for user: {}", exp.getMessage());
-        }
+        if (jwt == null) return;
+
+        TokenData tokenData = jwtService.getTokenData(jwt);
+        if (!tokenData.isValid()) return;
+
+        UserEntity DBUser = userRepository.findByIdWithRoles(tokenData.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        if (!DBUser.getTokenVersion().equals(tokenData.getTokenVersion()) || DBUser.getStatus() != ACTIVE) return;
+
+        UserSecurity user  = fromUserEntity(DBUser, "");
+        var auth = CustomAuthentication.authenticated(user, user.getAuthorities());
+        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        logger.info("user roles: {}", auth.getAuthorities());
     }
 }
 

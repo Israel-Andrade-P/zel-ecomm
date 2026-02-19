@@ -11,7 +11,6 @@ import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.LoginType;
 import com.zeldev.zel_e_comm.enumeration.RoleType;
 import com.zeldev.zel_e_comm.exception.*;
-import com.zeldev.zel_e_comm.model.User;
 import com.zeldev.zel_e_comm.repository.*;
 import com.zeldev.zel_e_comm.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,8 @@ import java.util.function.Supplier;
 
 import static com.zeldev.zel_e_comm.constants.Constants.EXPIRATION;
 import static com.zeldev.zel_e_comm.util.LocationUtils.buildLocation;
-import static com.zeldev.zel_e_comm.util.UserUtils.*;
+import static com.zeldev.zel_e_comm.util.UserUtils.buildUserEntity;
+import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
 import static java.time.LocalDateTime.now;
 
 @Service
@@ -87,12 +87,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public User getUserByEmail(String email) {
-        return fromUserEntity(getUserEntityByEmail(email));
-    }
-
-    @Override
     public @Nullable String getNewKey(KeyRequest request) {
         var user = getUserEntityByEmail(request.email());
         confirmationRepository.save(new ConfirmationEntity(user, suppliesKey.get()));
@@ -129,7 +123,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Set<RoleEntity> getRoles() {
-        var role = roleRepository.findByRoleName(RoleType.SELLER)
+        var role = roleRepository.findByRoleName(RoleType.USER)
                 .orElseThrow(() -> new RoleDoesntExistException("This role doesn't exist"));
         Set<RoleEntity> roles = new HashSet<>();
         roles.add(role);

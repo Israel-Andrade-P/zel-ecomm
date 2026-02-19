@@ -1,59 +1,59 @@
 package com.zeldev.zel_e_comm.domain;
 
-import com.zeldev.zel_e_comm.entity.CredentialEntity;
-import com.zeldev.zel_e_comm.model.User;
+import com.zeldev.zel_e_comm.enumeration.UserStatus;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
 
-public class UserSecurity implements UserDetails {
-    private final User user;
-    private final CredentialEntity credential;
+import static com.zeldev.zel_e_comm.constants.Constants.ROLE_PREFIX;
 
-    public UserSecurity(User user, CredentialEntity credential) {
-        this.user = user;
-        this.credential = credential;
+public record UserSecurity(
+        Long id,
+        String username,
+        String email,
+        String password,
+        Set<String> roles,
+        boolean enabled,
+        boolean accountNonExpired,
+        boolean accountNonLocked,
+        UserStatus status,
+        Integer tokenVersion) implements UserDetails {
+
+    public UserSecurity {
+        roles = Set.copyOf(roles);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(SimpleGrantedAuthority::new).toList();
+        return roles.stream().map(r -> new SimpleGrantedAuthority(ROLE_PREFIX + r)).toList();
     }
 
     @Override
     public @Nullable String getPassword() {
-        return credential.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
-    }
-
-    public String getEmail() {
-        return user.getEmail();
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return user.isAccountNonExpired();
+        return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return user.isAccountNonExpired();
+        return accountNonLocked;
     }
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return enabled;
     }
 }

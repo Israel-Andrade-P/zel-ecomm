@@ -6,7 +6,6 @@ import com.zeldev.zel_e_comm.domain.Token;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.request.LoginRequest;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
-import com.zeldev.zel_e_comm.model.User;
 import com.zeldev.zel_e_comm.security.CustomAuthenticationManager;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
@@ -30,7 +29,6 @@ import static com.zeldev.zel_e_comm.constants.Constants.LOGIN_PATH;
 import static com.zeldev.zel_e_comm.enumeration.LoginType.LOGIN_ATTEMPT;
 import static com.zeldev.zel_e_comm.enumeration.LoginType.LOGIN_SUCCESS;
 import static com.zeldev.zel_e_comm.util.RequestUtils.handleErrorResponse;
-import static com.zeldev.zel_e_comm.util.UserUtils.fromUserSecurity;
 
 @Slf4j
 public class AuthFilter extends AbstractAuthenticationProcessingFilter {
@@ -62,11 +60,11 @@ public class AuthFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        User user = fromUserSecurity((UserSecurity) authentication.getPrincipal());
-        authService.updateLoginAttempt(user.getEmail(), LOGIN_SUCCESS);
+        UserSecurity user = (UserSecurity) authentication.getPrincipal();
+        authService.updateLoginAttempt(user.email(), LOGIN_SUCCESS);
         String token = jwtService.createToken(user, Token::getAccess);
 
-        var loginResponse = new LoginResponse(user.getEmail(), user.getRoles());
+        var loginResponse = new LoginResponse(user.email(), user.getAuthorities());
         response.addHeader(HttpHeaders.SET_COOKIE, jwtService.generateJwtCookie(token).toString());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.OK.value());

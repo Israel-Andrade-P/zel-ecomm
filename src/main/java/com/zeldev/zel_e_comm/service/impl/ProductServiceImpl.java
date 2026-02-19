@@ -13,6 +13,7 @@ import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
 import com.zeldev.zel_e_comm.service.FileService;
 import com.zeldev.zel_e_comm.service.ProductService;
+import com.zeldev.zel_e_comm.util.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final FileService fileService;
+    private final AuthUtils authUtils;
     @Value("${project.path.images}")
     private String path;
 
@@ -89,6 +91,18 @@ public class ProductServiceImpl implements ProductService {
                 : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
         Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
         Page<ProductEntity> productPage = productRepository.findByNameLikeIgnoreCase("%" + keyword + "%", pageDetails);
+        List<ProductEntity> products = productPage.getContent();
+        if (products.isEmpty()) throw new APIException("No products have been added yet :(");
+        return buildProductResponse(productPage, products);
+    }
+
+    @Override
+    public ProductResponse getProductsBySeller(Integer page, Integer size, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
+                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
+        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Page<ProductEntity> productPage = productRepository.findBySellerId(authUtils.getAuthObj().getUsername(), pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
         return buildProductResponse(productPage, products);

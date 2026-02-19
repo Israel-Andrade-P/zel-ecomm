@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.entity;
 
 import com.zeldev.zel_e_comm.common.BaseEntity;
+import com.zeldev.zel_e_comm.enumeration.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +33,11 @@ public class UserEntity extends BaseEntity {
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean enabled;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status;
+    @Column(name = "token_version", nullable = false)
+    private Integer tokenVersion;
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
                inverseJoinColumns = @JoinColumn(name = "role_id"))

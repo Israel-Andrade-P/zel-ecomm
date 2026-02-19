@@ -2,8 +2,8 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.domain.Token;
 import com.zeldev.zel_e_comm.domain.TokenData;
+import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.enumeration.TokenType;
-import com.zeldev.zel_e_comm.model.User;
 import com.zeldev.zel_e_comm.security.JwtConfig;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
@@ -17,26 +17,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
 import javax.crypto.SecretKey;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import static com.zeldev.zel_e_comm.constants.Constants.*;
+import static com.zeldev.zel_e_comm.constants.Constants.ZEL_DEV_INC;
 import static com.zeldev.zel_e_comm.enumeration.TokenType.ACCESS;
 import static com.zeldev.zel_e_comm.enumeration.TokenType.REFRESH;
 import static io.jsonwebtoken.Header.JWT_TYPE;
 import static io.jsonwebtoken.Header.TYPE;
 import static java.time.Instant.now;
 import static java.util.Date.from;
-import static org.springframework.security.core.authority.AuthorityUtils.commaSeparatedStringToAuthorityList;
 
 @Service
 @RequiredArgsConstructor
@@ -56,13 +55,15 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
                     .notBefore(new Date())
                     .signWith(key.get(), Jwts.SIG.HS512);
 
-    private final BiFunction<User, TokenType, String> buildToken = (user, type) ->
+    private final BiFunction<UserSecurity, TokenType, String> buildToken = (user, type) ->
             Objects.equals(type, ACCESS) ? builder.get()
-                    .subject(user.getEmail())
-                    .claim(ROLES, user.getRoles())
+                    .subject(user.email())
+                    .claim("id", user.id())
+                    .claim("username", user.getUsername())
+                    .claim("token_version", user.tokenVersion())
                     .expiration(from(now().plusSeconds(getExpiration())))
                     .compact() : builder.get()
-                    .subject(user.getEmail())
+                    .subject(user.email())
                     .expiration(from(now().plusSeconds(getExpiration())))
                     .compact();
 
@@ -73,41 +74,34 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
 
-    private final Function<String, String> subject = token -> getClaimsValue(token, Claims::getSubject);
+    private final Function<Claims, Integer> getTokenVersion = claims -> claims.get("token_version", Integer.class);
 
-    private <T> T getClaimsValue(String token, Function<Claims, T> claims){
-        return getClaims.andThen(claims).apply(token);
-    }
+    private final Function<Claims, String> getUsername = claims -> claims.get("username", String.class);
 
-    public Function<String, List<GrantedAuthority>> authorities = token -> {
-        List<?> roles = getClaims.apply(token).get(ROLES, List.class);
-        return roles.stream()
-                .map(Object::toString)
-                .map(r -> new SimpleGrantedAuthority(ROLE_PREFIX + r))
-                .collect(Collectors.toList());
-    };
-
+    private final Function<Claims, Long> getId = claims -> claims.get("id", Long.class);
 
     @Override
-    public String createToken(User user, Function<Token, String> tokenFunction) {
+    public String createToken(UserSecurity user, Function<Token, String> tokenFunction) {
         var token = Token.builder().access(buildToken.apply(user, ACCESS)).refresh(buildToken.apply(user, REFRESH)).build();
         return tokenFunction.apply(token);
     }
 
     @Override
-    public <T> T getTokenData(String token, Function<TokenData, T> tokenDataFunction) {
-        return tokenDataFunction.apply(
-                TokenData.builder()
-                        .valid(validateToken(token))
-                        .authorities(authorities.apply(token))
-                        .claims(getClaims.apply(token))
-                        .user(userService.getUserByEmail(subject.apply(token)))
-                        .build()
-        );
-    }
-    @Override
-    public Boolean validateToken(String jwt) {
-        return getClaims.apply(jwt).getAudience().contains(ZEL_DEV_INC);
+    public TokenData getTokenData(String token) {
+        try {
+            Claims claims = getClaims.apply(token);
+            return TokenData.builder()
+                    .valid(claims.getAudience().contains(ZEL_DEV_INC))
+                    .subject(claims.getSubject())
+                    .username(getUsername.apply(claims))
+                    .userId(getId.apply(claims))
+                    .tokenVersion(getTokenVersion.apply(claims))
+                    .build();
+        }catch (Exception e) {
+            return TokenData.builder()
+                    .valid(false)
+                    .build();
+        }
     }
 
     @Override

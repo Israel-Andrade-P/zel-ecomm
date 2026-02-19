@@ -63,9 +63,8 @@ public class AuthController {
 
     @GetMapping("/user")
     public ResponseEntity<LoginResponse> getUserDetails(Authentication authentication) {
-        UserDetails userDetails = (UserSecurity) authentication.getPrincipal();
-        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-        return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(userDetails.getUsername(), roles));
+        UserSecurity user = (UserSecurity) authentication.getPrincipal();
+        return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(user.getUsername(), user.getAuthorities()));
     }
 
     @PostMapping("/logout")

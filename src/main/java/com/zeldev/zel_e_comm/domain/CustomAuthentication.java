@@ -28,7 +28,7 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
     private CustomAuthentication(UserSecurity user, Collection<? extends GrantedAuthority> authorities){
         super(authorities);
         this.user = user;
-        this.email = user.getEmail();
+        this.email = user.email();
         this.password = PASSWORD_PROTECTED;
         this.authenticated = true;
     }

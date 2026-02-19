@@ -5,12 +5,12 @@ import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.RoleEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
-import com.zeldev.zel_e_comm.model.User;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.zeldev.zel_e_comm.enumeration.UserStatus.ACTIVE;
 
 public class UserUtils {
     public static UserEntity buildUserEntity(UserRequest user, Set<RoleEntity> roles) {
@@ -25,6 +25,8 @@ public class UserUtils {
                 .accountNonExpired(true)
                 .enabled(false)
                 .roles(roles)
+                .status(ACTIVE)
+                .tokenVersion(0)
                 .build();
     }
 
@@ -37,26 +39,19 @@ public class UserUtils {
                 .build();
     }
 
-    public static User fromUserEntity(UserEntity userEntity) {
-        return User.builder()
-                .id(userEntity.getId())
-                .username(userEntity.getUsername())
-                .email(userEntity.getEmail())
-                .dob(userEntity.getDob())
-                .lastLogin(userEntity.getLastLogin())
-                .loginAttempts(userEntity.getLoginAttempts())
-                .accountNonLocked(userEntity.isAccountNonLocked())
-                .accountNonExpired(userEntity.isAccountNonExpired())
-                .enabled(userEntity.isEnabled())
-                .roles(userEntity.getRoles().stream().map(r -> r.getRole().name()).collect(Collectors.toSet()))
-                .build();
-    }
-
-    public static User fromUserSecurity(UserSecurity userSecurity) {
-        return User.builder()
-                .email(userSecurity.getEmail())
-                .roles(userSecurity.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
-                .build();
-
+    public static UserSecurity fromUserEntity(UserEntity userEntity, String password) {
+        Set<String> roles = userEntity.getRoles().stream().map(r -> r.getRole().name()).collect(Collectors.toSet());
+        return new UserSecurity(
+                userEntity.getId(),
+                userEntity.getUsername(),
+                userEntity.getEmail(),
+                password,
+                roles,
+                userEntity.isEnabled(),
+                userEntity.isAccountNonExpired(),
+                userEntity.isAccountNonLocked(),
+                userEntity.getStatus(),
+                userEntity.getTokenVersion()
+        );
     }
 }

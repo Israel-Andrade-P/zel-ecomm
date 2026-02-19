@@ -2,8 +2,10 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.UserEntity;
+import com.zeldev.zel_e_comm.enumeration.UserStatus;
 import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import com.zeldev.zel_e_comm.repository.UserRepository;
+import com.zeldev.zel_e_comm.service.JwtService;
 import com.zeldev.zel_e_comm.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Override
     @Transactional(readOnly = true)
@@ -25,8 +28,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String deleteUser(String username) {
-        int deleted = userRepository.deleteByUsername(username);
-        if (deleted == 0) throw new UserNotFoundException(String.format("User with username %s not found", username));
+        UserEntity user = getUserByUsername(username);
+
+        if (user.getStatus() == UserStatus.DELETED) return "User already deleted";
+
+        user.setStatus(UserStatus.DELETED);
+        user.setTokenVersion(user.getTokenVersion() + 1);
+        user.setEnabled(false);
+        user.setAccountNonLocked(false);
 
         return "User deleted";
     }

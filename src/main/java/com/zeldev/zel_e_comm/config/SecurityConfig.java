@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.config;
 
 import com.zeldev.zel_e_comm.filter.AuthFilter;
 import com.zeldev.zel_e_comm.filter.TokenCheckFilter;
+import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.security.CustomAccessDeniedHandler;
 import com.zeldev.zel_e_comm.security.CustomAuthenticationManager;
 import com.zeldev.zel_e_comm.service.AuthService;
@@ -60,7 +61,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public TokenCheckFilter tokenCheckFilter(JwtService jwtService) {
-        return new TokenCheckFilter(jwtService);
+    public TokenCheckFilter tokenCheckFilter(JwtService jwtService, UserRepository userRepository) {
+        return new TokenCheckFilter(jwtService, userRepository);
     }
 }

@@ -1,11 +1,6 @@
 package com.zeldev.zel_e_comm.domain;
 
-import com.zeldev.zel_e_comm.model.User;
-import io.jsonwebtoken.Claims;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -13,8 +8,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class TokenData {
-    private User user;
-    private Claims claims;
-    private Boolean valid;
-    private List<GrantedAuthority> authorities;
+    private boolean valid;
+    private String subject;
+    private String username;
+    private Long userId;
+    private Integer tokenVersion;
 }

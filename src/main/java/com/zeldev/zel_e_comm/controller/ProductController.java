@@ -48,6 +48,17 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getAllProducts(page, size, sortBy, sortOrder));
     }
 
+    @GetMapping("/products/seller")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<ProductResponse> getAllProductsBySeller(
+            @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
+            @RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) Integer size,
+            @RequestParam(name = "sortBy", defaultValue = SORT_ENTITY_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder
+    ) {
+        return ResponseEntity.status(OK).body(productService.getProductsBySeller(page, size, sortBy, sortOrder));
+    }
+
     @GetMapping("/categories/{category_id}/products")
     public ResponseEntity<ProductResponse> getProductsByCategory(
             @PathVariable("category_id") String id,

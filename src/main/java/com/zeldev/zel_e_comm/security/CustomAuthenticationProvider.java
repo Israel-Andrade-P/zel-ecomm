@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.security;
 
 import com.zeldev.zel_e_comm.domain.CustomAuthentication;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
+import com.zeldev.zel_e_comm.enumeration.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,7 +24,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         var customAuth = (CustomAuthentication) authentication;
-        var user = (UserSecurity) userDetailsService.loadUserByUsername(customAuth.getEmail());
+        UserSecurity user = (UserSecurity) userDetailsService.loadUserByUsername(customAuth.getEmail());
         validAccount.accept(user);
         if (encoder.matches(customAuth.getPassword(), user.getPassword())){
             return CustomAuthentication.authenticated(user, user.getAuthorities());
@@ -36,6 +37,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
 
     private final Consumer<UserSecurity> validAccount = userSecurity -> {
+        if (userSecurity.status() == UserStatus.DELETED) {throw new DisabledException("Account has been deleted");}
+        if (userSecurity.status() == UserStatus.SUSPENDED) {throw new DisabledException("Account has been suspended");}
         if (!userSecurity.isAccountNonLocked()) {throw new LockedException("Your account is currently locked");}
         if (!userSecurity.isEnabled()) {throw new DisabledException("Your account is currently disabled");}
         if (!userSecurity.isAccountNonExpired()) {throw new DisabledException("Your account has expired. Please contact administrator");}
