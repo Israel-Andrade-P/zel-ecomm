@@ -9,5 +9,4 @@ class ZelECommApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

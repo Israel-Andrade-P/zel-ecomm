@@ -34,4 +34,7 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
                    \s"""
     )
     boolean existsByIdAndUserEmail(UUID publicId, String userEmail);
+
+    @Query("SELECT l FROM LocationEntity l WHERE l.publicId = ?1 AND l.user.email = ?2")
+    Optional<LocationEntity> findByPublicIdAndUserEmail(UUID publicId, String userEmail);
 }

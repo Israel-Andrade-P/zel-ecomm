@@ -10,4 +10,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query("SELECT o FROM OrderEntity o WHERE o.publicId=?1")
     Optional<OrderEntity> findByPublicId(String orderId);
+
+    @Query(
+            """
+                    SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END\s
+                    FROM OrderEntity o WHERE o.publicId = ?1 AND o.user.email = ?2
+                   \s"""
+    )
+    boolean existsByIdAndUserEmail(String orderId, String loggedInEmail);
 }

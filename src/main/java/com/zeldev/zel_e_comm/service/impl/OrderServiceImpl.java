@@ -14,10 +14,11 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static com.zeldev.zel_e_comm.util.OrderUtils.buildOrder;
+import static com.zeldev.zel_e_comm.util.OrderUtils.toOrderResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
         Set<CartItemEntity> cartItems = cart.getCartItems();
         if (cartItems.isEmpty()) throw new CartIsEmptyException("Cart is empty");
 
-        LocationEntity location = locationService.getByPublicId(request.locationPublicId());
+        LocationEntity location = locationService.getByPublicIdAndUserEmail(request.locationPublicId(), user.getEmail());
 
         OrderEntity order = buildOrder(cart, user, location);
         orderRepository.save(order);
@@ -53,17 +54,22 @@ public class OrderServiceImpl implements OrderService {
         cartItems.clear();
 
         //send back OrderResponse
-        return OrderUtils.toOrderResponse(order, orderItems,user.getEmail(), request.locationPublicId());
+        return toOrderResponse(order);
     }
 
     @Override
     public @Nullable OrderResponse getOrderResponse(String orderId) {
         OrderEntity order = getOrderEntity(orderId);
-        return OrderUtils.toOrderResponse(order, order.getOrderItems(), order.getUser().getEmail(), order.getLocation().getPublicId().toString());
+        return toOrderResponse(order);
     }
 
     @Override
     public OrderEntity getOrderEntity(String orderId) {
         return orderRepository.findByPublicId(orderId).orElseThrow(() -> new ResourceNotFoundException(orderId, "Order"));
+    }
+
+    @Override
+    public @Nullable List<OrderResponse> getOrders() {
+        return orderRepository.findAll().stream().map(OrderUtils::toOrderResponse).toList();
     }
 }

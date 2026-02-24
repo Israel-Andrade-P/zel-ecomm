@@ -49,6 +49,7 @@ public class LocationController {
     }
 
     @DeleteMapping("/locations/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN') || @locationSecurity.isOwner(#publicId)")
     public ResponseEntity<Response> delete(@PathVariable("id") String publicId, HttpServletRequest request) {
         locationService.deleteLocation(publicId);
         return ResponseEntity.status(OK).body(RequestUtils.getResponse(request, Collections.emptyMap(), "Location deleted", OK));

@@ -20,14 +20,14 @@ public class OrderUtils {
                 .build();
     }
 
-    public static OrderResponse toOrderResponse(OrderEntity order, Set<OrderItemEntity> orderItems, String email, String locationId) {
+    public static OrderResponse toOrderResponse(OrderEntity order) {
         return OrderResponse.builder()
                 .orderId(order.getPublicId())
-                .userEmail(email)
+                .userEmail(order.getUser().getEmail())
                 .totalPrice(order.getTotalPrice())
-                .orderItems(orderItems.stream().map(OrderItemUtils::toOrderItemResponse).collect(Collectors.toSet()))
+                .orderItems(order.getOrderItems().stream().map(OrderItemUtils::toOrderItemResponse).collect(Collectors.toSet()))
                 .status(order.getStatus())
-                .locationPublicId(locationId)
+                .locationPublicId(order.getLocation().getPublicId().toString())
                 .createdAt(order.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant())
                 .build();
     }

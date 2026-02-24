@@ -49,6 +49,11 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    public LocationEntity getByPublicIdAndUserEmail(String publicId, String userEmail) {
+        return findByPublicIdAndEmail(publicId, userEmail);
+    }
+
+    @Override
     public @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String publicId) {
         LocationEntity locationDB = findByPublicId(publicId);
 
@@ -79,5 +84,10 @@ public class LocationServiceImpl implements LocationService {
     private LocationEntity findByPublicId(String publicId) {
         UUID uuid = UUID.fromString(publicId);
         return locationRepository.findByPublicId(uuid).orElseThrow(() -> new ResourceNotFoundException(publicId, "Location"));
+    }
+
+    private LocationEntity findByPublicIdAndEmail(String publicId, String userEmail) {
+        UUID uuid = UUID.fromString(publicId);
+        return locationRepository.findByPublicIdAndUserEmail(uuid, userEmail).orElseThrow(() -> new ResourceNotFoundException(publicId, "Location"));
     }
 }

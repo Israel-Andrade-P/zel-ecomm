@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     public UserResponse createUser(UserRequest user) {
         UserEntity userEntity = userRepository.save(createNewUser(user));
         credentialRepository.save(new CredentialEntity(userEntity, encoder.encode(user.password())));
-        ConfirmationEntity confirmation = confirmationRepository.save(new ConfirmationEntity(userEntity, suppliesKey.get()));
+        confirmationRepository.save(new ConfirmationEntity(userEntity, suppliesKey.get()));
         locationRepository.save(buildLocation(user.location(), userEntity));
         return toDTO(userEntity);
     }

@@ -79,19 +79,14 @@ public class SecurityConfig {
         return new TokenCheckFilter(jwtService, userRepository);
     }
 
-    private static class NameMatchesUrlVariable implements AuthorizationManager<RequestAuthorizationContext> {
-        private final String pathVariable;
-
-        public NameMatchesUrlVariable(String pathVariable) {
-            this.pathVariable = pathVariable;
-        }
+    private record NameMatchesUrlVariable(String pathVariable) implements AuthorizationManager<RequestAuthorizationContext> {
 
         @Override
-        public @Nullable AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authSupplier, RequestAuthorizationContext reqContext) {
-            Authentication authentication = authSupplier.get();
-            String username = reqContext.getVariables().get(pathVariable);
+            public AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authSupplier, RequestAuthorizationContext reqContext) {
+                Authentication authentication = authSupplier.get();
+                String username = reqContext.getVariables().get(pathVariable);
 
-            return new AuthorizationDecision(username.equals(authentication.getName()));
+                return new AuthorizationDecision(username.equals(authentication.getName()));
+            }
         }
-    }
 }
