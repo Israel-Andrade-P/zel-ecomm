@@ -57,7 +57,6 @@ public class AuthServiceImpl implements AuthService {
         isKeyValid(confirmationEntity);
         var userEntity = getUserEntityByEmail(confirmationEntity.getUser().getEmail());
         userEntity.setEnabled(true);
-        //userRepository.save(userEntity);
         confirmationRepository.delete(confirmationEntity);
     }
 

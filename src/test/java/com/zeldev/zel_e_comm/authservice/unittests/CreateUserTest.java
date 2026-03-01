@@ -7,16 +7,9 @@ import com.zeldev.zel_e_comm.entity.RoleEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.RoleType;
 import com.zeldev.zel_e_comm.exception.RoleDoesntExistException;
-import com.zeldev.zel_e_comm.repository.*;
-import com.zeldev.zel_e_comm.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -25,26 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-//THIS IS A UNIT TEST
-@ExtendWith(MockitoExtension.class)
-public class CreateUserTest {
-
-    @Mock
-    UserRepository userRepository;
-    @Mock
-    CredentialRepository credentialRepository;
-    @Mock
-    ConfirmationRepository confirmationRepository;
-    @Mock
-    LocationRepository locationRepository;
-    @Mock
-    RoleRepository roleRepository;
-    @Mock
-    PasswordEncoder passwordEncoder;
-
-    @InjectMocks
-    AuthServiceImpl authService;
-
+public class CreateUserTest extends AuthServiceBaseTest{
     LocationDTO locationDTO;
     UserRequest userRequest;
     UserEntity userTest;
