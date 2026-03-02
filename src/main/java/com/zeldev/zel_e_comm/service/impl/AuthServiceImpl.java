@@ -69,9 +69,10 @@ public class AuthServiceImpl implements AuthService {
                     user.setLoginAttempts(0);
                     user.setAccountNonLocked(true);
                 }
-                user.setLoginAttempts(user.getLoginAttempts() + 1);
-                userCache.put(user.getEmail(), user.getLoginAttempts());
-                if (userCache.get(user.getEmail()) > 5){
+                Integer attempts = user.getLoginAttempts() + 1;
+                user.setLoginAttempts(attempts);
+                userCache.put(user.getEmail(), attempts);
+                if (attempts > 5){
                     user.setAccountNonLocked(false);
                 }
             }
@@ -86,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public @Nullable String getNewKey(KeyRequest request) {
+    public String getNewKey(KeyRequest request) {
         var user = getUserEntityByEmail(request.email());
         confirmationRepository.save(new ConfirmationEntity(user, suppliesKey.get()));
         return "New key generated!";
