@@ -1,4 +1,4 @@
-package com.zeldev.zel_e_comm.authservice.unittests;
+package com.zeldev.zel_e_comm.unittests.authservice;
 
 import com.zeldev.zel_e_comm.dto.request.LocationDTO;
 import com.zeldev.zel_e_comm.dto.request.UserRequest;

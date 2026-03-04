@@ -1,4 +1,4 @@
-package com.zeldev.zel_e_comm.authservice.unittests;
+package com.zeldev.zel_e_comm.unittests.authservice;
 
 import com.zeldev.zel_e_comm.cache.CacheStore;
 import com.zeldev.zel_e_comm.repository.*;

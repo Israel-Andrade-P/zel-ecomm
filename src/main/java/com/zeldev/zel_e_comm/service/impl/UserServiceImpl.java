@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public @Nullable UserResponse updateUser(UserRequest request, String username) {
+    public UserResponse updateUser(UserRequest request, String username) {
         UserEntity user = getUserByUsername(username);
 
         if (request.username() != null && !request.username().isBlank()) user.setUsername(request.username());
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public @Nullable List<UserResponse> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(UserUtils::toDTO).toList();
     }
 
