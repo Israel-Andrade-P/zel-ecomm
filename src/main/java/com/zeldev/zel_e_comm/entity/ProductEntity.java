@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 @Entity
@@ -35,7 +36,7 @@ public class ProductEntity extends BaseEntity {
     public BigDecimal calculateSpecialPrice() {
         return price.subtract(
                 price.multiply(BigDecimal.valueOf(discount)).divide(BigDecimal.valueOf(100))
-        );
+        ).setScale(2, RoundingMode.HALF_UP);
     }
 
     @PrePersist
