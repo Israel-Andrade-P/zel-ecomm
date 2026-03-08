@@ -1,6 +1,5 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
@@ -8,6 +7,7 @@ import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.InsufficientStockException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
+import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import com.zeldev.zel_e_comm.repository.ProductRepository;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,8 +43,8 @@ public class ProductServiceImpl implements ProductService {
     private String path;
 
     @Override
-    public ProductDTO create(ProductDTO request, String categoryName, Authentication loggedUser) {
-        var user = userRepository.findByEmail(((UserSecurity) loggedUser.getPrincipal()).getUsername()).orElseThrow(() -> new ResourceNotFoundException("email", "user"));
+    public ProductDTO create(ProductDTO request, String categoryName) {
+        var user = userRepository.findByEmail(authUtils.getLoggedInEmail()).orElseThrow(() -> new UserNotFoundException("user not found"));
         ProductEntity entity = buildProductEntity(request);
         entity.setSeller(user);
         CategoryEntity category = categoryService.getByName(categoryName);
@@ -59,10 +58,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
-                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
-        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
         Page<ProductEntity> productPage = productRepository.findAll(pageDetails);
 
         List<ProductEntity> products = productPage.getContent();
@@ -73,10 +69,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponse getProductsByCategory(String id, Integer page, Integer size, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
-                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
-        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
         Page<ProductEntity> productPage = productRepository.findByCategory_IdOrderByPriceAsc(categoryService.getByName(id).getId(), pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
@@ -86,10 +79,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponse getProductsByKeyword(String keyword, Integer page, Integer size, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
-                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
-        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
+        Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
         Page<ProductEntity> productPage = productRepository.findByNameLikeIgnoreCase("%" + keyword + "%", pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
@@ -98,11 +88,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getProductsBySeller(Integer page, Integer size, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
-                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
-        Pageable pageDetails = PageRequest.of(page, size, sortByAndOrder);
-        Page<ProductEntity> productPage = productRepository.findBySellerId(authUtils.getAuthObj().getUsername(), pageDetails);
+        Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
+        Page<ProductEntity> productPage = productRepository.findBySellerEmail(authUtils.getLoggedInEmail(), pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
         return buildProductResponse(productPage, products);
@@ -180,5 +167,12 @@ public class ProductServiceImpl implements ProductService {
 
     private ProductEntity getByPublicId(UUID productId) {
         return productRepository.findByPublicId(productId).orElseThrow(() -> new ResourceNotFoundException(productId.toString(), "Product"));
+    }
+
+    private Pageable getPageable(Integer page, Integer size, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Order.asc(sortBy).ignoreCase())
+                : Sort.by(Sort.Order.desc(sortBy).ignoreCase());
+        return PageRequest.of(page, size, sortByAndOrder);
     }
 }

@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
+import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.repository.ProductRepository;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
@@ -10,6 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceBaseTest {
@@ -20,4 +27,25 @@ public class ProductServiceBaseTest {
     @Mock protected AuthUtils authUtils;
 
     @InjectMocks protected ProductServiceImpl productService;
+
+    protected ProductEntity createProduct(String name) {
+        ProductEntity product = new ProductEntity();
+        product.setPublicId(UUID.randomUUID());
+        product.setName(name);
+        return product;
+    }
+
+    protected void assertPageable(
+            Pageable pageable,
+            int page,
+            int size,
+            String sort,
+            Sort.Direction direction
+    ) {
+        assertEquals(page, pageable.getPageNumber());
+        assertEquals(size, pageable.getPageSize());
+
+        Sort.Order order = pageable.getSort().getOrderFor(sort);
+        assertEquals(direction, order.getDirection());
+    }
 }

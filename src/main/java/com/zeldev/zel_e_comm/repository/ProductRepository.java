@@ -16,8 +16,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     Page<ProductEntity> findByNameLikeIgnoreCase(String keyword, Pageable pageDetails);
 
-    @Query("SELECT p FROM ProductEntity p WHERE p.seller.username=?1")
-    Page<ProductEntity> findBySellerId(String username, Pageable pageDetails);
+    @Query("SELECT p FROM ProductEntity p WHERE p.seller.email=?1")
+    Page<ProductEntity> findBySellerEmail(String email, Pageable pageDetails);
 
     @Query(
             """

@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductDTO create(ProductDTO request, String category, Authentication loggedUser);
+    ProductDTO create(ProductDTO request, String category);
     ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder);
 
     ProductResponse getProductsByCategory(String id, Integer page, Integer size, String sortBy, String sortOrder);

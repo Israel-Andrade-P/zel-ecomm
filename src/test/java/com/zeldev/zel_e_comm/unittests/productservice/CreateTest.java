@@ -1,15 +1,13 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
-import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
-import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
+import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.security.core.Authentication;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -43,9 +41,10 @@ public class CreateTest extends ProductServiceBaseTest{
         );
         var user = createEntity();
         var category = new CategoryEntity("Cleaning");
-        var auth = auth("test@gmail");
+        var email = "test@gmail";
 
-        when(userRepository.findByEmail("test@gmail")).thenReturn(Optional.of(user));
+        when(authUtils.getLoggedInEmail()).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(categoryService.getByName(category.getName())).thenReturn(category);
         when(productRepository.save(any())).thenAnswer(invocation -> {
             ProductEntity entity =  invocation.getArgument(0);
@@ -53,7 +52,7 @@ public class CreateTest extends ProductServiceBaseTest{
             return entity;
         });
 
-        ProductDTO response = productService.create(request, category.getName(), auth);
+        ProductDTO response = productService.create(request, category.getName());
 
         ArgumentCaptor<ProductEntity> captor = ArgumentCaptor.forClass(ProductEntity.class);
 
@@ -86,11 +85,12 @@ public class CreateTest extends ProductServiceBaseTest{
                     """
     )
     void redPath() {
-        var auth = auth("test@gmail");
+        var email = "test@gmail";
 
-        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        when(authUtils.getLoggedInEmail()).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> productService.create(null, "", auth));
+        assertThrows(UserNotFoundException.class, () -> productService.create(null, ""));
 
         verifyNoMoreInteractions(productRepository);
     }
@@ -100,15 +100,5 @@ public class CreateTest extends ProductServiceBaseTest{
         userEntity.setUsername("karl_jones");
         userEntity.setEmail("test@gmail");
         return userEntity;
-    }
-
-    private Authentication auth(String email) {
-        var auth = mock(Authentication.class);
-        var principal = mock(UserSecurity.class);
-
-        when(auth.getPrincipal()).thenReturn(principal);
-        when(principal.getUsername()).thenReturn(email);
-
-        return auth;
     }
 }

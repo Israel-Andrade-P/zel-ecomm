@@ -21,26 +21,29 @@ import static org.mockito.Mockito.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-public class GetAllProductsTest extends ProductServiceBaseTest {
+public class GetProductsBySellerTest extends ProductServiceBaseTest{
+    private final String EMAIL = "test@gmail";
 
     @ParameterizedTest
     @ValueSource(strings = {"asc", "desc"})
     @DisplayName(
             """
-                    GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
-                    THEN: return a ProductResponse
+                    GIVEN: some pagination related request params
+                    WHEN: getProductsBySeller is called
+                    THEN: return a ProductResponse with logged in seller products
                     """
     )
-    void shouldReturnProducts(String sortOrder) {
+    void shouldReturnProductsBySeller(String sortOrder) {
         int page = 0;
         int size = 10;
 
+
         Page<ProductEntity> productPage = new PageImpl<>(List.of(createProduct("Refrigerator"), createProduct("Chair")));
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
+        when(authUtils.getLoggedInEmail()).thenReturn(EMAIL);
+        when(productRepository.findBySellerEmail(any(String.class), any(Pageable.class))).thenReturn(productPage);
 
-        ProductResponse response = productService.getAllProducts(page, size, "name", sortOrder);
+        ProductResponse response = productService.getProductsBySeller(page, size, "name", sortOrder);
 
         Pageable pageable = capturePageable();
 
@@ -53,8 +56,8 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
     @Test
     @DisplayName(
             """
-                    GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
+                    GIVEN: some pagination related request params
+                    WHEN: getProductsBySeller is called
                     THEN: no products in db yet
                     AND: throws exception
                     """
@@ -65,14 +68,15 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
 
         Page<ProductEntity> page1 = new PageImpl<>(List.of());
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(page1);
+        when(authUtils.getLoggedInEmail()).thenReturn(EMAIL);
+        when(productRepository.findBySellerEmail(any(String.class), any(Pageable.class))).thenReturn(page1);
 
-        assertThrows(APIException.class, () -> productService.getAllProducts(page, size, "name", "asc"));
+        assertThrows(APIException.class, () -> productService.getProductsBySeller(page, size, "name", "asc"));
     }
 
     private Pageable capturePageable() {
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
-        verify(productRepository, times(1)).findAll(captor.capture());
+        verify(productRepository, times(1)).findBySellerEmail(any(String.class), captor.capture());
         return captor.getValue();
     }
 }

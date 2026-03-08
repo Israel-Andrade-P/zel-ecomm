@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
+import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import org.junit.jupiter.api.DisplayName;
@@ -21,26 +22,32 @@ import static org.mockito.Mockito.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-public class GetAllProductsTest extends ProductServiceBaseTest {
+public class GetProductsByCategoryTest extends ProductServiceBaseTest{
 
     @ParameterizedTest
     @ValueSource(strings = {"asc", "desc"})
     @DisplayName(
             """
-                    GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
-                    THEN: return a ProductResponse
+            GIVEN: some pagination related request params and category id
+            WHEN: getProductsByCategory is called
+            THEN: return a ProductResponse
                     """
     )
-    void shouldReturnProducts(String sortOrder) {
+    void shouldReturnProductsByCategory(String sortOrder) {
         int page = 0;
         int size = 10;
 
         Page<ProductEntity> productPage = new PageImpl<>(List.of(createProduct("Refrigerator"), createProduct("Chair")));
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
+        CategoryEntity category = new CategoryEntity();
+        category.setId(3L);
+        category.setName("Kitchen stuff");
 
-        ProductResponse response = productService.getAllProducts(page, size, "name", sortOrder);
+        String category_id = "3";
+        when(categoryService.getByName(category_id)).thenReturn(category);
+        when(productRepository.findByCategory_IdOrderByPriceAsc(any(Long.class), any(Pageable.class))).thenReturn(productPage);
+
+        ProductResponse response = productService.getProductsByCategory(category_id, page, size, "name", sortOrder);
 
         Pageable pageable = capturePageable();
 
@@ -53,26 +60,32 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
     @Test
     @DisplayName(
             """
-                    GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
-                    THEN: no products in db yet
-                    AND: throws exception
+            GIVEN: some pagination related request params and category id
+            WHEN: getProductsByCategory is called
+            THEN: return an empty list
+            AND: throws exception
                     """
     )
     void throwsException() {
         int page = 0;
         int size = 10;
+        String id = "3";
 
-        Page<ProductEntity> page1 = new PageImpl<>(List.of());
+        Page<ProductEntity> productPage = new PageImpl<>(List.of());
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(page1);
+        CategoryEntity category = new CategoryEntity();
+        category.setId(3L);
+        category.setName("Kitchen stuff");
 
-        assertThrows(APIException.class, () -> productService.getAllProducts(page, size, "name", "asc"));
+        when(categoryService.getByName(id)).thenReturn(category);
+        when(productRepository.findByCategory_IdOrderByPriceAsc(any(Long.class), any(Pageable.class))).thenReturn(productPage);
+
+        assertThrows(APIException.class, () -> productService.getProductsByCategory(id, page, size, "name", "asc"));
     }
 
-    private Pageable capturePageable() {
+    protected Pageable capturePageable() {
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
-        verify(productRepository, times(1)).findAll(captor.capture());
+        verify(productRepository, times(1)).findByCategory_IdOrderByPriceAsc(any(Long.class), captor.capture());
         return captor.getValue();
     }
 }

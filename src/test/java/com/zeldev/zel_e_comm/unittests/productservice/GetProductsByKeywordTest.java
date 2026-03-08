@@ -21,7 +21,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-public class GetAllProductsTest extends ProductServiceBaseTest {
+public class GetProductsByKeywordTest extends ProductServiceBaseTest{
+
+    private final String KEYWORD = "a";
 
     @ParameterizedTest
     @ValueSource(strings = {"asc", "desc"})
@@ -38,9 +40,9 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
 
         Page<ProductEntity> productPage = new PageImpl<>(List.of(createProduct("Refrigerator"), createProduct("Chair")));
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
+        when(productRepository.findByNameLikeIgnoreCase(any(String.class), any(Pageable.class))).thenReturn(productPage);
 
-        ProductResponse response = productService.getAllProducts(page, size, "name", sortOrder);
+        ProductResponse response = productService.getProductsByKeyword(KEYWORD, page, size, "name", sortOrder);
 
         Pageable pageable = capturePageable();
 
@@ -53,8 +55,8 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
     @Test
     @DisplayName(
             """
-                    GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
+                    GIVEN: some pagination related request params and a keyword 
+                    WHEN: getProductsByKeyword is called
                     THEN: no products in db yet
                     AND: throws exception
                     """
@@ -65,14 +67,15 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
 
         Page<ProductEntity> page1 = new PageImpl<>(List.of());
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(page1);
+        when(productRepository.findByNameLikeIgnoreCase(any(String.class), any(Pageable.class))).thenReturn(page1);
 
-        assertThrows(APIException.class, () -> productService.getAllProducts(page, size, "name", "asc"));
+        assertThrows(APIException.class, () -> productService.getProductsByKeyword(KEYWORD, page, size, "name", "asc"));
     }
+
 
     private Pageable capturePageable() {
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
-        verify(productRepository, times(1)).findAll(captor.capture());
+        verify(productRepository, times(1)).findByNameLikeIgnoreCase(any(String.class), captor.capture());
         return captor.getValue();
     }
 }

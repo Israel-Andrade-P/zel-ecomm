@@ -2,15 +2,14 @@ package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
-import com.zeldev.zel_e_comm.service.ProductService;
 import com.zeldev.zel_e_comm.service.ProductOrchestrationService;
+import com.zeldev.zel_e_comm.service.ProductService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +32,8 @@ public class ProductController {
     public ResponseEntity<ProductDTO> addProduct(
             @Parameter(description = "ID of category product belongs to")
             @RequestBody @Valid ProductDTO request,
-            @PathVariable("category_name") String categoryName,
-            Authentication loggedUser) {
-        return ResponseEntity.status(CREATED).body(productService.create(request, categoryName, loggedUser));
+            @PathVariable("category_name") String categoryName) {
+        return ResponseEntity.status(CREATED).body(productService.create(request, categoryName));
     }
 
     @GetMapping("/products")
