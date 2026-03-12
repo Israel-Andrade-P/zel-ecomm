@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.service.impl;
 
+import com.zeldev.zel_e_comm.config.AppConfig;
 import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
@@ -39,8 +40,7 @@ public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
     private final FileService fileService;
     private final AuthUtils authUtils;
-    @Value("${project.path.images}")
-    private String path;
+    private final AppConfig appConfig;
 
     @Override
     public ProductDTO create(ProductDTO request, String categoryName) {
@@ -147,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO updateImage(String productId, MultipartFile image) throws IOException {
         ProductEntity productDB = findByPublicId(productId);
-        String filename = fileService.uploadImage(path, image);
+        String filename = fileService.uploadImage(appConfig.getImages(), image);
         productDB.setImage(filename);
         return toDTO(productDB);
     }

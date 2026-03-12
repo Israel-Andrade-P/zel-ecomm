@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
+import com.zeldev.zel_e_comm.config.AppConfig;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.repository.ProductRepository;
 import com.zeldev.zel_e_comm.repository.UserRepository;
@@ -29,6 +30,7 @@ public class ProductServiceBaseTest {
     @Mock protected UserRepository userRepository;
     @Mock protected FileService fileService;
     @Mock protected AuthUtils authUtils;
+    @Mock protected AppConfig appConfig;
 
     @InjectMocks protected ProductServiceImpl productService;
 
@@ -37,9 +39,10 @@ public class ProductServiceBaseTest {
         product.setPublicId(UUID.randomUUID());
         product.setName(name);
         product.setDescription("old azz phone");
-        product.setQuantity(1);
+        product.setQuantity(2);
         product.setPrice(BigDecimal.valueOf(2000));
         product.setDiscount(2);
+        product.setImage("random_image");
         return product;
     }
 
