@@ -1,8 +1,9 @@
-package com.zeldev.zel_e_comm.unittests.productservice;
+package com.zeldev.zel_e_comm.unittests.categoryservice;
 
-import com.zeldev.zel_e_comm.dto.response.ProductResponse;
+import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,49 +15,49 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-public class GetAllProductsTest extends ProductServiceBaseTest {
+public class GetAllTest extends CategoryServiceBaseTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"asc", "desc"})
     @DisplayName(
             """
                     GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
-                    THEN: return a ProductResponse
+                    WHEN: getAll is called
+                    THEN: return a CategoryResponse
                     """
     )
-    void shouldReturnProducts(String sortOrder) {
-        int page = 0;
-        int size = 10;
+    void greenPath(String sortOrder) {
+        Integer page = 0;
+        Integer size = 5;
         String sortBy = "name";
 
-        Page<ProductEntity> productPage = new PageImpl<>(List.of(createProduct("Refrigerator"), createProduct("Chair")));
+        Page<CategoryEntity> categotyPage = new PageImpl<>(List.of(new CategoryEntity("Furniture"), new CategoryEntity("Computers")));
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
+        when(categoryRepository.findAll(any(Pageable.class))).thenReturn(categotyPage);
 
-        ProductResponse response = productService.getAllProducts(page, size, sortBy, sortOrder);
+        var response = categoryService.getAll(page, size, sortBy, sortOrder);
 
         Pageable pageable = capturePageable();
 
         assertPageable(pageable, page, size, sortBy, sortOrder.equals("asc") ? ASC : DESC);
 
-        assertEquals(2, response.content().size());
+        assertEquals(2, response.categories().size());
         assertEquals(page, response.pageNumber());
+        assertEquals(2, response.pageSize());
+        assertTrue(response.lastPage());
     }
 
     @Test
     @DisplayName(
             """
                     GIVEN: some pagination related request params 
-                    WHEN: getAllProducts is called
-                    THEN: no products in db yet
+                    WHEN: getAll is called
+                    THEN: return a empty list
                     AND: throws exception
                     """
     )
@@ -64,16 +65,16 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
         int page = 0;
         int size = 10;
 
-        Page<ProductEntity> page1 = new PageImpl<>(List.of());
+        Page<CategoryEntity> categoryPage = new PageImpl<>(List.of());
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(page1);
+        when(categoryRepository.findAll(any(Pageable.class))).thenReturn(categoryPage);
 
-        assertThrows(APIException.class, () -> productService.getAllProducts(page, size, "name", "asc"));
+        assertThrows(APIException.class, () -> categoryService.getAll(page, size, "name", "asc"));
     }
 
     private Pageable capturePageable() {
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
-        verify(productRepository, times(1)).findAll(captor.capture());
+        verify(categoryRepository).findAll(captor.capture());
         return captor.getValue();
     }
 }

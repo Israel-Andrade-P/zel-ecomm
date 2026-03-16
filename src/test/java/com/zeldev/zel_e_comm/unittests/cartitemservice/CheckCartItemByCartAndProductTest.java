@@ -26,15 +26,9 @@ public class CheckCartItemByCartAndProductTest extends CartItemServiceBaseTest{
                     """
     )
     void greenPath() {
-        ProductEntity product = new ProductEntity();
-        product.setPublicId(UUID.randomUUID());
-        product.setName("TV");
-        product.setSpecialPrice(BigDecimal.valueOf(69.99));
-        product.setDiscount(3);
+       ProductEntity product = createProduct();
         CartEntity cart = new CartEntity();
         cart.setId(5L);
-        CartItemEntity item = new CartItemEntity();
-        item.setProduct(product);
 
         when(cartItemRepository.findCartItemEntityByProductIdAndCartId(cart.getId(), product.getPublicId())).thenReturn(Optional.empty());
 
@@ -51,11 +45,7 @@ public class CheckCartItemByCartAndProductTest extends CartItemServiceBaseTest{
                     """
     )
     void redPath() {
-        ProductEntity product = new ProductEntity();
-        product.setPublicId(UUID.randomUUID());
-        product.setName("TV");
-        product.setSpecialPrice(BigDecimal.valueOf(69.99));
-        product.setDiscount(3);
+        ProductEntity product = createProduct();
         CartEntity cart = new CartEntity();
         cart.setId(5L);
         CartItemEntity item = new CartItemEntity();

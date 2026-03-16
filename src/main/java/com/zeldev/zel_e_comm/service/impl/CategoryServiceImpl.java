@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import static com.zeldev.zel_e_comm.util.CategoryUtils.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
@@ -54,8 +56,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (!request.name().isBlank() && !request.name().equals(categoryDB.getName())) {
             categoryDB.setName(request.name());
         }
-        CategoryEntity savedCategory = categoryRepository.save(categoryDB);
-        return toDTO(savedCategory);
+//        CategoryEntity savedCategory = categoryRepository.save(categoryDB);
+        return toDTO(categoryDB);
     }
 
     public CategoryEntity getByName(String name) {
