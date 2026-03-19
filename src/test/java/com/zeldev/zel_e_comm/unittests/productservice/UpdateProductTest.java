@@ -59,7 +59,7 @@ public class UpdateProductTest extends ProductServiceBaseTest{
         assertEquals(productDB.getDiscount(), response.discount());
         assertEquals(BigDecimal.valueOf(1960.0).setScale(2, RoundingMode.HALF_UP), response.specialPrice());
 
-        verify(productRepository, times(1)).findByPublicId(UUID.fromString(publicId));
+        verify(productRepository).findByPublicId(UUID.fromString(publicId));
     }
 
     @ParameterizedTest

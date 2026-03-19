@@ -54,7 +54,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String publicId) {
+    public LocationDTO updateLocation(LocationDTO locationDTO, String publicId) {
         LocationEntity locationDB = findByPublicId(publicId);
 
         if (locationDTO.city() != null && !locationDTO.city().isBlank()) {

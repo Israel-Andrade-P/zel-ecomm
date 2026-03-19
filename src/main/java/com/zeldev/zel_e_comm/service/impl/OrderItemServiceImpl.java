@@ -20,7 +20,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final OrderItemRepository orderItemRepository;
 
     @Override
-    public Set<OrderItemEntity> createOrderItems(Set<CartItemEntity> cartItems, OrderEntity order) {
-        return new HashSet<>(orderItemRepository.saveAll(OrderItemUtils.createOrderItems(cartItems, order)));
+    public void createOrderItems(Set<CartItemEntity> cartItems, OrderEntity order) {
+        orderItemRepository.saveAll(OrderItemUtils.createOrderItems(cartItems, order));
     }
 }

@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class OrderUtils {
-    public static OrderEntity buildOrder(CartEntity cart, UserEntity user, LocationEntity location) {
+    public static OrderEntity buildOrder(UserEntity user, LocationEntity location) {
         return OrderEntity.builder()
                 .publicId(suppliesOrderId.get())
                 .status(OrderStatus.PENDING_PAYMENT)

@@ -34,16 +34,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse createOrder(OrderRequest request) {
         UserEntity user = authUtils.getLoggedInUser();
-        CartEntity cart = cartService.getCartByEmail(user.getEmail());
-        Set<CartItemEntity> cartItems = cart.getCartItems();
+        Set<CartItemEntity> cartItems = cartService.getCartByEmail(user.getEmail()).getCartItems();
         if (cartItems.isEmpty()) throw new CartIsEmptyException("Cart is empty");
 
         LocationEntity location = locationService.getByPublicIdAndUserEmail(request.locationPublicId(), user.getEmail());
 
-        OrderEntity order = buildOrder(cart, user, location);
+        OrderEntity order = buildOrder(user, location);
         orderRepository.save(order);
 
-        Set<OrderItemEntity> orderItems = orderItemService.createOrderItems(cartItems, order);
+        orderItemService.createOrderItems(cartItems, order);
 
         //update product stock
         cartItems.forEach(item -> {
