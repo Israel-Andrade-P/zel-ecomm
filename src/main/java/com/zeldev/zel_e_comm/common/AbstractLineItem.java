@@ -31,5 +31,4 @@ public abstract class AbstractLineItem extends BaseEntity {
             throw new IllegalStateException("Quantity must be positive");
         }
     }
-
 }
