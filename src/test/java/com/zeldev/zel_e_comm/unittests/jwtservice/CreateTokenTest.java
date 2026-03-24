@@ -41,10 +41,10 @@ public class CreateTokenTest extends JwtServiceBaseTest{
     void greenPath2() {
         UserSecurity user = setup();
 
-        String access = jwtService.createToken(user, Token::getRefresh);
+        String refresh = jwtService.createToken(user, Token::getRefresh);
 
-        assertNotNull(access);
-        assertFalse(access.isBlank());
+        assertNotNull(refresh);
+        assertFalse(refresh.isBlank());
     }
 
     @Test
