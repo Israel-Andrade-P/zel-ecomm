@@ -53,6 +53,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUserWithToken(HttpServletRequest request, String jwt) {
+        System.out.println("hey there im in the filter");
         if (jwt == null) return;
 
         TokenData tokenData = jwtService.getTokenData(jwt);
