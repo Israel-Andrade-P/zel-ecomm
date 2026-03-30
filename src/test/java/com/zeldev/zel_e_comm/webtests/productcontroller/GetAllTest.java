@@ -1,10 +1,9 @@
-package com.zeldev.zel_e_comm.webtests;
+package com.zeldev.zel_e_comm.webtests.productcontroller;
 
 import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,7 +25,6 @@ class GetAllTest extends ProductControllerBaseTest{
                     THEN: return 200 response with products in body
                     """
     )
-    @WithMockUser
     void withCustomParams() {
         mvc.get()
                 .uri(BASE_URI.concat("/products"))
@@ -47,7 +45,6 @@ class GetAllTest extends ProductControllerBaseTest{
                     THEN: return 200 response with products in body
                     """
     )
-    @WithMockUser
     void withDefaultParams() {
         var productResponse = getResponseDto();
         when(productService.getAllProducts(anyInt(), anyInt(), anyString(), anyString())).thenReturn(productResponse);
@@ -60,23 +57,6 @@ class GetAllTest extends ProductControllerBaseTest{
                 .isEqualTo("tv");
 
         verify(productService).getAllProducts(parseInt(PAGE_NUMBER), parseInt(PAGE_SIZE), SORT_ENTITY_BY, SORT_DIR);
-    }
-
-    @Test
-    @DisplayName(
-            """
-                    GIVEN: default query params with no auth object
-                    WHEN: it hits /products
-                    THEN: return 401 response
-                    """
-    )
-    void noAuthObj() {
-        mvc.get()
-                .uri(BASE_URI.concat("/products"))
-                .exchange().assertThat()
-                .hasStatus(UNAUTHORIZED);
-
-        verify(productService, never()).getAllProducts(parseInt(PAGE_NUMBER), parseInt(PAGE_SIZE), SORT_ENTITY_BY, SORT_DIR);
     }
 
     private ProductResponse getResponseDto() {
