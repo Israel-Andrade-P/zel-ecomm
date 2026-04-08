@@ -5,12 +5,15 @@ spring:
     url: jdbc:postgresql://localhost:5432/ecomm
     username: zel
     password: cheese
+    hikari:
+      auto-commit: false
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
 project:
   path:
     images: ./images

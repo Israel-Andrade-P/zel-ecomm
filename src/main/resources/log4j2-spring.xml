@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <!-- Customize log pattern -->
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+        </Property>
+
+        <!-- Log file location -->
+        <Property name="LOG_FILE">logs/app.log</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console output -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- File output -->
+<!--        <File name="File" fileName="${LOG_FILE}">-->
+<!--            <PatternLayout pattern="${LOG_PATTERN}"/>-->
+<!--        </File>-->
+
+<!--        &lt;!&ndash; Rolling file (recommended for real apps) &ndash;&gt;-->
+<!--        <RollingFile name="RollingFile"-->
+<!--                     fileName="${LOG_FILE}"-->
+<!--                     filePattern="logs/app-%d{yyyy-MM-dd}.log.gz">-->
+<!--            <PatternLayout pattern="${LOG_PATTERN}"/>-->
+<!--            <Policies>-->
+<!--                <TimeBasedTriggeringPolicy interval="1"/>-->
+<!--            </Policies>-->
+<!--        </RollingFile>-->
+    </Appenders>
+
+    <Loggers>
+        <!-- Application-specific logging -->
+        <Logger name="com.zeldev.zel_e_comm" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+
+        <!-- Spring logs -->
+        <Logger name="org.springframework" level="info"/>
+
+        <!-- Root logger -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

@@ -51,6 +51,8 @@ public class ProductServiceImpl implements ProductService {
         entity.setCategory(category);
         entity.setSpecialPrice(entity.calculateSpecialPrice());
         entity.setImage("default.png");
+        //.save is called by the SimpleJpaRepository impl, if it's a new entity calls entityManager.persist else calls .merge. It evaluates the Id field
+        //if Id is null then considers as a new entity
         ProductEntity saved = productRepository.save(entity);
         return toDTO(saved);
     }

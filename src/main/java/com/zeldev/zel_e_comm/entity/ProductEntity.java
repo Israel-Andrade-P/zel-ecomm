@@ -26,10 +26,11 @@ public class ProductEntity extends BaseEntity {
     private BigDecimal price;
     private Integer discount;
     private BigDecimal specialPrice;
-    @ManyToOne
+    //everytime you have a ManyToOne or ManyToMany change the fetch type to LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private UserEntity seller;
 

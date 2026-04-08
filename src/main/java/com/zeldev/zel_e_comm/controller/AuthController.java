@@ -1,5 +1,6 @@
 package com.zeldev.zel_e_comm.controller;
 
+import com.zeldev.zel_e_comm.domain.CustomAuthentication;
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.request.KeyRequest;
@@ -8,26 +9,22 @@ import com.zeldev.zel_e_comm.dto.response.LoginResponse;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
+import com.zeldev.zel_e_comm.util.AuthUtils;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.zeldev.zel_e_comm.constants.Constants.ACCOUNT_VERIFIED_MESSAGE;
 import static com.zeldev.zel_e_comm.util.RequestUtils.getResponse;
 import static java.util.Collections.emptyMap;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -36,10 +33,11 @@ import static org.springframework.http.HttpStatus.OK;
 public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
+    private final AuthUtils authUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.createUser(request));
+    public ResponseEntity<UserResponse> register(@RequestBody @Valid UserRequest request) {
+        return ResponseEntity.status(CREATED).body(authService.createUser(request));
     }
 
     @GetMapping("/verify")
@@ -52,24 +50,23 @@ public class AuthController {
 
     @PostMapping("/new_key")
     public ResponseEntity<String> getNewKey(@RequestBody KeyRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.getNewKey(request));
+        return ResponseEntity.status(OK).body(authService.getNewKey(request));
     }
 
     @GetMapping("/username")
-    public ResponseEntity<String> getUsername(Authentication authentication) {
-        if (authentication == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-        return ResponseEntity.status(HttpStatus.OK).body(authentication.getName());
+    public ResponseEntity<String> getUsername() {
+        return ResponseEntity.status(OK).body(authUtils.getLoggedInUsername());
     }
 
     @GetMapping("/user")
-    public ResponseEntity<LoginResponse> getUserDetails(Authentication authentication) {
-        UserSecurity user = (UserSecurity) authentication.getPrincipal();
-        return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(user.getUsername(), user.getAuthorities()));
+    public ResponseEntity<LoginResponse> getUserDetails() {
+        CustomAuthentication auth = authUtils.getAuthObj();
+        return ResponseEntity.status(OK).body(new LoginResponse(auth.getEmail(), auth.getAuthorities()));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
         ResponseCookie emptyCookie = jwtService.generateEmptyCookie();
-        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, emptyCookie.toString()).body("Signed out!");
+        return ResponseEntity.status(OK).header(HttpHeaders.SET_COOKIE, emptyCookie.toString()).body("Signed out!");
     }
 }
