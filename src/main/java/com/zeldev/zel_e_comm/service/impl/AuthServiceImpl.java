@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
                 userCache.evict(user.getEmail());
             }
         }
-        userRepository.save(user);
+        //userRepository.save(user);
     }
 
     @Override
@@ -109,6 +109,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     public UserEntity getUserEntityByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(email, "User"));
+    }
+
+    @Override
+    public UserEntity getUserWithRoles(String email) {
+        return userRepository.findByIdWithRoles(email).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override

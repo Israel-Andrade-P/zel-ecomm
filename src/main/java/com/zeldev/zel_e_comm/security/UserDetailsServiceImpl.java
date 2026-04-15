@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity user = authService.getUserEntityByEmail(email);
+        UserEntity user = authService.getUserWithRoles(email);
         CredentialEntity credential = authService.getCredentialByUserId(user.getId());
         return fromUserEntity(user, credential.getPassword());
     }

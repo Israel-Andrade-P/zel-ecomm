@@ -1,6 +1,5 @@
 package com.zeldev.zel_e_comm.webtests.ordercontroller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zeldev.zel_e_comm.dto.response.OrderItemResponse;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
 import com.zeldev.zel_e_comm.enumeration.OrderStatus;

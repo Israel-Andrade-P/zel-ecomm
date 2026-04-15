@@ -16,6 +16,7 @@ public interface AuthService {
     void updateLoginAttempt(String email, LoginType loginType);
     CredentialEntity getCredentialByUserId(Long userId);
     UserEntity getUserEntityByEmail(String email);
+    UserEntity getUserWithRoles(String email);
 
     @Nullable String getNewKey(KeyRequest keyRequest);
     //LocationEntity getLocationByUserId(Long userId);

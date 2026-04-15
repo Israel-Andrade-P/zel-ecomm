@@ -44,7 +44,7 @@ public class CartServiceImpl implements CartService {
 
         productService.validateQuantity(quantity, product.getPublicId());
 
-        cartRepository.save(cart);
+        if (cart.getId() == null) cartRepository.save(cart);
 
         cartItemService.createItem(product, cart, quantity);
 

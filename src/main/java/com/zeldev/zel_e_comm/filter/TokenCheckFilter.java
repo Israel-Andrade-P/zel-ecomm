@@ -53,13 +53,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUserWithToken(HttpServletRequest request, String jwt) {
-        System.out.println("hey there im in the filter");
         if (jwt == null) return;
 
         TokenData tokenData = jwtService.getTokenData(jwt);
         if (!tokenData.isValid()) return;
 
-        UserEntity DBUser = userRepository.findByIdWithRoles(tokenData.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity DBUser = userRepository.findByIdWithRoles(tokenData.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!DBUser.getTokenVersion().equals(tokenData.getTokenVersion()) || DBUser.getStatus() != ACTIVE) return;
 
         UserSecurity user  = fromUserEntity(DBUser, "");

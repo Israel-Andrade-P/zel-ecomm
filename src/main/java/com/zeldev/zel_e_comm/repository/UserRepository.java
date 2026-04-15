@@ -19,6 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("DELETE FROM UserEntity u WHERE u.username=?1")
     int deleteByUsername(@Param("username") String username);
 
-    @Query("SELECT u FROM UserEntity u JOIN FETCH u.roles WHERE u.id=?1")
-    Optional<UserEntity> findByIdWithRoles(Long id);
+    @Query("SELECT u FROM UserEntity u JOIN FETCH u.roles WHERE u.email=?1")
+    Optional<UserEntity> findByIdWithRoles(String email);
 }

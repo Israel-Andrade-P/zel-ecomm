@@ -42,7 +42,6 @@ public class UpdateLoginAttemptTest extends AuthServiceBaseTest{
 
         assertEquals(1, user.getLoginAttempts());
         assertTrue(user.isAccountNonLocked());
-        verify(userRepository, times(1)).save(user);
         verify(userCache, times(1)).put(user.getEmail(), user.getLoginAttempts());
     }
 
@@ -67,8 +66,7 @@ public class UpdateLoginAttemptTest extends AuthServiceBaseTest{
 
         assertEquals(3, user.getLoginAttempts());
         assertTrue(user.isAccountNonLocked());
-        verify(userRepository, times(1)).save(user);
-        verify(userCache, times(1)).put(user.getEmail(), user.getLoginAttempts());
+        verify(userCache).put(user.getEmail(), user.getLoginAttempts());
     }
 
     @Test
@@ -93,8 +91,7 @@ public class UpdateLoginAttemptTest extends AuthServiceBaseTest{
 
         assertEquals(6, user.getLoginAttempts());
         assertFalse(user.isAccountNonLocked());
-        verify(userRepository, times(1)).save(user);
-        verify(userCache, times(1)).put(user.getEmail(), user.getLoginAttempts());
+        verify(userCache).put(user.getEmail(), user.getLoginAttempts());
     }
 
     @Test
@@ -118,8 +115,7 @@ public class UpdateLoginAttemptTest extends AuthServiceBaseTest{
 
         assertEquals(0, user.getLoginAttempts());
         assertTrue(user.isAccountNonLocked());
-        verify(userRepository, times(1)).save(user);
-        verify(userCache, times(1)).evict(user.getEmail());
+        verify(userCache).evict(user.getEmail());
     }
 
     @Test
