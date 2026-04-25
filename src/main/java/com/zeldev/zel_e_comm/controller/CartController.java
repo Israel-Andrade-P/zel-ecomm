@@ -30,7 +30,7 @@ public class CartController {
         return ResponseEntity.status(CREATED).body(cartService.addProductToCart(productId, quantity));
     }
 
-    @GetMapping("/carts")
+    @GetMapping("/admin/carts")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CartDTO>> getCarts() {
         return ResponseEntity.status(OK).body(cartService.getCarts());
@@ -41,12 +41,22 @@ public class CartController {
         return ResponseEntity.status(OK).body(cartService.getCart());
     }
 
-    @PutMapping("/carts/products/{product_id}/quantity/{operation}")
-    public ResponseEntity<CartDTO> updateCartProduct(@PathVariable("product_id") String productId, @PathVariable("operation") String operation) {
-        return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, operation.equalsIgnoreCase("delete") ? -1 : 1));
+//    @PutMapping("/carts/products/{product_id}/quantity/{operation}")
+//    public ResponseEntity<CartDTO> updateCartProduct(@PathVariable("product_id") String productId, @PathVariable("operation") String operation) {
+//        return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, operation.equalsIgnoreCase("delete") ? -1 : 1));
+//    }
+
+    @PutMapping("/carts/products/{product_id}/quantity/increase")
+    public ResponseEntity<CartDTO> increaseCartProduct(@PathVariable("product_id") String productId) {
+        return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, 1));
     }
 
-    @DeleteMapping("/carts/product/{product_id}")
+    @PutMapping("/carts/products/{product_id}/quantity/decrease")
+    public ResponseEntity<CartDTO> decreaseCartProduct(@PathVariable("product_id") String productId) {
+        return ResponseEntity.status(OK).body(cartService.updateQuantity(productId, -1));
+    }
+
+    @DeleteMapping("/carts/products/{product_id}")
     public ResponseEntity<Response> deleteItem(@PathVariable("product_id") String productId, HttpServletRequest request) {
         cartService.deleteItemFromCart(productId);
         return ResponseEntity.status(OK).body(getResponse(request, emptyMap(), "Item removed", OK));

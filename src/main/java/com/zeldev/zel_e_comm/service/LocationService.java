@@ -18,8 +18,8 @@ public interface LocationService {
 
     LocationEntity getByPublicIdAndUserEmail(String locationId, String userEmail);
 
-    @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String zipCode);
+    @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String publicId);
 
-    void deleteLocation(String zipCode);
+    void deleteLocation(String publicId);
 
 }

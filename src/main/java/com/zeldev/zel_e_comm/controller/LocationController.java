@@ -3,7 +3,6 @@ package com.zeldev.zel_e_comm.controller;
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.request.LocationDTO;
 import com.zeldev.zel_e_comm.service.LocationService;
-import com.zeldev.zel_e_comm.util.RequestUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+import static com.zeldev.zel_e_comm.util.RequestUtils.getResponse;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -52,6 +52,6 @@ public class LocationController {
     @PreAuthorize("hasRole('ADMIN') || @locationSecurity.isOwner(#publicId)")
     public ResponseEntity<Response> delete(@PathVariable("id") String publicId, HttpServletRequest request) {
         locationService.deleteLocation(publicId);
-        return ResponseEntity.status(OK).body(RequestUtils.getResponse(request, Collections.emptyMap(), "Location deleted", OK));
+        return ResponseEntity.status(OK).body(getResponse(request, Collections.emptyMap(), "Location deleted", OK));
     }
 }

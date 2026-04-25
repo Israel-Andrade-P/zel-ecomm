@@ -47,7 +47,7 @@ public class AuthFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         try{
-            LoginRequest user = new ObjectMapper().configure(AUTO_CLOSE_SOURCE, true).readValue(request.getInputStream(), LoginRequest.class);
+            LoginRequest user = new ObjectMapper()/*.configure(AUTO_CLOSE_SOURCE, true)*/.readValue(request.getInputStream(), LoginRequest.class);
             authService.updateLoginAttempt(user.email(), LOGIN_ATTEMPT);
             CustomAuthentication authentication = CustomAuthentication.unauthenticated(user.email(), user.password());
             return getAuthenticationManager().authenticate(authentication);
