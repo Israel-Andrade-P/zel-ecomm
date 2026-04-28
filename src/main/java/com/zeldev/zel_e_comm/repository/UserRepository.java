@@ -22,3 +22,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u FROM UserEntity u JOIN FETCH u.roles WHERE u.email=?1")
     Optional<UserEntity> findByIdWithRoles(String email);
 }
+
+
+
+
+
+
+
+

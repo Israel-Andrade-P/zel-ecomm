@@ -14,7 +14,6 @@ import com.zeldev.zel_e_comm.exception.*;
 import com.zeldev.zel_e_comm.repository.*;
 import com.zeldev.zel_e_comm.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +31,6 @@ import static java.time.LocalDateTime.now;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
@@ -43,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private final CacheStore<String, Integer> userCache;
 
     @Override
+    @Transactional
     public UserResponse createUser(UserRequest user) {
         UserEntity userEntity = userRepository.save(createNewUser(user));
         credentialRepository.save(new CredentialEntity(userEntity, encoder.encode(user.password())));
@@ -52,27 +51,31 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(noRollbackFor = ConfirmationKeyExpiredException.class)
     public void verifyAccount(String key) {
-        var confirmationEntity = getConfirmationByKey(key);
-        isKeyValid(confirmationEntity);
-        var userEntity = getUserEntityByEmail(confirmationEntity.getUser().getEmail());
-        userEntity.setEnabled(true);
-        confirmationRepository.delete(confirmationEntity);
+        ConfirmationEntity confirmation = getConfirmationByKey(key);
+
+        if (isExpired(confirmation)) {
+            handleExpiredKey(confirmation);
+        }
+
+        confirmUser(confirmation);
     }
 
     @Override
+    @Transactional
     public void updateLoginAttempt(String email, LoginType loginType) {
         var user = getUserEntityByEmail(email);
-        switch (loginType){
+        switch (loginType) {
             case LOGIN_ATTEMPT -> {
-                if (userCache.get(user.getEmail()) == null){
+                if (userCache.get(user.getEmail()) == null) {
                     user.setLoginAttempts(0);
                     user.setAccountNonLocked(true);
                 }
                 Integer attempts = user.getLoginAttempts() + 1;
                 user.setLoginAttempts(attempts);
                 userCache.put(user.getEmail(), attempts);
-                if (attempts > 5){
+                if (attempts > 5) {
                     user.setAccountNonLocked(false);
                 }
             }
@@ -98,15 +101,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new CustomInvalidKeyException("The key is invalid"));
     }
 
-    private void isKeyValid(ConfirmationEntity confirmationEntity) {
-        if (confirmationEntity.getCreatedAt().plusMinutes(EXPIRATION).isBefore(now())){
-            confirmationRepository.delete(confirmationEntity);
-            throw new ConfirmationKeyExpiredException("The confirmation key is expired. Please request a new key");
-        }
-    }
-
     @Override
-    @Transactional(readOnly = true)
     public UserEntity getUserEntityByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(email, "User"));
     }
@@ -117,7 +112,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public CredentialEntity getCredentialByUserId(Long userId) {
         return credentialRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
     }
@@ -135,11 +129,29 @@ public class AuthServiceImpl implements AuthService {
         return roles;
     }
 
+    private void confirmUser(ConfirmationEntity confirmation) {
+        UserEntity user = confirmation.getUser();
+
+        user.setEnabled(true);
+        confirmationRepository.delete(confirmation);
+    }
+
+    private boolean isExpired(ConfirmationEntity confirmation) {
+        return confirmation.getCreatedAt()
+                .plusMinutes(EXPIRATION)
+                .isBefore(now());
+    }
+
+    private void handleExpiredKey(ConfirmationEntity confirmation) {
+        confirmationRepository.delete(confirmation);
+        throw new ConfirmationKeyExpiredException("The confirmation key is expired. Please request a new key");
+    }
+
     private final Supplier<String> suppliesKey = () -> {
         String pool = "0123456789";
         SecureRandom random = new SecureRandom();
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             int randomIndex = random.nextInt(pool.length());
             builder.append(pool.charAt(randomIndex));
         }

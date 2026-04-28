@@ -21,7 +21,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class ConfirmationEntity extends BaseEntity {
     @Column(name = "conf_key")
     private String confKey;
-    @OneToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIdentityReference(alwaysAsId = true)

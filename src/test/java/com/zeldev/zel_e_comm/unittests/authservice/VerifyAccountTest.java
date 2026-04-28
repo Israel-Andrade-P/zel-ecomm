@@ -4,7 +4,6 @@ import com.zeldev.zel_e_comm.entity.ConfirmationEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.exception.ConfirmationKeyExpiredException;
 import com.zeldev.zel_e_comm.exception.CustomInvalidKeyException;
-import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,13 +44,11 @@ public class VerifyAccountTest extends AuthServiceBaseTest {
         user.setEmail("user@test.com");
 
         when(confirmationRepository.findByKey(key)).thenReturn(Optional.of(confirmationEntity));
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         authService.verifyAccount(key);
 
         assertTrue(user.isEnabled());
 
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
         verify(confirmationRepository, times(1)).findByKey(key);
         verify(confirmationRepository,times(1)).delete(confirmationEntity);
     }
@@ -71,7 +68,6 @@ public class VerifyAccountTest extends AuthServiceBaseTest {
         assertThrows(CustomInvalidKeyException.class, () -> authService.verifyAccount(key));
 
         verify(confirmationRepository, times(1)).findByKey(key);
-        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
@@ -90,24 +86,5 @@ public class VerifyAccountTest extends AuthServiceBaseTest {
 
         assertThrows(ConfirmationKeyExpiredException.class, () -> authService.verifyAccount(key));
         verify(confirmationRepository, times(1)).delete(confirmationEntity);
-    }
-
-    @Test
-    @DisplayName(
-            """
-          GIVEN: String key
-          WHEN: verifyAccount is called
-          THEN: provide invalid user email
-          AND:  throws exception
-                  """
-    )
-    void invalidEmail() {
-        user.setEmail("invalid@fake.com");
-
-        when(confirmationRepository.findByKey(key)).thenReturn(Optional.of(confirmationEntity));
-        when(userRepository.findByEmail(user.getEmail())).thenThrow(new ResourceNotFoundException(user.getEmail(), "User"));
-
-        assertThrows(ResourceNotFoundException.class, () -> authService.verifyAccount(key));
-        verify(userRepository, times(1)).findByEmail(user.getEmail());
     }
 }
