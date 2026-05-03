@@ -58,7 +58,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         TokenData tokenData = jwtService.getTokenData(jwt);
         if (!tokenData.isValid()) return;
 
-        UserEntity DBUser = userRepository.findByIdWithRoles(tokenData.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity DBUser = userRepository.findByEmailWithRoles(tokenData.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!DBUser.getTokenVersion().equals(tokenData.getTokenVersion()) || DBUser.getStatus() != ACTIVE) return;
 
         UserSecurity user  = fromUserEntity(DBUser, "");

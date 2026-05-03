@@ -108,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserEntity getUserWithRoles(String email) {
-        return userRepository.findByIdWithRoles(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userRepository.findByEmailWithRoles(email).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override
