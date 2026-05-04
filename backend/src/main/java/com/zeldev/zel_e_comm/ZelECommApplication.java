@@ -9,5 +9,4 @@ public class ZelECommApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ZelECommApplication.class, args);
 	}
-
 }
