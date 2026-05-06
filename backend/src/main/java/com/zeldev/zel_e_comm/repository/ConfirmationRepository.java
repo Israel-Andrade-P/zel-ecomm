@@ -15,5 +15,5 @@ public interface ConfirmationRepository extends JpaRepository<ConfirmationEntity
     )
     Optional<ConfirmationEntity> findByKey(String key);
 
-    ConfirmationEntity findByUser(UserEntity user);
+    //ConfirmationEntity findByUser(UserEntity user);
 }

@@ -17,12 +17,12 @@ public interface CartRepository extends JpaRepository<CartEntity, Long> {
     )
     Optional<CartEntity> findCartByUserEmail(String email);
 
-    @Query(
-            """
-                    SELECT c FROM CartEntity c WHERE c.user.email=?1 AND c.id=?2
-                    """
-    )
-    Optional<CartEntity> findCartByEmailAndCartId(String email, Long cartId);
+//    @Query(
+//            """
+//                    SELECT c FROM CartEntity c WHERE c.user.email=?1 AND c.id=?2
+//                    """
+//    )
+//    Optional<CartEntity> findCartByEmailAndCartId(String email, Long cartId);
 
 //    @Query(
 //            """
