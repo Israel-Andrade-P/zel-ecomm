@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
+import ProductViewModel from "./ProductViewModel";
 
 type ProductCardProps = {
   productId: number;
@@ -26,8 +27,7 @@ const ProductCard = ({ productId, productName, image, description, quantity, pri
   return (
     <div className="border rounded-lg shadow-xl overflow-hidden transition-shadow duration-300">
       <div onClick={() => { handleProductView({ productId, productName, image, description, quantity, price, discount, specialPrice }) }} className="w-full overflow-hidden aspect-3/2">
-        <img className="w-full h-full cursor-pointer transition-transform duration-300 transform hover:scale-105" src={image} alt={productName}>
-        </img>
+        <img className="w-full h-full cursor-pointer transition-transform duration-300 transform hover:scale-105" src={image} alt={productName}></img>
       </div>
       <div className="p-4">
         <h2 onClick={() => { handleProductView({ productId, productName, image, description, quantity, price, discount, specialPrice }) }} className="text-lg font-semibold mb-2 cursor-pointer">
@@ -67,6 +67,7 @@ const ProductCard = ({ productId, productName, image, description, quantity, pri
         </div>
 
       </div>
+      <ProductViewModel open={openProductViewModel} setOpen={setOpenProductViewModel} product={selectedViewProduct} isAvailable={isAvailable} />
     </div>
   )
 }
