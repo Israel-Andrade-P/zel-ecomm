@@ -57,7 +57,7 @@ public class ProductController {
         return ResponseEntity.status(OK).body(productService.getProductsBySeller(page, size, sortBy, sortOrder));
     }
 
-    @GetMapping("/categories/{category_id}/products")
+    @GetMapping("/products/categories/{category_id}")
     public ResponseEntity<ProductResponse> getProductsByCategory(
             @PathVariable("category_id") String id,
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,

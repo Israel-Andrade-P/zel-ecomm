@@ -13,5 +13,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @Setter
 public class AppConfig {
     private String images;
+    private String url;
 }
 

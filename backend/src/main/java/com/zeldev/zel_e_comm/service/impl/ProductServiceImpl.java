@@ -15,8 +15,8 @@ import com.zeldev.zel_e_comm.service.CategoryService;
 import com.zeldev.zel_e_comm.service.FileService;
 import com.zeldev.zel_e_comm.service.ProductService;
 import com.zeldev.zel_e_comm.util.AuthUtils;
+import com.zeldev.zel_e_comm.util.ProductUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import static com.zeldev.zel_e_comm.util.ProductUtils.*;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -39,13 +37,14 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final FileService fileService;
+    private final ProductUtils productUtils;
     private final AuthUtils authUtils;
     private final AppConfig appConfig;
 
     @Override
     public ProductDTO create(ProductDTO request, String categoryName) {
         var user = userRepository.findByEmail(authUtils.getLoggedInEmail()).orElseThrow(() -> new UserNotFoundException("user not found"));
-        ProductEntity entity = buildProductEntity(request);
+        ProductEntity entity = productUtils.buildProductEntity(request);
         entity.setSeller(user);
         CategoryEntity category = categoryService.getByName(categoryName);
         entity.setCategory(category);
@@ -54,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
         //.save is called by the SimpleJpaRepository impl, if it's a new entity calls entityManager.persist else calls .merge. It evaluates the Id field
         //if Id is null then considers as a new entity
         ProductEntity saved = productRepository.save(entity);
-        return toDTO(saved);
+        return productUtils.toDTO(saved);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return buildProductResponse(productPage, products);
+        return productUtils.buildProductResponse(productPage, products);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductEntity> productPage = productRepository.findByCategory_IdOrderByPriceAsc(categoryService.getByName(id).getId(), pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return buildProductResponse(productPage, products);
+        return productUtils.buildProductResponse(productPage, products);
     }
 
     @Override
@@ -85,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductEntity> productPage = productRepository.findByNameLikeIgnoreCase("%" + keyword + "%", pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return buildProductResponse(productPage, products);
+        return productUtils.buildProductResponse(productPage, products);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductEntity> productPage = productRepository.findBySellerEmail(authUtils.getLoggedInEmail(), pageDetails);
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");
-        return buildProductResponse(productPage, products);
+        return productUtils.buildProductResponse(productPage, products);
     }
 
     @Override
@@ -127,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
             productDB.setQuantity(productDTO.quantity());
         }
 
-        return toDTO(productDB);
+        return productUtils.toDTO(productDB);
     }
 
     @Override
@@ -136,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.delete(productDB);
 
-        return toDTO(productDB);
+        return productUtils.toDTO(productDB);
     }
 
     @Override
@@ -151,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productDB = findByPublicId(productId);
         String filename = fileService.uploadImage(appConfig.getImages(), image);
         productDB.setImage(filename);
-        return toDTO(productDB);
+        return productUtils.toDTO(productDB);
     }
 
     @Override

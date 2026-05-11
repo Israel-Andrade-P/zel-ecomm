@@ -13,7 +13,7 @@ public class Constants {
     public static final String LOGIN_PATH = "/api/v1/auth/login";
     public static final String PASSWORD_PROTECTED = "PASSWORD_PROTECTED";
     public static final String[] WHITE_LIST =
-            {"/api/v1/auth/**", "/v3/api-docs/**","/swagger-ui/**",
+            {"/api/v1/auth/**", "/api/v1/products/**", "/v3/api-docs/**","/swagger-ui/**",
                     "/swagger-ui.html", "/api-docs/**", "/swagger-resources/**", "/aggregate/**", "/actuator/**"};
     public static final String ACCOUNT_VERIFIED_MESSAGE = "Your account has been verified";
 }
