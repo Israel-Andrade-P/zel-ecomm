@@ -2,6 +2,7 @@ import api from "../../api/api";
 
 export const fetchProducts = () => async (dispatch) => {
   try {
+    dispatch({ type: "IS_FETCHING" });
     const { data } = await api.get(`/products`);
     dispatch({
       type: "FETCH_PRODUCTS",
@@ -12,7 +13,12 @@ export const fetchProducts = () => async (dispatch) => {
       totalPages: data.totalPages,
       lastPage: data.lastPage,
     });
+    dispatch({ type: "FETCH_SUCCESS" });
   } catch (error) {
     console.log(error);
+    dispatch({
+      type: "FETCH_ERROR",
+      payload: error?.response?.data?.message || "Failed to fetch products",
+    });
   }
 };
