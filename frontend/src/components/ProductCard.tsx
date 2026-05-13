@@ -3,8 +3,8 @@ import { FaShoppingCart } from "react-icons/fa";
 import ProductViewModel from "./ProductViewModel";
 
 type ProductCardProps = {
-  productId: number;
-  productName: string;
+  publicId: string;
+  name: string;
   image: string;
   description: string;
   quantity: number;
@@ -13,7 +13,7 @@ type ProductCardProps = {
   specialPrice: number;
 };
 
-const ProductCard = ({ productId, productName, image, description, quantity, price, discount, specialPrice, }: ProductCardProps) => {
+const ProductCard = ({ publicId, name, image, description, quantity, price, discount, specialPrice, }: ProductCardProps) => {
   const [openProductViewModel, setOpenProductViewModel] = useState(false);
   const btnLoader = false;
   const [selectedViewProduct, setSelectedViewProduct] = useState({});
@@ -26,12 +26,12 @@ const ProductCard = ({ productId, productName, image, description, quantity, pri
 
   return (
     <div className="border rounded-lg shadow-xl overflow-hidden transition-shadow duration-300">
-      <div onClick={() => { handleProductView({ productId, productName, image, description, quantity, price, discount, specialPrice }) }} className="w-full overflow-hidden aspect-3/2">
-        <img className="w-full h-full cursor-pointer transition-transform duration-300 transform hover:scale-105" src={image} alt={productName}></img>
+      <div onClick={() => { handleProductView({ publicId, name, image, description, quantity, price, discount, specialPrice }) }} className="w-full overflow-hidden aspect-3/2">
+        <img className="w-full h-full cursor-pointer transition-transform duration-300 transform hover:scale-105" src={image} alt={name}></img>
       </div>
       <div className="p-4">
-        <h2 onClick={() => { handleProductView({ productId, productName, image, description, quantity, price, discount, specialPrice }) }} className="text-lg font-semibold mb-2 cursor-pointer">
-          {productName}
+        <h2 onClick={() => { handleProductView({ publicId, name, image, description, quantity, price, discount, specialPrice }) }} className="text-lg font-semibold mb-2 cursor-pointer">
+          {name}
         </h2>
 
         <div className="min-h-20 max-h-20">

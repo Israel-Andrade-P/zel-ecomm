@@ -18,8 +18,8 @@ function ProductViewModel({
   if (!product) return null;
 
   const {
-    productId,
-    productName,
+    publicId,
+    name,
     image,
     description,
     quantity,
@@ -42,13 +42,13 @@ function ProductViewModel({
           <DialogPanel transition className="relative transform overflow-hidden rounded-lg bg-white p-5 shadow-xl transition-all md:max-w-155 md:min-w-155 w-full">
             {image && (
               <div className="flex justify-center aspect-3/2">
-                <img src={image} alt={productName}></img>
+                <img src={image} alt={name}></img>
               </div>
             )}
 
             <div className="px-6 pt-10 pb-2">
               <DialogTitle className="lg:text-3xl sm:text-2xl text-xl font-semibold leading-6 text-gray-800 mb-4">
-                {productName}
+                {name}
               </DialogTitle>
 
 
