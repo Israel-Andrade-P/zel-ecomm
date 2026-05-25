@@ -3,7 +3,6 @@ package com.zeldev.zel_e_comm.service;
 import com.zeldev.zel_e_comm.dto.request.ProductDTO;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.util.UUID;
 
 public interface ProductService {
     ProductDTO create(ProductDTO request, String category);
-    ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder);
+    ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder, String category, String keyword);
 
     ProductResponse getProductsByCategory(String id, Integer page, Integer size, String sortBy, String sortOrder);
 

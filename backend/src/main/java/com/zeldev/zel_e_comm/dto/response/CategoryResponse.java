@@ -7,7 +7,7 @@ import java.util.List;
 
 @Builder
 public record CategoryResponse(
-        List<CategoryDTO> categories,
+        List<CategoryDTO> content,
         Integer pageNumber,
         Integer pageSize,
         Long totalElements,

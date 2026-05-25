@@ -25,7 +25,7 @@ public class CategoryController {
         return ResponseEntity.status(CREATED).body(service.createCategory(request));
     }
 
-    @GetMapping("categories/all")
+    @GetMapping("/categories")
     public ResponseEntity<CategoryResponse> getAll(@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
                                                    @RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) Integer size,
                                                    @RequestParam(name = "sortBy", defaultValue = SORT_ENTITY_BY, required = false) String sortBy,

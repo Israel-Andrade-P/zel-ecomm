@@ -16,13 +16,14 @@ public class CategoryUtils {
 
     public static CategoryDTO toDTO(CategoryEntity entity) {
         return CategoryDTO.builder()
+                .id(entity.getId())
                 .name(entity.getName())
                 .build();
     }
 
     public static CategoryResponse categoryResponseBuilder(Page<CategoryEntity> pageInfo, List<CategoryEntity> categories) {
         return CategoryResponse.builder()
-                .categories(categories.stream().map(CategoryUtils::toDTO).toList())
+                .content(categories.stream().map(CategoryUtils::toDTO).toList())
                 .pageNumber(pageInfo.getNumber())
                 .pageSize(pageInfo.getSize())
                 .totalElements(pageInfo.getTotalElements())

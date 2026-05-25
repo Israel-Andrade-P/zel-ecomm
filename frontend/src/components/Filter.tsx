@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 import { FiArrowDown, FiArrowUp, FiRefreshCw, FiSearch } from "react-icons/fi"
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 
-const Filter = () => {
-  const categories = [
-    { categoryId: 1, categoryName: "Electronics" },
-    { categoryId: 2, categoryName: "Furniture" },
-    { categoryId: 3, categoryName: "Games" },
-  ]
+const Filter = ({ categories }) => {
 
   const [searchParams] = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -21,7 +16,7 @@ const Filter = () => {
 
   useEffect(() => {
     const currentCategory = searchParams.get("category") || "all";
-    const currentSortOrder = searchParams.get("sortby") || "asc";
+    const currentSortOrder = searchParams.get("sortOrder") || "asc";
     const currentSearchTerm = searchParams.get("keyword") || "";
 
     setCategory(currentCategory);
@@ -58,7 +53,7 @@ const Filter = () => {
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => {
       const newOrder = (prevOrder === "asc") ? "desc" : "asc";
-      params.set("sortby", newOrder);
+      params.set("sortOrder", newOrder);
       navigate(`${path}?${params}`);
       return newOrder;
     })
@@ -84,7 +79,7 @@ const Filter = () => {
             className="min-w-30 text-slate-800 border-slate-700">
             <MenuItem value="all">All</MenuItem>
             {categories.map((item) => (
-              <MenuItem key={item.categoryId} value={item.categoryName}>{item.categoryName}</MenuItem>
+              <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
             ))}
           </Select>
         </FormControl>

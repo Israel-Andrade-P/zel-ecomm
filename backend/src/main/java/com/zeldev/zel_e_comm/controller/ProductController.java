@@ -41,9 +41,11 @@ public class ProductController {
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
             @RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) Integer size,
             @RequestParam(name = "sortBy", defaultValue = SORT_ENTITY_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder
+            @RequestParam(name = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "keyword", required = false) String keyword
     ) {
-        return ResponseEntity.status(OK).body(productService.getAllProducts(page, size, sortBy, sortOrder));
+        return ResponseEntity.status(OK).body(productService.getAllProducts(page, size, sortBy, sortOrder, category, keyword));
     }
 
     @GetMapping("/seller/products")

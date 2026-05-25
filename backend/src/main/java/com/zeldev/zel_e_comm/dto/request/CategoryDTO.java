@@ -8,6 +8,7 @@ import lombok.Builder;
 
 @Builder
 public record CategoryDTO(
+        Long id,
         @NotNull(message = "Name field can not be empty")
         @NotEmpty(message = "Name field can not be empty")
         @Size(min = 2, max = 20, message = "Category name must be between 2 - 20 characters")

@@ -41,7 +41,7 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
 
         when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
 
-        ProductResponse response = productService.getAllProducts(page, size, sortBy, sortOrder);
+        ProductResponse response = productService.getAllProducts(page, size, sortBy, sortOrder, category, keyword);
 
         Pageable pageable = capturePageable();
 
@@ -68,7 +68,7 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
 
         when(productRepository.findAll(any(Pageable.class))).thenReturn(page1);
 
-        assertThrows(APIException.class, () -> productService.getAllProducts(page, size, "name", "asc"));
+        assertThrows(APIException.class, () -> productService.getAllProducts(page, size, "name", "asc", category, keyword));
     }
 
     private Pageable capturePageable() {

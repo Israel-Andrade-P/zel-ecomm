@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,9 +59,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder) {
+    public ProductResponse getAllProducts(Integer page, Integer size, String sortBy, String sortOrder, String category, String keyword) {
         Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
-        Page<ProductEntity> productPage = productRepository.findAll(pageDetails);
+
+        Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        if (keyword != null && !keyword.isBlank()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + keyword.toLowerCase() + "%")
+                    );
+        }
+
+        if (category != null && !category.isBlank()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("category").get("name"), category)
+            );
+        }
+
+        Page<ProductEntity> productPage = productRepository.findAll(spec, pageDetails);
 
         List<ProductEntity> products = productPage.getContent();
         if (products.isEmpty()) throw new APIException("No products have been added yet :(");

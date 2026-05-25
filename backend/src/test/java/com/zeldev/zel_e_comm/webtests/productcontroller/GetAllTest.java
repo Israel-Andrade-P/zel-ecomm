@@ -34,7 +34,7 @@ class GetAllTest extends ProductControllerBaseTest{
                 .param("sortOrder", "desc")
                 .exchange().assertThat().hasStatus(OK);
 
-        verify(productService).getAllProducts(3, 35, "price", "desc");
+        verify(productService).getAllProducts(3, 35, "price", "desc", category, keyword);
     }
 
     @Test
@@ -47,7 +47,7 @@ class GetAllTest extends ProductControllerBaseTest{
     )
     void withDefaultParams() {
         var productResponse = getResponseDto();
-        when(productService.getAllProducts(anyInt(), anyInt(), anyString(), anyString())).thenReturn(productResponse);
+        when(productService.getAllProducts(anyInt(), anyInt(), anyString(), anyString(), category, keyword)).thenReturn(productResponse);
         mvc.get()
                 .uri(BASE_URI.concat("/products"))
                 .exchange().assertThat()
@@ -56,7 +56,7 @@ class GetAllTest extends ProductControllerBaseTest{
                 .extractingPath("$.content[0].name")
                 .isEqualTo("tv");
 
-        verify(productService).getAllProducts(parseInt(PAGE_NUMBER), parseInt(PAGE_SIZE), SORT_ENTITY_BY, SORT_DIR);
+        verify(productService).getAllProducts(parseInt(PAGE_NUMBER), parseInt(PAGE_SIZE), SORT_ENTITY_BY, SORT_DIR, category, keyword);
     }
 
     private ProductResponse getResponseDto() {
