@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import ProductViewModel from "./ProductViewModel";
+import { truncateText } from "../../utils/truncateText";
 
 type ProductCardProps = {
   publicId: string;
@@ -31,11 +32,11 @@ const ProductCard = ({ publicId, name, image, description, quantity, price, disc
       </div>
       <div className="p-4">
         <h2 onClick={() => { handleProductView({ publicId, name, image, description, quantity, price, discount, specialPrice }) }} className="text-lg font-semibold mb-2 cursor-pointer">
-          {name}
+          {truncateText(name)}
         </h2>
 
         <div className="min-h-20 max-h-20">
-          <p className="text-gray-600 text-sm">{description}</p>
+          <p className="text-gray-600 text-sm">{truncateText(description, 50)}</p>
         </div>
 
         <div className="flex items-center justify-between">
