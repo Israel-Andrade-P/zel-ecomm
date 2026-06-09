@@ -45,3 +45,22 @@ export const fetchCategories = () => async (dispatch) => {
     });
   }
 };
+
+export const addToCart =
+  (data, qnt = 1, toast) =>
+  (dispatch, getState) => {
+    //find product
+    const { products } = getState().products;
+    const product = products.find((item) => item.publicId === data.publicId);
+
+    //quantity check
+    const isInStock = product.quantity >= qnt;
+
+    if (isInStock) {
+      dispatch({ type: "ADD_TO_CART", payload: { ...data, quantity: qnt } });
+      toast.success(`${data?.name} added to cart`);
+      localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+    } else {
+      toast.error("Out of stock");
+    }
+  };
