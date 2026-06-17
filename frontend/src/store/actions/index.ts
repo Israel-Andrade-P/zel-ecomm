@@ -64,3 +64,44 @@ export const addToCart =
       toast.error("Out of stock");
     }
   };
+
+export const increaseItemQnt =
+  (data, toast, currentQuantity, setCurrentQuantity) =>
+  (dispatch, getState) => {
+    const { products } = getState().products;
+
+    if (!products) {
+      toast.error("Products are still loading");
+      return;
+    }
+
+    const product = products.find((item) => item.publicId === data.publicId);
+
+    const isInStock = product.quantity >= currentQuantity + 1;
+
+    if (isInStock) {
+      const newQnt = currentQuantity + 1;
+      setCurrentQuantity(newQnt);
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: { ...data, quantity: newQnt + 1 },
+      });
+      localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+    } else {
+      toast.error("Item not in stock");
+    }
+  };
+
+export const decreaseItemQnt = (data, newQnt) => (dispatch, getState) => {
+  dispatch({
+    type: "ADD_TO_CART",
+    payload: { ...data, quantity: newQnt },
+  });
+  localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+};
+
+export const removeFromCart = (data, toast) => (dispatch, getState) => {
+  dispatch({ type: "REMOVE_FROM_CART", payload: data });
+  toast.success(`${data.name} was removed`);
+  localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+};
