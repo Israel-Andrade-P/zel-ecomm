@@ -105,3 +105,9 @@ export const removeFromCart = (data, toast) => (dispatch, getState) => {
   toast.success(`${data.name} was removed`);
   localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
 };
+
+export const authenticateUser =
+  (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
+    try {
+    } catch (error) {}
+  };
