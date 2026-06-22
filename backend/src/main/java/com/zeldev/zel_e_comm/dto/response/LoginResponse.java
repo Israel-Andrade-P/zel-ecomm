@@ -4,4 +4,4 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
-public record LoginResponse (String email, Collection<? extends GrantedAuthority> roles) {}
+public record LoginResponse (String email, String username, Collection<? extends GrantedAuthority> roles) {}

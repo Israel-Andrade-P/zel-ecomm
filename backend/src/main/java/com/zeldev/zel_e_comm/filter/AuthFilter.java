@@ -64,7 +64,7 @@ public class AuthFilter extends AbstractAuthenticationProcessingFilter {
         authService.updateLoginAttempt(user.email(), LOGIN_SUCCESS);
         String token = jwtService.createToken(user, Token::getAccess);
 
-        var loginResponse = new LoginResponse(user.email(), user.getAuthorities());
+        var loginResponse = new LoginResponse(user.email(), user.getUsername(), user.getAuthorities());
         response.addHeader(HttpHeaders.SET_COOKIE, jwtService.generateJwtCookie(token).toString());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.OK.value());

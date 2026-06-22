@@ -30,8 +30,8 @@ const Login = () => {
                 </div>
                 <hr className="mt-2 mb-5 text-black" />
                 <div className="flex flex-col gap-3">
-                    <InputField label="Username" required id="username" type="text" message="*Username is required"
-                        placeholder="Enter Username" register={register} errors={errors} />
+                    <InputField label="Email" required id="email" type="email" message="*Email is required"
+                        placeholder="Enter Email" register={register} errors={errors} />
                     <InputField label="Password" required id="password" type="password" message="*Password is required"
                         placeholder="Enter Password" register={register} errors={errors} />
                 </div>

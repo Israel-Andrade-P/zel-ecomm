@@ -61,7 +61,7 @@ public class AuthController {
     @GetMapping("/user")
     public ResponseEntity<LoginResponse> getUserDetails() {
         CustomAuthentication auth = authUtils.getAuthObj();
-        return ResponseEntity.status(OK).body(new LoginResponse(auth.getEmail(), auth.getAuthorities()));
+        return ResponseEntity.status(OK).body(new LoginResponse(auth.getEmail(), auth.getUsername(), auth.getAuthorities()));
     }
 
     @PostMapping("/logout")

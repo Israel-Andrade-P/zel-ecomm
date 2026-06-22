@@ -109,5 +109,17 @@ export const removeFromCart = (data, toast) => (dispatch, getState) => {
 export const authenticateUser =
   (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
     try {
-    } catch (error) {}
+      setLoader(true);
+      const { data } = await api.post("/auth/login", sendData);
+      dispatch({ type: "LOGIN_USER", payload: data });
+      localStorage.setItem("auth", JSON.stringify(data));
+      reset();
+      toast.success("Login success");
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Internal Server Error");
+    } finally {
+      setLoader(false);
+    }
   };
