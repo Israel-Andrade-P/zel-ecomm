@@ -123,3 +123,19 @@ export const authenticateUser =
       setLoader(false);
     }
   };
+
+export const registerUser =
+  (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
+    try {
+      setLoader(true);
+      const { data } = await api.post("/auth/register", sendData);
+      reset();
+      toast.success(data?.message || "Registered successfully");
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Internal Server Error");
+    } finally {
+      setLoader(false);
+    }
+  };
