@@ -139,3 +139,9 @@ export const registerUser =
       setLoader(false);
     }
   };
+
+export const logUserOut = (navigate) => (dispatch) => {
+  dispatch({ type: "LOG_OUT" });
+  localStorage.removeItem("auth");
+  navigate("/login");
+};

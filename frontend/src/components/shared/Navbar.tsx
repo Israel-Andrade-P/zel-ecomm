@@ -4,7 +4,7 @@ import { FaShoppingCart, FaSignInAlt, FaStore } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { IoIosMenu } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import UserMenu from "../user/UserMenu";
 
 const Navbar = () => {
