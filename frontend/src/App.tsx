@@ -11,6 +11,7 @@ import Cart from './components/cart/Cart'
 import Login from './components/auth/Login'
 import PrivateRoute from './components/shared/PrivateRoute'
 import Register from './components/auth/Register'
+import Checkout from './components/checkout/Checkout'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/cart' element={<Cart />} />
+          <Route path='/checkout' element={<Checkout />} />
           <Route path='/' element={<PrivateRoute publicPage />}>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
