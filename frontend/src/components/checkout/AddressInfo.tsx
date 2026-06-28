@@ -1,9 +1,19 @@
 import { Skeleton } from "@mui/material";
+import { useState } from "react";
 import { FaAddressBook } from "react-icons/fa";
+import AddressInfoModel from "./AddressInfoModel";
+import AddAddressForm from "./AddAddressForm";
 
 const AddressInfo = () => {
     const noAddress = true;
     const isLoading = false;
+    const [openAddressModel, setOpenAddressModel] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState("");
+
+    const addNewAddressHandler = () => {
+        setSelectedAddress("");
+        setOpenAddressModel(true);
+    };
 
     return (
         <div className="pt-4">
@@ -15,8 +25,11 @@ const AddressInfo = () => {
                             No addresses found
                         </h1>
                         <p className="mb-6 text-slate-800 text-center">
-                            Please register an address to complete purchase
+                            Please add an address to complete purchase
                         </p>
+                        <button onClick={addNewAddressHandler} className="px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition-all">
+                            Add
+                        </button>
                     </div>
                 ) : (
                     <div className="relative p-6 rounded-lg max-w-md mx-auto">
@@ -38,6 +51,10 @@ const AddressInfo = () => {
                     </div>
                 )
             }
+
+            <AddressInfoModel open={openAddressModel} setOpen={setOpenAddressModel}>
+                <AddAddressForm address={selectedAddress} setOpen={setOpenAddressModel} />
+            </AddressInfoModel>
         </div>
     )
 }
