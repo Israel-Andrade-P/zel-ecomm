@@ -1,11 +1,12 @@
 package com.zeldev.zel_e_comm.util;
 
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
+import com.zeldev.zel_e_comm.dto.response.LocationResponse;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 
 public class LocationUtils {
-    public static LocationEntity buildLocation(LocationDTO location, UserEntity user){
+    public static LocationEntity buildLocation(LocationRequest location, UserEntity user){
         return LocationEntity.builder()
                 .country(location.country())
                 .city(location.city())
@@ -15,8 +16,9 @@ public class LocationUtils {
                 .build();
     }
 
-    public static LocationDTO toDTO(LocationEntity entity) {
-        return LocationDTO.builder()
+    public static LocationResponse toDTO(LocationEntity entity) {
+        return LocationResponse.builder()
+                .publicId(entity.getPublicId().toString())
                 .city(entity.getCity())
                 .country(entity.getCountry())
                 .street(entity.getStreet())

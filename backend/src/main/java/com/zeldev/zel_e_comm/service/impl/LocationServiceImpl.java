@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
+import com.zeldev.zel_e_comm.dto.response.LocationResponse;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.LocationRepository;
@@ -9,7 +10,6 @@ import com.zeldev.zel_e_comm.util.AuthUtils;
 import com.zeldev.zel_e_comm.util.LocationUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,19 +27,19 @@ public class LocationServiceImpl implements LocationService {
     private final AuthUtils authUtils;
 
     @Override
-    public LocationDTO createLocation(LocationDTO location) {
+    public LocationResponse createLocation(LocationRequest location) {
         return toDTO(locationRepository.save(buildLocation(location, authUtils.getLoggedInUser())));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public @Nullable List<LocationDTO> getAll() {
+    public @Nullable List<LocationResponse> getAll() {
         return locationRepository.findAll().stream().map(LocationUtils::toDTO).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public @Nullable List<LocationDTO> getUserLocations() {
+    public @Nullable List<LocationResponse> getUserLocations() {
         return locationRepository.findLocationsByUserEmail(authUtils.getLoggedInEmail()).stream().map(LocationUtils::toDTO).toList();
     }
 
@@ -54,7 +54,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationDTO updateLocation(LocationDTO locationDTO, String publicId) {
+    public LocationResponse updateLocation(LocationRequest locationDTO, String publicId) {
         LocationEntity locationDB = findByPublicId(publicId);
 
         if (locationDTO.city() != null && !locationDTO.city().isBlank()) {

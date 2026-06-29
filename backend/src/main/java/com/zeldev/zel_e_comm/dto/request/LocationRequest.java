@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 @Builder
-public record LocationDTO(
+public record LocationRequest(
         @NotEmpty(message = "The field country is required")
         @NotBlank(message = "The field country is required")
         @Schema(example = "Norway")

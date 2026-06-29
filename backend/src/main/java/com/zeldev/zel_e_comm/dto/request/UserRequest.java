@@ -30,5 +30,5 @@ public record UserRequest(
         @NotNull(message = "The field Date of Birth is required")
         @Schema(example = "1993-12-11")
         LocalDate dob,
-        LocationDTO location
+        LocationRequest location
 ) {}

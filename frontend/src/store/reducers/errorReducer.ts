@@ -13,6 +13,7 @@ export const errorReducer = (state = initialState, action) => {
         ...state,
         isLoading: true,
         errorMessage: null,
+        btnLoader: true,
       };
 
     case "FETCH_SUCCESS":
@@ -20,6 +21,9 @@ export const errorReducer = (state = initialState, action) => {
         ...state,
         isLoading: false,
         errorMessage: null,
+        categoryLoader: false,
+        categoryError: null,
+        btnLoader: false,
       };
 
     case "FETCH_ERROR":
@@ -27,6 +31,8 @@ export const errorReducer = (state = initialState, action) => {
         ...state,
         isLoading: false,
         errorMessage: action.payload,
+        btnLoader: false,
+        categoryLoader: false,
       };
 
     case "BUTTON_LOADER":

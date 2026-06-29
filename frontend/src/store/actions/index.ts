@@ -153,6 +153,7 @@ export const addUpdateUserAddress =
     try {
       const { data } = await api.post("/locations/add", sendData);
       toast.success("Address added");
+      dispatch({ type: "FETCH_SUCCESS" });
     } catch (err) {
       console.log(err);
       toast.error(err?.response?.data?.message || "Internal Server Error");
@@ -161,3 +162,20 @@ export const addUpdateUserAddress =
       setOpen(false);
     }
   };
+
+export const fetchUserAddresses = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get(`/locations/user`);
+
+    dispatch({ type: "USER_ADDRESS", payload: data });
+    dispatch({ type: "FETCH_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "FETCH_ERROR",
+      payload:
+        error?.response?.data?.message || "Failed to fetch user addresses",
+    });
+  }
+};

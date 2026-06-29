@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.locationservice;
 
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ public class CreateLocationTest extends LocationServiceBaseTest{
                     """
     )
     void greenPath() {
-        LocationDTO locationDTO = new LocationDTO("China", "Shanghai", "69th", "555");
+        LocationRequest locationDTO = new LocationRequest("China", "Shanghai", "69th", "555");
         UserEntity user = new UserEntity();
         user.setUsername("zeldev");
 

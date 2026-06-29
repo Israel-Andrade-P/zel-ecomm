@@ -1,10 +1,18 @@
 import { Step, StepLabel, Stepper } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddressInfo from "./AddressInfo";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserAddresses } from "../../store/actions";
 
 const Checkout = () => {
     const [activeStep, setActiveStep] = useState(0);
+    const { address } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const steps = ["Address", "Payment Method", "Order Summary", "Payment"];
+
+    useEffect(() => {
+        dispatch(fetchUserAddresses());
+    }, [dispatch]);
 
     return (
         <div className="py-14 min-h-[calc(100vh-100px)]">
@@ -19,7 +27,7 @@ const Checkout = () => {
             </Stepper>
 
             <div className="mt-5">
-                {activeStep === 0 && <AddressInfo />}
+                {activeStep === 0 && <AddressInfo addresses={address} />}
             </div>
         </div>
     )

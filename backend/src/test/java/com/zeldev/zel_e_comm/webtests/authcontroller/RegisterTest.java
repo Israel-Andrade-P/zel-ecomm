@@ -2,7 +2,7 @@ package com.zeldev.zel_e_comm.webtests.authcontroller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
 import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ public class RegisterTest extends AuthControllerBaseTest{
                 "cheese",
                 "555",
                 LocalDate.of(1992, 11, 30),
-                new LocationDTO("Norway", "Viking City", "68th", "4343"));
+                new LocationRequest("Norway", "Viking City", "68th", "4343"));
         UserResponse response = new UserResponse(
                 "zel",
                 "zel@gmail",
@@ -76,7 +76,7 @@ public class RegisterTest extends AuthControllerBaseTest{
                 "12",
                 "",
                 null,
-                new LocationDTO("Norway", "Viking City", "68th", "4343"));
+                new LocationRequest("Norway", "Viking City", "68th", "4343"));
 
         mockMvc.post().uri(BASE_URI.concat("/register"))
                 .contentType("application/json")

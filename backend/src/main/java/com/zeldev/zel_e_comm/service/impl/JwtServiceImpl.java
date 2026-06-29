@@ -110,6 +110,7 @@ public class JwtServiceImpl extends JwtConfig implements JwtService {
                 .path("/api")
                 .maxAge(24 * 60 * 60)
                 .httpOnly(false)
+                .secure(false)
                 .build();
     }
 

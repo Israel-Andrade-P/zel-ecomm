@@ -2,7 +2,7 @@ package com.zeldev.zel_e_comm.webtests.locationcontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeldev.zel_e_comm.controller.LocationController;
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.JwtService;
 import com.zeldev.zel_e_comm.service.LocationService;
@@ -25,7 +25,7 @@ public class LocationControllerBaseTest {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    protected LocationDTO createLocationDto(String country) {
-        return new LocationDTO(country, "The Shire", "Hobbit St.", "42069");
+    protected LocationRequest createLocationDto(String country) {
+        return new LocationRequest(country, "The Shire", "Hobbit St.", "42069");
     }
 }

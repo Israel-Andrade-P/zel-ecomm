@@ -1,14 +1,12 @@
 package com.zeldev.zel_e_comm.unittests.locationservice;
 
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +27,7 @@ public class UpdateLocationTest extends LocationServiceBaseTest{
     )
     void greenPath(String country, String city, String street, String zipCode) {
         String publicId = UUID.randomUUID().toString();
-        LocationDTO locationDTO = new LocationDTO(country, city, street, zipCode);
+        LocationRequest locationDTO = new LocationRequest(country, city, street, zipCode);
 
         LocationEntity location = new LocationEntity();
         location.setCountry("Australia");
@@ -65,7 +63,7 @@ public class UpdateLocationTest extends LocationServiceBaseTest{
     )
     void redPath() {
         String publicId = UUID.randomUUID().toString();
-        LocationDTO locationDTO = new LocationDTO("China", "city", "street", "zipCode");
+        LocationRequest locationDTO = new LocationRequest("China", "city", "street", "zipCode");
 
         when(locationRepository.findByPublicId(UUID.fromString(publicId))).thenReturn(Optional.empty());
 

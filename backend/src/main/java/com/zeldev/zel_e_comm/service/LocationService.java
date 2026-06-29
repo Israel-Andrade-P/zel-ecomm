@@ -1,24 +1,24 @@
 package com.zeldev.zel_e_comm.service;
 
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
+import com.zeldev.zel_e_comm.dto.response.LocationResponse;
 import com.zeldev.zel_e_comm.entity.LocationEntity;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface LocationService {
-    LocationDTO createLocation(LocationDTO location);
+    LocationResponse createLocation(LocationRequest location);
 
-    @Nullable List<LocationDTO> getAll();
+    @Nullable List<LocationResponse> getAll();
 
-    @Nullable List<LocationDTO> getUserLocations();
+    @Nullable List<LocationResponse> getUserLocations();
 
     LocationEntity getByPublicId(String publicId);
 
     LocationEntity getByPublicIdAndUserEmail(String locationId, String userEmail);
 
-    @Nullable LocationDTO updateLocation(LocationDTO locationDTO, String publicId);
+    @Nullable LocationResponse updateLocation(LocationRequest locationDTO, String publicId);
 
     void deleteLocation(String publicId);
 

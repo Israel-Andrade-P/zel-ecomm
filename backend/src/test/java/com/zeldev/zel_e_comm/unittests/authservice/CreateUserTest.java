@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.authservice;
 
-import com.zeldev.zel_e_comm.dto.request.LocationDTO;
+import com.zeldev.zel_e_comm.dto.request.LocationRequest;
 import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.RoleEntity;
@@ -19,14 +19,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class CreateUserTest extends AuthServiceBaseTest{
-    LocationDTO locationDTO;
+    LocationRequest locationDTO;
     UserRequest userRequest;
     UserEntity userTest;
     RoleEntity role;
 
     @BeforeEach
     void beforeEach() {
-        locationDTO = new LocationDTO("testLand", "testCity", "testSt", "test555");
+        locationDTO = new LocationRequest("testLand", "testCity", "testSt", "test555");
         userRequest = new UserRequest("zel", null, null, null, null, locationDTO);
         userTest = new UserEntity();
         userTest.setUsername("zel");
