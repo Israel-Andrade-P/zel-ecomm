@@ -151,9 +151,16 @@ export const addUpdateUserAddress =
     dispatch({ type: "BUTTON_LOADER" });
 
     try {
-      const { data } = await api.post("/locations/add", sendData);
-      toast.success("Address added");
-      dispatch({ type: "FETCH_SUCCESS" });
+      if (publicId) {
+        await api.put(`/locations/update/${publicId}`, sendData);
+        toast.success("Address updated");
+        dispatch({ type: "FETCH_SUCCESS" });
+      } else {
+        const { data } = await api.post("/locations/add", sendData);
+        toast.success("Address added");
+        dispatch({ type: "FETCH_SUCCESS" });
+      }
+      dispatch(fetchUserAddresses());
     } catch (err) {
       console.log(err);
       toast.error(err?.response?.data?.message || "Internal Server Error");
@@ -178,4 +185,11 @@ export const fetchUserAddresses = () => async (dispatch, getState) => {
         error?.response?.data?.message || "Failed to fetch user addresses",
     });
   }
+};
+
+export const selectUserAddress = (address) => {
+  return {
+    type: "SELECT_CHECKOUT_ADDRESS",
+    payload: address,
+  };
 };

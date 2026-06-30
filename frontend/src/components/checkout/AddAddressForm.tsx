@@ -5,22 +5,32 @@ import { useDispatch, useSelector } from "react-redux";
 import Spinners from "../shared/Spinners";
 import toast from "react-hot-toast";
 import { addUpdateUserAddress } from "../../store/actions";
+import { useEffect } from "react";
 
 const AddAddressForm = ({ address, setOpen }) => {
     const { btnLoader } = useSelector((state) => state.errors);
     const dispatch = useDispatch();
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({ mode: "onTouched" });
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({ mode: "onTouched" });
 
     const onSaveAddressHandler = async (data) => {
         dispatch(addUpdateUserAddress(data, toast, address?.publicId, setOpen));
     };
+
+    useEffect(() => {
+        if (address?.publicId) {
+            setValue("country", address?.country);
+            setValue("city", address?.city);
+            setValue("street", address?.street);
+            setValue("zipCode", address?.zipCode);
+        }
+    }, [address]);
 
     return (
         <div className="">
             <form onSubmit={handleSubmit(onSaveAddressHandler)} className="">
                 <div className="flex justify-center items-center mb-4 font-semibold text-2xl text-slate-800 py-2 px-4">
                     <FaAddressCard className="mr-2 text-2xl" />
-                    Register New Address
+                    {!address.publicId ? "Register New Address" : "Update Address"}
                 </div>
                 <div className="flex flex-col gap-4">
                     <InputField label="Country" required id="country" type="text" message="*Country is required"

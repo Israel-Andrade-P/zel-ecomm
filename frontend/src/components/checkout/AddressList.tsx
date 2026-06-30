@@ -1,13 +1,14 @@
 import { FaCheckCircle, FaEdit, FaStreetView, FaTrash } from "react-icons/fa";
 import { MdLocationCity, MdPinDrop, MdPublic } from "react-icons/md";
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { selectUserAddress } from "../../store/actions";
 
 const AddressList = ({ addresses, setSelectedAddress, setOpenAddressModel }) => {
-    const selectedAddress = addresses[1];
+    const { selectedAddress } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const handleAddressSelection = (address) => {
-
+        dispatch(selectUserAddress(address));
     };
 
     const onEditButtonHandler = (address) => {
