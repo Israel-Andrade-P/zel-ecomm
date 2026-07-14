@@ -3,7 +3,7 @@ import { MdLocationCity, MdPinDrop, MdPublic } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux"
 import { selectUserAddress } from "../../store/actions";
 
-const AddressList = ({ addresses, setSelectedAddress, setOpenAddressModel }) => {
+const AddressList = ({ addresses, setSelectedAddress, setOpenAddressModel, setOpenDeleteModel }) => {
     const { selectedAddress } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
@@ -18,6 +18,7 @@ const AddressList = ({ addresses, setSelectedAddress, setOpenAddressModel }) => 
 
     const onDeleteButtonHandler = (address) => {
         setSelectedAddress(address);
+        setOpenDeleteModel(true);
     };
 
     return (

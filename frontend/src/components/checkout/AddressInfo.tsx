@@ -3,18 +3,27 @@ import { useState } from "react";
 import { FaAddressBook } from "react-icons/fa";
 import AddressInfoModel from "./AddressInfoModel";
 import AddAddressForm from "./AddAddressForm";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddressList from "./AddressList";
+import DeleteModel from "./DeleteModel";
+import toast from "react-hot-toast";
+import { deleteUserAddress } from "../../store/actions";
 
 const AddressInfo = ({ addresses }) => {
     const noAddress = !addresses || addresses.length === 0;
     const { isLoading, btnLoader } = useSelector((state) => state.errors);
     const [openAddressModel, setOpenAddressModel] = useState(false);
+    const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState("");
+    const dispatch = useDispatch();
 
     const addNewAddressHandler = () => {
         setSelectedAddress("");
         setOpenAddressModel(true);
+    };
+
+    const deleteAddressHandler = () => {
+        dispatch(deleteUserAddress(toast, selectedAddress?.publicId, setOpenDeleteModel))
     };
 
     return (
@@ -49,7 +58,8 @@ const AddressInfo = ({ addresses }) => {
                                     <AddressList
                                         addresses={addresses}
                                         setSelectedAddress={setSelectedAddress}
-                                        setOpenAddressModel={setOpenAddressModel} />
+                                        setOpenAddressModel={setOpenAddressModel}
+                                        setOpenDeleteModel={setOpenDeleteModel} />
                                 </div>
 
                                 {addresses.length > 0 && (
@@ -68,6 +78,8 @@ const AddressInfo = ({ addresses }) => {
             <AddressInfoModel open={openAddressModel} setOpen={setOpenAddressModel}>
                 <AddAddressForm address={selectedAddress} setOpen={setOpenAddressModel} />
             </AddressInfoModel>
+
+            <DeleteModel open={openDeleteModel} loader={btnLoader} setOpen={setOpenDeleteModel} title="Delete Address" onDeleteHandler={deleteAddressHandler} />
         </div>
     )
 }

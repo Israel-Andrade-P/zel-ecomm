@@ -193,3 +193,29 @@ export const selectUserAddress = (address) => {
     payload: address,
   };
 };
+
+export const deleteUserAddress =
+  (toast, publicId, setOpenDeleteModel) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: "BUTTON_LOADER" });
+      await api.delete(`/locations/delete/${publicId}`);
+      dispatch({ type: "FETCH_SUCCESS" });
+      toast.success("Address deleted");
+      dispatch(fetchUserAddresses());
+      dispatch(clearSelectedAddress());
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: "FETCH_ERROR",
+        payload: error?.response?.data?.message || "An ERROR has occurred",
+      });
+    } finally {
+      setOpenDeleteModel(false);
+    }
+  };
+
+export const clearSelectedAddress = () => {
+  return {
+    type: "DELETE_USER_ADDRESS",
+  };
+};
