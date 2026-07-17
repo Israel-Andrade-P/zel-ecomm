@@ -17,5 +17,4 @@ public record CartItemDTO(
         BigDecimal price,
         @Schema(description = "percentage", example = "15")
         Integer discount
-) {
-}
+) {}

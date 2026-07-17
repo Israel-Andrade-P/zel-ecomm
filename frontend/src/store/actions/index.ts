@@ -219,3 +219,45 @@ export const clearSelectedAddress = () => {
     type: "DELETE_USER_ADDRESS",
   };
 };
+
+export const addPaymentMethod = (method) => {
+  return {
+    type: "ADD_PAYMENT_METHOD",
+    payload: method,
+  };
+};
+
+export const createUserCart = (cartItems) => async (dispatch, getState) => {
+  try {
+    await api.post("/carts/add-whole", cartItems);
+    await dispatch(getUserCart());
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "FETCH_ERROR",
+      payload: error?.response?.data?.message || "Failed to create user's cart",
+    });
+  }
+};
+
+export const getUserCart = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get("/carts/users/cart");
+
+    dispatch({
+      type: "GET_USER_CART",
+      payload: data.products,
+      totalPrice: data.totalPrice,
+      cartId: data.publicId,
+    });
+    localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+    dispatch({ type: "FETCH_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "FETCH_ERROR",
+      payload: error?.response?.data?.message || "Failed to fetch user's cart",
+    });
+  }
+};

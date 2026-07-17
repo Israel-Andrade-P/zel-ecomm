@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.CartDTO;
+import com.zeldev.zel_e_comm.dto.request.CartItemDTO;
 import com.zeldev.zel_e_comm.entity.CartEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import com.zeldev.zel_e_comm.service.ProductService;
 import com.zeldev.zel_e_comm.util.AuthUtils;
 import com.zeldev.zel_e_comm.util.CartUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import static com.zeldev.zel_e_comm.util.CartUtils.toDTO;
 //Each repository call runs in its own tiny transaction, those transactions start and end inside the repository
 //Your service method has no unit of work, mutates detached entities, relies on save() everywhere
 @Transactional
+@Slf4j
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final CartItemService cartItemService;
@@ -49,6 +52,21 @@ public class CartServiceImpl implements CartService {
         cartItemService.createItem(product, cart, quantity);
 
         return toDTO(cart);
+    }
+
+    @Override
+    public void addCartWithItems(List<CartItemDTO> items) {
+        log.info("Items sent by frontend {}", items);
+        var cart = createCart();
+
+        if (cart.getId() != null) cartItemService.deleteByCartId(cart.getId());
+        else cartRepository.save(cart);
+
+        for (CartItemDTO item : items) {
+            var product = productService.findByPublicId(item.productId());
+            productService.validateQuantity(item.quantity(), product.getPublicId());
+            cartItemService.createItem(product, cart, item.quantity());
+        }
     }
 
     @Override

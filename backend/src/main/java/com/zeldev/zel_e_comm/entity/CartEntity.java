@@ -7,6 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "carts")
@@ -16,6 +17,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class CartEntity extends BaseEntity {
+    @Column(name = "public_id", nullable = false, unique = true)
+    private UUID publicId;
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -45,4 +48,10 @@ public class CartEntity extends BaseEntity {
         item.setCart(null);
     }
 
+    @PrePersist
+    private void initPublicId() {
+        if (publicId == null) {
+            publicId = UUID.randomUUID();
+        }
+    }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 @Builder
 public record CartDTO(
+        String publicId,
         @Schema(description = "Cart's current total price", example = "2999.00")
         BigDecimal totalPrice,
         @Schema(description = "All cart items listed, that are currently in cart")

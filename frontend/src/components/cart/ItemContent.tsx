@@ -8,7 +8,7 @@ import { formatPrice } from "../../utils/formatPrice";
 import { truncateText } from "../../utils/truncateText";
 
 type ItemContentProps = {
-    publicId: string;
+    productId: string;
     name: string;
     image: string;
     description: string;
@@ -20,7 +20,7 @@ type ItemContentProps = {
 };
 
 
-const ItemContent = ({ publicId, name, image, description, quantity, price, discount, specialPrice, cartId }: ItemContentProps) => {
+const ItemContent = ({ productId, name, image, description, quantity, price, discount, specialPrice, cartId }: ItemContentProps) => {
     const [currentQuantity, setCurrentQuantity] = useState(quantity);
     const dispatch = useDispatch();
 
@@ -51,7 +51,7 @@ const ItemContent = ({ publicId, name, image, description, quantity, price, disc
                 <div className="md:w-36 sm:w-24 w-12">
                     <img src={image} alt={name} className="md:h-36 sm:h-24 h-12 w-full object-cover rounded-md" />
                     <div className="flex items-start gap-5 mt-3">
-                        <button onClick={() => removeItemFromCart({ image, name, description, price, specialPrice, publicId, quantity })} className="flex items-center font-semibold space-x-2 px-4 py-1 text-xs border border-rose-600 text-rose-600
+                        <button onClick={() => removeItemFromCart({ image, name, description, price, specialPrice, productId, quantity })} className="flex items-center font-semibold space-x-2 px-4 py-1 text-xs border border-rose-600 text-rose-600
                                                            rounded-md hover:bg-red-50 transition-colors duration-200">
                             <HiOutlineTrash size={16} className="text-rose-600" />
                             Remove
@@ -67,8 +67,8 @@ const ItemContent = ({ publicId, name, image, description, quantity, price, disc
                 <SetQuantity
                     quantity={currentQuantity}
                     cardCounter={true}
-                    handleQtyIncrease={() => handleQtyIncrease({ image, name, description, price, specialPrice, publicId, quantity })}
-                    handleQtyDecrease={() => handleQtyDecrease({ image, name, description, price, specialPrice, publicId, quantity })} />
+                    handleQtyIncrease={() => handleQtyIncrease({ image, name, description, price, specialPrice, productId, quantity })}
+                    handleQtyDecrease={() => handleQtyDecrease({ image, name, description, price, specialPrice, productId, quantity })} />
             </div>
             <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold">
                 {formatPrice(Number(currentQuantity) * Number(specialPrice))}

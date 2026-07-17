@@ -13,6 +13,7 @@ public class CartUtils {
 
     public static CartDTO toDTO(CartEntity cart) {
         return CartDTO.builder()
+                .publicId(cart.getPublicId().toString())
                 .totalPrice(cart.getTotalPrice())
                 .products(cart.getCartItems().stream().map(CartItemUtils::toDTO).toList())
                 .build();

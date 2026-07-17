@@ -1,19 +1,21 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { fetchProducts } from "../store/actions";
 
 const useProductFilter = () => {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
+  const { products } = useSelector((state) => state.products);
 
   useEffect(() => {
     const params = new URLSearchParams();
 
-    const currentPage = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+    const currentPage = searchParams.get("page")
+      ? Number(searchParams.get("page"))
+      : 1;
 
     params.set("page", currentPage - 1);
-
 
     const sortOrder = searchParams.get("sortOrder") || "asc";
     const categoryParams = searchParams.get("category") || null;
@@ -33,8 +35,9 @@ const useProductFilter = () => {
     console.log("Query:", queryString);
 
     dispatch(fetchProducts(queryString));
+  }, [dispatch, searchParams]);
 
-  }, [dispatch, searchParams])
+  console.log(products);
 };
 
 export default useProductFilter;

@@ -14,4 +14,5 @@ public interface CartItemService {
     void updateQuantity(CartEntity cart, String productId, Integer quantity);
     List<CartItemEntity> findActiveCartItemsByProductId(UUID productId);
     void deleteByProductPublicId(UUID productId);
+    void deleteByCartId(Long cartId);
 }

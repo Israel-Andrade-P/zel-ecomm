@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.request.CartDTO;
+import com.zeldev.zel_e_comm.dto.request.CartItemDTO;
 import com.zeldev.zel_e_comm.service.CartService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,12 @@ public class CartController {
     public ResponseEntity<CartDTO> addProductToCart(@PathVariable("product_id") String productId,
                                                     @PathVariable("quantity") Integer quantity) {
         return ResponseEntity.status(CREATED).body(cartService.addProductToCart(productId, quantity));
+    }
+
+    @PostMapping("/carts/add-whole")
+    public ResponseEntity<String> addCartWithItems(@RequestBody List<CartItemDTO> items) {
+        cartService.addCartWithItems(items);
+        return ResponseEntity.status(CREATED).body("Cart added");
     }
 
     @GetMapping("/admin/carts")

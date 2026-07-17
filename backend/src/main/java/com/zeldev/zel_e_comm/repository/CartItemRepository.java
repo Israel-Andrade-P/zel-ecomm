@@ -43,4 +43,11 @@ public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> 
         WHERE ci.product.publicId=?1
     """)
     void deleteByProductPublicId(UUID productId);
+
+    @Modifying(flushAutomatically = true)
+    @Query("""
+        DELETE FROM CartItemEntity ci
+        WHERE ci.cart.id=?1
+    """)
+    void deleteByCartId(Long cartId);
 }
