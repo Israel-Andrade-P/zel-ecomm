@@ -51,7 +51,7 @@ export const addToCart =
   (dispatch, getState) => {
     //find product
     const { products } = getState().products;
-    const product = products.find((item) => item.publicId === data.publicId);
+    const product = products.find((item) => item.productId === data.productId);
 
     //quantity check
     const isInStock = product.quantity >= qnt;
@@ -75,7 +75,7 @@ export const increaseItemQnt =
       return;
     }
 
-    const product = products.find((item) => item.publicId === data.publicId);
+    const product = products.find((item) => item.productId === data.productId);
 
     const isInStock = product.quantity >= currentQuantity + 1;
 

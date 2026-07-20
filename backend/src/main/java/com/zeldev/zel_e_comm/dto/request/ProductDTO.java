@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Builder
 public record ProductDTO(
         @Schema(description = "UUID string", example = "dqwidbifbif948194191")
-        String publicId,
+        String productId,
         @NotNull(message = "Name field is mandatory")
         @NotEmpty(message = "Name field is mandatory")
         @Size(min = 2, max = 50, message = "Name must be between 2 - 50 characters")

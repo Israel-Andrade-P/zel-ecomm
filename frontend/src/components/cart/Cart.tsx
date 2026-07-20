@@ -20,6 +20,9 @@ const Cart = () => {
         (acc, cur) => acc + Number(cur?.specialPrice) * Number(cur?.quantity), 0
     );
 
+    console.log("Cart:", cart);
+
+
     if (!cart || cart.length === 0) return <CartEmpty />
 
     return (

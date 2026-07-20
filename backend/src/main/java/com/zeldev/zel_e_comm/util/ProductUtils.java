@@ -27,7 +27,7 @@ public class ProductUtils {
 
     public ProductDTO toDTO(ProductEntity entity) {
         return ProductDTO.builder()
-                .publicId(entity.getPublicId().toString())
+                .productId(entity.getPublicId().toString())
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .quantity(entity.getQuantity())

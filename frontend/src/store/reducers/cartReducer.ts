@@ -14,7 +14,7 @@ export const cartReducer = (state = initialState, action) => {
 
       if (existingProduct) {
         const updatedCart = state.cart.map((item) => {
-          if (item.publicId === productToAdd.publicId) {
+          if (item.productId === productToAdd.productId) {
             return productToAdd;
           } else {
             return item;
@@ -31,7 +31,7 @@ export const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         cart: state.cart.filter(
-          (item) => item.publicId !== action.payload.publicId,
+          (item) => item.productId !== action.payload.productId,
         ),
       };
 

@@ -23,8 +23,10 @@ public class CartItemUtils {
                 .productId(itemEntity.getProduct().getPublicId().toString())
                 .productName(itemEntity.getProduct().getName())
                 .price(itemEntity.getPrice())
+                .specialPrice(itemEntity.getProduct().getSpecialPrice())
                 .quantity(itemEntity.getQuantity())
                 .discount(itemEntity.getDiscount())
+                .image(itemEntity.getProduct().getImage())
                 .build();
     }
 }
