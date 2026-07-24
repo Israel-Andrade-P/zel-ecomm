@@ -6,14 +6,18 @@ import { fetchUserAddresses } from "../../store/actions";
 import toast from "react-hot-toast";
 import ErrorPage from "../shared/ErrorPage";
 import PaymentMethod from "./PaymentMethod";
+import OrderSummary from "./OrderSummary";
+import StripePayment from "./StripePayment";
+import PaypalPayment from "./PaypalPayment";
 
 const Checkout = () => {
     const [activeStep, setActiveStep] = useState(0);
     const { address, selectedAddress } = useSelector((state) => state.auth);
     const { isLoading, errorMessage } = useSelector((state) => state.errors);
+    const { paymentMethod } = useSelector((state) => state.payment);
+    const { cart, totalPrice } = useSelector((state) => state.carts);
     const dispatch = useDispatch();
     const steps = ["Address", "Payment Method", "Order Summary", "Payment"];
-    const paymentMethod = false;
 
     const handleBack = () => {
         setActiveStep((prevStep) => prevStep - 1);
@@ -56,6 +60,12 @@ const Checkout = () => {
                     <div className="mt-5">
                         {activeStep === 0 && <AddressInfo addresses={address} />}
                         {activeStep === 1 && <PaymentMethod />}
+                        {activeStep === 2 && <OrderSummary totalPrice={totalPrice} cart={cart} address={selectedAddress} paymentMethod={paymentMethod} />}
+                        {activeStep === 3 && <>
+                            {
+                                paymentMethod === "stripe" ? (<StripePayment />) : (<PaypalPayment />)
+                            }
+                        </>}
                     </div>
                 )
             }

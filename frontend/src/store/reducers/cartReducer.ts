@@ -9,7 +9,7 @@ export const cartReducer = (state = initialState, action) => {
     case "ADD_TO_CART":
       const productToAdd = action.payload;
       const existingProduct = state.cart.find(
-        (item) => item.publicId === productToAdd.publicId,
+        (item) => item.productId === productToAdd.productId,
       );
 
       if (existingProduct) {

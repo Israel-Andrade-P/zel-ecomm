@@ -4,3 +4,7 @@ export const formatPrice = (amount) => {
     currency: "USD",
   }).format(amount);
 };
+
+export const priceCalculation = (price, quantity) => {
+  return (Number(price) * Number(quantity)).toFixed(2);
+};

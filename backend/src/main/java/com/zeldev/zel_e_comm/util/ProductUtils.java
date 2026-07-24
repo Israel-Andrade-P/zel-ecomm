@@ -53,5 +53,4 @@ public class ProductUtils {
         String imageBaseUrl = appConfig.getUrl();
         return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
     }
-
 }
