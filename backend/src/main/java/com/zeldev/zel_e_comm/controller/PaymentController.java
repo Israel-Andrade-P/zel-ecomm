@@ -1,10 +1,13 @@
 package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
+import com.zeldev.zel_e_comm.dto.request.StripePaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
+import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
 import com.zeldev.zel_e_comm.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,5 +24,10 @@ public class PaymentController {
             @RequestBody PaymentRequest request
     ) {
         return ResponseEntity.ok(paymentService.pay(orderId, request));
+    }
+
+    @PostMapping("/stripe/client-secret")
+    public ResponseEntity<StripePaymentResponse> createPaymentIntent(@RequestBody StripePaymentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPaymentIntent(request));
     }
 }

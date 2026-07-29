@@ -2,6 +2,7 @@ const intialState = {
   user: null,
   address: [],
   selectedAddress: null,
+  clientSecret: null,
 };
 
 export const authReducer = (state = intialState, action) => {

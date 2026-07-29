@@ -92,6 +92,13 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(PaymentProviderException.class)
+    public ResponseEntity<ErrorResponse> handler(PaymentProviderException exp) {
+        return ResponseEntity.status(BAD_GATEWAY).body(
+                new ErrorResponse(502, BAD_GATEWAY, exp.getMessage())
+        );
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
         log.error("Illegal application state: {}", ex.getMessage());

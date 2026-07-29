@@ -1,13 +1,16 @@
 package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
+import com.zeldev.zel_e_comm.dto.request.StripePaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
+import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
 import com.zeldev.zel_e_comm.entity.OrderEntity;
 import com.zeldev.zel_e_comm.entity.PaymentEntity;
 import com.zeldev.zel_e_comm.exception.AlreadyPaidException;
 import com.zeldev.zel_e_comm.repository.PaymentRepository;
 import com.zeldev.zel_e_comm.service.OrderService;
 import com.zeldev.zel_e_comm.service.PaymentService;
+import com.zeldev.zel_e_comm.service.StripeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ import static com.zeldev.zel_e_comm.util.PaymentUtils.toPaymentResponse;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderService orderService;
+    private final StripeService stripeService;
 
     @Override
     public PaymentResponse pay(String orderId, PaymentRequest request) {
@@ -36,6 +40,13 @@ public class PaymentServiceImpl implements PaymentService {
         order.setStatus(PAID);
 
         return toPaymentResponse(payment);
+    }
+
+    public StripePaymentResponse createPaymentIntent(StripePaymentRequest request) {
+        var paymentIntent = stripeService.paymentIntent(request);
+        return StripePaymentResponse.builder()
+                .clientSecret(paymentIntent.getClientSecret())
+                .build();
     }
 }
 
