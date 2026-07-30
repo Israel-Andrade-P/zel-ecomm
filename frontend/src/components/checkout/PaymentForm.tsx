@@ -3,12 +3,12 @@ import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import { useState } from "react";
 import { priceCalculation } from "../../utils/formatPrice";
 
-const PaymentForm = (clientSecret, totalPrice) => {
+const PaymentForm = ({ clientSecret, totalPrice }) => {
     const stripe = useStripe();
     const elements = useElements();
-    const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const paymentElementOptions = { layout: "tabs" };
+    const isLoading = !clientSecret || !stripe || !elements;
 
     const handleSubmit = async (e) => {
 
@@ -18,14 +18,15 @@ const PaymentForm = (clientSecret, totalPrice) => {
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4">
             <h2 className="text-xl font-semibold mb-4">Payment Information</h2>
             {
-                loading ? (<Skeleton />) :
+                isLoading ? (<Skeleton />) :
                     (
                         <>
                             {clientSecret && <PaymentElement options={paymentElementOptions} />}
                             {errorMessage && (<div className="text-red-500 mt-2">{errorMessage}</div>)}
 
-                            <button disabled={!stripe || loading}>
-                                {!loading ? `Pay $${priceCalculation(totalPrice, 1)}` : "Processing"}
+                            <button disabled={!stripe || isLoading} className="text-white w-full px-5 py-2.5 bg-black mt-2 rounded-md font-bold disabled:opacity-50
+                                                                             disabled:animate-pulse">
+                                {!isLoading ? `Pay $${priceCalculation(totalPrice, 1)}` : "Processing"}
                             </button>
                         </>
                     )
