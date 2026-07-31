@@ -35,9 +35,27 @@ const Checkout = () => {
         setActiveStep((prevStep) => prevStep + 1);
     }
 
+    const canProceed = () => {
+        switch (activeStep) {
+            case 0:
+                return !!selectedAddress;
+            case 1:
+                return !!paymentMethod;
+            default:
+                return true;
+        }
+    }
+
+    if (!canProceed()) {
+        toast.error("Please select the necessary information")
+        return;
+    }
+
     useEffect(() => {
-        dispatch(fetchUserAddresses());
-    }, [dispatch]);
+        if (!address || address.length === 0) {
+            dispatch(fetchUserAddresses());
+        }
+    }, [address, dispatch]);
 
     return (
         <div className="py-14 min-h-[calc(100vh-100px)]">
@@ -79,9 +97,9 @@ const Checkout = () => {
                 {
                     activeStep !== steps.length - 1 && (
                         <button disabled={
-                            errorMessage || ((activeStep === 0 ? !selectedAddress
+                            errorMessage || !canProceed()/*((activeStep === 0 ? !selectedAddress
                                 : activeStep === 1 ? !paymentMethod : false
-                            ))
+                            ))*/
                         } className={`bg-custom-blue font-semibold px-6 h-10 rounded-md text-white 
                           ${errorMessage || (activeStep === 0 && !selectedAddress) || (activeStep === 1 && !paymentMethod) ? "opacity-60" : ""}`} onClick={handleNext}>
                             Proceed

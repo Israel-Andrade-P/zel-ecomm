@@ -45,9 +45,9 @@ public class OrderServiceImpl implements OrderService {
         orderItemService.createOrderItems(cartItems, order);
 
         //update product stock
-        cartItems.forEach(item -> {
-            productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
-        });
+//        cartItems.forEach(item -> {
+//            productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
+//        });
 
         //clear cart
         cartItems.clear();

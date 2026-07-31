@@ -42,8 +42,15 @@ public class PaymentServiceImpl implements PaymentService {
         return toPaymentResponse(payment);
     }
 
+    //grab orderId from StripePaymentRequest, don't trust the amount coming from frontend, load order then calculate amount that should be charged
+    //follow this flow: Create Order -> PENDING_PAYMENT -> Create PaymentIntent -> Stripe Checkout/Form -> Stripe Webhook -> Create PaymentEntity -> Deduct inventory -> Clear cart -> PAID
     public StripePaymentResponse createPaymentIntent(StripePaymentRequest request) {
-        var paymentIntent = stripeService.paymentIntent(request);
+        OrderEntity order = orderService.getOrderEntity(request.orderId());
+        if (order.getStatus() != PENDING_PAYMENT) {
+            throw new AlreadyPaidException("Order cannot be paid in status: " + order.getStatus());
+        }
+
+        var paymentIntent = stripeService.paymentIntent(order);
         return StripePaymentResponse.builder()
                 .clientSecret(paymentIntent.getClientSecret())
                 .build();

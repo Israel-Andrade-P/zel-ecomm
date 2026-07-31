@@ -12,6 +12,7 @@ import Login from './components/auth/Login'
 import PrivateRoute from './components/shared/PrivateRoute'
 import Register from './components/auth/Register'
 import Checkout from './components/checkout/Checkout'
+import PaymentConfirmation from './components/checkout/PaymentConfirmation'
 
 function App() {
 
@@ -31,11 +32,12 @@ function App() {
           </Route>
           <Route path='/' element={<PrivateRoute />}>
             <Route path='/checkout' element={<Checkout />} />
+            <Route path='/order-confirm' element={<PaymentConfirmation />} />
           </Route>
         </Routes>
       </Router>
       <Toaster position='bottom-center' />
-    </React.Fragment>
+    </React.Fragment >
   )
 }
 

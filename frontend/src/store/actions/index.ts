@@ -280,3 +280,20 @@ export const getStripeClientSecret =
       );
     }
   };
+
+export const stripePaymentConfirmation =
+  (setErrorMessage, setIsLoading, toast) => async (dispatch, getState) => {
+    try {
+      const { response } = await api.post("/payments/stripe/pay", {});
+      if (response.data) {
+        localStorage.removeItem("cartItems");
+        localStorage.removeItem("client-secret");
+        dispatch({ type: "REMOVE_CLIENT_SECRET_ADDRESS" });
+      }
+    } catch (err) {
+      console.log(err);
+      console.log(
+        err?.response?.data?.message || "Failed creating Stripe client secret",
+      );
+    }
+  };
