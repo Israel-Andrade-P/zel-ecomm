@@ -10,7 +10,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const StripePayment = () => {
     const dispatch = useDispatch();
-    const { clientSecret } = useSelector((state) => state.auth);
+    const { clientSecret } = useSelector((state) => state.payment);
     const { totalPrice } = useSelector((state) => state.carts);
     const { isLoading, errorMessage } = useSelector((state) => state.errors);
 

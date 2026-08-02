@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom"
+import { stripePaymentConfirmation } from "../../store/actions";
+import toast from "react-hot-toast";
 
 const PaymentConfirmation = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const { errorMessage } = useSelector((state) => state.errors);
+    const [errorMessage, setErrorMessage] = useState("");
     const { cart } = useSelector((state) => state.carts);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +20,11 @@ const PaymentConfirmation = () => {
 
     useEffect(() => {
         if (paymentIntent && clientSecret && redirectStatus && cart && cart?.length > 0) {
+            const sendData = {
+                addressId: "1",
+            }
 
+            dispatch(stripePaymentConfirmation(setErrorMessage, setIsLoading, toast));
         }
     }, [paymentIntent, clientSecret, redirectStatus, cart])
 

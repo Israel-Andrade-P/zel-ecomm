@@ -2,7 +2,7 @@ import { Button, Skeleton, Step, StepLabel, Stepper } from "@mui/material";
 import { useEffect, useState } from "react";
 import AddressInfo from "./AddressInfo";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserAddresses } from "../../store/actions";
+import { fetchUserAddresses, persistOrderInfo } from "../../store/actions";
 import toast from "react-hot-toast";
 import ErrorPage from "../shared/ErrorPage";
 import PaymentMethod from "./PaymentMethod";
@@ -31,6 +31,9 @@ const Checkout = () => {
         if (activeStep === 1 && (!selectedAddress || !paymentMethod)) {
             toast.error("Please select a payment method")
             return;
+        }
+        if (activeStep === 2 && selectedAddress && paymentMethod) {
+            dispatch(persistOrderInfo(selectedAddress));
         }
         setActiveStep((prevStep) => prevStep + 1);
     }

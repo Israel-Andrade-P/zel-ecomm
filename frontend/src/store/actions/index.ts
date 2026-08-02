@@ -285,15 +285,36 @@ export const stripePaymentConfirmation =
   (setErrorMessage, setIsLoading, toast) => async (dispatch, getState) => {
     try {
       const { response } = await api.post("/payments/stripe/pay", {});
-      if (response.data) {
+      if (respone.data) {
         localStorage.removeItem("cartItems");
         localStorage.removeItem("client-secret");
-        dispatch({ type: "REMOVE_CLIENT_SECRET_ADDRESS" });
+        dispatch({ type: "REMOVE_CLIENT_SECRET" });
+        dispatch({ type: "REMOVE_SELECTED_ADDRESS" });
+        dispatch({ type: "CLEAR_CART" });
+        toast.success("Order has been placed successfully");
+      } else {
+        setErrorMessage("Payment failed");
       }
     } catch (err) {
       console.log(err);
       console.log(
-        err?.response?.data?.message || "Failed creating Stripe client secret",
+        err?.response?.data?.message || "Error during payment proccess",
+        err,
       );
+      setErrorMessage("Payment error has occurred");
     }
   };
+
+export const persistOrderInfo = (address) => async (dispatch) => {
+  //check whats in this address
+  try {
+    const { response } = await api.post("/order/place", address);
+    dispatch({ type: "SET_CURRENT_ORDER", payload: response.orderId });
+  } catch (err) {
+    console.log(err);
+    console.log(
+      err?.response?.data?.message || "Error setting current order",
+      err,
+    );
+  }
+};
