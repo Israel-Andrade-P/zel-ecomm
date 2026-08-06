@@ -11,18 +11,18 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 const StripePayment = () => {
     const dispatch = useDispatch();
     const { clientSecret } = useSelector((state) => state.payment);
-    const { totalPrice } = useSelector((state) => state.carts);
+    const { currentOrderId, orderTotalPrice } = useSelector((state) => state.order);
     const { isLoading, errorMessage } = useSelector((state) => state.errors);
 
-    console.log("Publishable key: ", stripePromise);
-    console.log("Total Price: ", totalPrice);
+    console.log("Order Id: ", currentOrderId);
+    console.log("Total Price: ", orderTotalPrice);
 
 
     useEffect(() => {
-        if (!clientSecret) {
-            dispatch(getStripeClientSecret(totalPrice));
+        if (currentOrderId && !clientSecret) {
+            dispatch(getStripeClientSecret(currentOrderId));
         }
-    }, [clientSecret]);
+    }, [currentOrderId, clientSecret, dispatch]);
     console.log("Stripe Secret:", clientSecret);
 
     if (isLoading) {
@@ -38,7 +38,7 @@ const StripePayment = () => {
             {
                 clientSecret && (
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
-                        <PaymentForm clientSecret={clientSecret} totalPrice={totalPrice} />
+                        <PaymentForm clientSecret={clientSecret} totalPrice={orderTotalPrice} />
                     </Elements>
                 )
             }

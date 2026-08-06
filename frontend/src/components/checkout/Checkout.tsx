@@ -33,7 +33,7 @@ const Checkout = () => {
             return;
         }
         if (activeStep === 2 && selectedAddress && paymentMethod) {
-            dispatch(persistOrderInfo(selectedAddress));
+            dispatch(persistOrderInfo(selectedAddress.publicId));
         }
         setActiveStep((prevStep) => prevStep + 1);
     }
@@ -47,11 +47,6 @@ const Checkout = () => {
             default:
                 return true;
         }
-    }
-
-    if (!canProceed()) {
-        toast.error("Please select the necessary information")
-        return;
     }
 
     useEffect(() => {

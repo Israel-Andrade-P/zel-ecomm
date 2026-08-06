@@ -262,14 +262,30 @@ export const getUserCart = () => async (dispatch, getState) => {
   }
 };
 
+export const persistOrderInfo = (addressId) => async (dispatch) => {
+  //check whats in this address
+  try {
+    const orderRequest = { locationPublicId: addressId };
+    const { data } = await api.post("/order/place", orderRequest);
+    dispatch({ type: "SET_CURRENT_ORDER", payload: data });
+  } catch (err) {
+    console.log(err);
+    console.log(
+      err?.response?.data?.message || "Error setting current order",
+      err,
+    );
+  }
+};
+
 export const getStripeClientSecret =
-  (totalPrice) => async (dispatch, getState) => {
+  (currentOrderId) => async (dispatch, getState) => {
     try {
       dispatch({ type: "IS_FETCHING" });
-      const { data } = await api.post("/payments/stripe/client-secret", {
-        amount: Number(totalPrice) * 100,
-        currency: "usd",
-      });
+      const stripePaymentRequest = { orderId: currentOrderId };
+      const { data } = await api.post(
+        "/payments/stripe/client-secret",
+        stripePaymentRequest,
+      );
       dispatch({ type: "STRIPE_CLIENT_SECRET", payload: data.clientSecret });
       dispatch({ type: "FETCH_SUCCESS" });
       localStorage.setItem("client-secret", JSON.stringify(data.clientSecret));
@@ -282,39 +298,28 @@ export const getStripeClientSecret =
   };
 
 export const stripePaymentConfirmation =
-  (setErrorMessage, setIsLoading, toast) => async (dispatch, getState) => {
+  (paymentIntent, toast) => async (dispatch, getState) => {
+    dispatch({ type: "PAYMENT_CONFIRM_REQUEST" });
+
     try {
-      const { response } = await api.post("/payments/stripe/pay", {});
-      if (respone.data) {
-        localStorage.removeItem("cartItems");
-        localStorage.removeItem("client-secret");
-        dispatch({ type: "REMOVE_CLIENT_SECRET" });
-        dispatch({ type: "REMOVE_SELECTED_ADDRESS" });
-        dispatch({ type: "CLEAR_CART" });
-        toast.success("Order has been placed successfully");
-      } else {
-        setErrorMessage("Payment failed");
-      }
+      const { data } = await api.post("/payments/stripe/confirm", {
+        paymentIntent,
+      });
+
+      dispatch({ type: "PAYMENT_CONFIRM_SUCCESS" });
+
+      localStorage.removeItem("cartItems");
+      localStorage.removeItem("client-secret");
+      dispatch({ type: "REMOVE_CLIENT_SECRET" });
+      dispatch({ type: "REMOVE_SELECTED_ADDRESS" });
+      dispatch({ type: "CLEAR_CART" });
+      toast.success("Order has been placed successfully");
     } catch (err) {
+      dispatch({ type: "PAYMENT_CONFIRM_FAILURE" });
       console.log(err);
       console.log(
         err?.response?.data?.message || "Error during payment proccess",
         err,
       );
-      setErrorMessage("Payment error has occurred");
     }
   };
-
-export const persistOrderInfo = (address) => async (dispatch) => {
-  //check whats in this address
-  try {
-    const { response } = await api.post("/order/place", address);
-    dispatch({ type: "SET_CURRENT_ORDER", payload: response.orderId });
-  } catch (err) {
-    console.log(err);
-    console.log(
-      err?.response?.data?.message || "Error setting current order",
-      err,
-    );
-  }
-};

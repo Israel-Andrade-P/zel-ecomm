@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
 //        });
 
         //clear cart
-        cartItems.clear();
+//        cartItems.clear();
 
         //send back OrderResponse
         return toOrderResponse(order);

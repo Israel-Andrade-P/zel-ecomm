@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
+import com.zeldev.zel_e_comm.dto.request.StripeConfirmationRequest;
 import com.zeldev.zel_e_comm.dto.request.StripePaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
 import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
@@ -28,6 +29,11 @@ public class PaymentController {
 
     @PostMapping("/stripe/client-secret")
     public ResponseEntity<StripePaymentResponse> createPaymentIntent(@RequestBody StripePaymentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPaymentIntent(request));
+    }
+
+    @PostMapping("/stripe/confirm")
+    public ResponseEntity<StripeConfirmationResponse> createPaymentIntent(@RequestBody StripeConfirmationRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPaymentIntent(request));
     }
 }
