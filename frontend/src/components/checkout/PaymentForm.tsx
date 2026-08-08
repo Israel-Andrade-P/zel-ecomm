@@ -18,6 +18,11 @@ const PaymentForm = ({ clientSecret, totalPrice }) => {
 
         const { error: submitError } = await elements.submit();
 
+        if (submitError) {
+            setErrorMessage(submitError.message);
+            return;
+        }
+
         const { error } = await stripe.confirmPayment({
             elements,
             clientSecret,

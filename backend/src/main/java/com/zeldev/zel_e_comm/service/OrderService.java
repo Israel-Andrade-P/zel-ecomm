@@ -15,4 +15,6 @@ public interface OrderService {
     OrderEntity getOrderEntity(String orderId);
 
     @Nullable List<OrderResponse> getOrders();
+
+    void markAsPaid(String orderId);
 }

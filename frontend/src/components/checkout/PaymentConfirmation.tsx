@@ -14,6 +14,7 @@ const PaymentConfirmation = () => {
 
     const paymentIntent = searchParams.get("payment_intent");
 
+
     useEffect(() => {
         if (!paymentIntent) return;
 

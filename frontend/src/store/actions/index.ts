@@ -302,9 +302,19 @@ export const stripePaymentConfirmation =
     dispatch({ type: "PAYMENT_CONFIRM_REQUEST" });
 
     try {
-      const { data } = await api.post("/payments/stripe/confirm", {
-        paymentIntent,
-      });
+      const { data } = await api.get(
+        `/payments/stripe/confirm?payment_intent=${paymentIntent}`,
+      );
+
+      if (!data.success) {
+        dispatch({
+          type: "PAYMENT_CONFIRM_FAILURE",
+          payload: "Payment was not successful",
+        });
+
+        toast.error("Payment was not succesful");
+        return;
+      }
 
       dispatch({ type: "PAYMENT_CONFIRM_SUCCESS" });
 
@@ -315,7 +325,10 @@ export const stripePaymentConfirmation =
       dispatch({ type: "CLEAR_CART" });
       toast.success("Order has been placed successfully");
     } catch (err) {
-      dispatch({ type: "PAYMENT_CONFIRM_FAILURE" });
+      dispatch({
+        type: "PAYMENT_CONFIRM_FAILURE",
+        payload: err?.response?.data?.message,
+      });
       console.log(err);
       console.log(
         err?.response?.data?.message || "Error during payment proccess",

@@ -4,6 +4,7 @@ import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
 import com.zeldev.zel_e_comm.dto.request.StripeConfirmationRequest;
 import com.zeldev.zel_e_comm.dto.request.StripePaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
+import com.zeldev.zel_e_comm.dto.response.StripeConfirmationResponse;
 import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
 import com.zeldev.zel_e_comm.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +33,14 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPaymentIntent(request));
     }
 
-    @PostMapping("/stripe/confirm")
-    public ResponseEntity<StripeConfirmationResponse> createPaymentIntent(@RequestBody StripeConfirmationRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPaymentIntent(request));
+    @GetMapping("/stripe/confirm/{payment_intent}")
+    public ResponseEntity<StripeConfirmationResponse> confirmPayment(@RequestParam("payment_intent") String paymentIntentId) {
+        return ResponseEntity.status(HttpStatus.OK).body(paymentService.confirmPayment(paymentIntentId));
     }
+
+    @PostMapping("/stripe/webhook")
+        public ResponseEntity<Void> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String signature) {
+            paymentService.handleWebhook(payload, signature);
+            return ResponseEntity.ok().build();
+        }
 }

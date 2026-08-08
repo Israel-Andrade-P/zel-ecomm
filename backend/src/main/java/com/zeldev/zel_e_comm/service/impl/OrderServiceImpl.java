@@ -2,7 +2,10 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.OrderRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
-import com.zeldev.zel_e_comm.entity.*;
+import com.zeldev.zel_e_comm.entity.CartItemEntity;
+import com.zeldev.zel_e_comm.entity.LocationEntity;
+import com.zeldev.zel_e_comm.entity.OrderEntity;
+import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.exception.CartIsEmptyException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.OrderRepository;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 
+import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PAID;
 import static com.zeldev.zel_e_comm.util.OrderUtils.buildOrder;
 import static com.zeldev.zel_e_comm.util.OrderUtils.toOrderResponse;
 
@@ -70,5 +74,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public @Nullable List<OrderResponse> getOrders() {
         return orderRepository.findAll().stream().map(OrderUtils::toOrderResponse).toList();
+    }
+
+    @Override
+    public void markAsPaid(String orderId) {
+        var order = getOrderEntity(orderId);
+
+        if (order.getStatus() == PAID) return;
+
+        order.getOrderItems().forEach(item -> {
+            productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
+        });
+
+        order.setStatus(PAID);
     }
 }
