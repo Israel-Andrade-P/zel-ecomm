@@ -82,9 +82,13 @@ public class OrderServiceImpl implements OrderService {
 
         if (order.getStatus() == PAID) return;
 
+        var cart = cartService.getCartByEmail(order.getUser().getEmail());
+
         order.getOrderItems().forEach(item -> {
             productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
         });
+
+        cart.getCartItems().clear();
 
         order.setStatus(PAID);
     }

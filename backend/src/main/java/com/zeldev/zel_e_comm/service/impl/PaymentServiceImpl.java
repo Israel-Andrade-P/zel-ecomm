@@ -14,6 +14,7 @@ import com.zeldev.zel_e_comm.service.OrderService;
 import com.zeldev.zel_e_comm.service.PaymentService;
 import com.zeldev.zel_e_comm.service.StripeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PENDING_PAYMENT;
 import static com.zeldev.zel_e_comm.util.PaymentUtils.buildPayment;
 import static com.zeldev.zel_e_comm.util.PaymentUtils.toPaymentResponse;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -60,6 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public StripeConfirmationResponse confirmPayment(String paymentIntentId) {
+        log.info("Calling stripe service from payment service");
         return stripeService.checkPaymentIntent(paymentIntentId);
     }
 

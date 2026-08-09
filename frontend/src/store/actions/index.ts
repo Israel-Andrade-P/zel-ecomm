@@ -84,7 +84,7 @@ export const increaseItemQnt =
       setCurrentQuantity(newQnt);
       dispatch({
         type: "ADD_TO_CART",
-        payload: { ...data, quantity: newQnt + 1 },
+        payload: { ...data, quantity: newQnt },
       });
       localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
     } else {

@@ -9,10 +9,12 @@ import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
 import com.zeldev.zel_e_comm.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
@@ -33,13 +35,15 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPaymentIntent(request));
     }
 
-    @GetMapping("/stripe/confirm/{payment_intent}")
-    public ResponseEntity<StripeConfirmationResponse> confirmPayment(@RequestParam("payment_intent") String paymentIntentId) {
+    @GetMapping("/stripe/confirm")
+    public ResponseEntity<StripeConfirmationResponse> confirmPayment(@RequestParam(name = "payment_intent") String paymentIntentId) {
+        log.info("In controller...");
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.confirmPayment(paymentIntentId));
     }
 
     @PostMapping("/stripe/webhook")
         public ResponseEntity<Void> handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String signature) {
+        log.info("Stripe webhook endpoint hit!");
             paymentService.handleWebhook(payload, signature);
             return ResponseEntity.ok().build();
         }

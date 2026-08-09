@@ -55,9 +55,12 @@ public class StripeService {
 
     public StripeConfirmationResponse checkPaymentIntent(String paymentIntentId) {
         try {
+            log.info("Retrieving PaymentIntent with id {}", paymentIntentId);
             PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
             boolean success = "succeeded".equals(paymentIntent.getStatus());
+            log.info("PaymentIntent retrieved with status {}", paymentIntent.getStatus());
             String orderId = paymentIntent.getMetadata().get("orderId");
+            log.info("StripeConfirmationResponse being built...");
             return StripeConfirmationResponse.builder()
                     .success(success)
                     .orderId(orderId)
@@ -67,7 +70,7 @@ public class StripeService {
         }
     }
 
-    //Webhook not being triggered, also frontend stripePaymentConfirmation action going in the catch block
+    //Webhook not being triggered
     public void handleWebhook(String payload, String signature) {
         try {
             Event event = Webhook.constructEvent(payload, signature, webhookSecret);
