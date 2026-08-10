@@ -1,13 +1,11 @@
 package com.zeldev.zel_e_comm.service.impl;
 
-import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
-import com.zeldev.zel_e_comm.dto.request.StripeConfirmationRequest;
 import com.zeldev.zel_e_comm.dto.request.StripePaymentRequest;
-import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
 import com.zeldev.zel_e_comm.dto.response.StripeConfirmationResponse;
 import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
 import com.zeldev.zel_e_comm.entity.OrderEntity;
 import com.zeldev.zel_e_comm.entity.PaymentEntity;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import com.zeldev.zel_e_comm.exception.AlreadyPaidException;
 import com.zeldev.zel_e_comm.repository.PaymentRepository;
 import com.zeldev.zel_e_comm.service.OrderService;
@@ -18,10 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PAID;
 import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PENDING_PAYMENT;
 import static com.zeldev.zel_e_comm.util.PaymentUtils.buildPayment;
-import static com.zeldev.zel_e_comm.util.PaymentUtils.toPaymentResponse;
 
 @Slf4j
 @Service
@@ -29,21 +25,26 @@ import static com.zeldev.zel_e_comm.util.PaymentUtils.toPaymentResponse;
 @Transactional
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
-    private final OrderService orderService;
+    private OrderService orderService;
     private final StripeService stripeService;
 
+//    @Override
+//    public PaymentResponse pay(String orderId, PaymentRequest request) {
+//        OrderEntity order = orderService.getOrderEntity(orderId);
+//        if (order.getStatus() != PENDING_PAYMENT) {
+//            throw new AlreadyPaidException("Order cannot be paid in status: " + order.getStatus());
+//        }
+//
+//        PaymentEntity payment = paymentRepository.save(buildPayment(request));
+//        order.setPayment(payment);
+//        order.setStatus(PAID);
+//
+//        return toPaymentResponse(payment);
+//    }
+
     @Override
-    public PaymentResponse pay(String orderId, PaymentRequest request) {
-        OrderEntity order = orderService.getOrderEntity(orderId);
-        if (order.getStatus() != PENDING_PAYMENT) {
-            throw new AlreadyPaidException("Order cannot be paid in status: " + order.getStatus());
-        }
-
-        PaymentEntity payment = paymentRepository.save(buildPayment(request));
-        order.setPayment(payment);
-        order.setStatus(PAID);
-
-        return toPaymentResponse(payment);
+    public PaymentEntity persistPaymentEntity(PaymentType paymentType) {
+        return paymentRepository.save(buildPayment(paymentType));
     }
 
     //grab orderId from StripePaymentRequest, don't trust the amount coming from frontend, load order then calculate amount that should be charged
@@ -66,9 +67,15 @@ public class PaymentServiceImpl implements PaymentService {
         return stripeService.checkPaymentIntent(paymentIntentId);
     }
 
+    //TEST CHANGES YOU'VE MADE!!!!
     @Override
     public void handleWebhook(String payload, String signature) {
-        stripeService.handleWebhook(payload, signature);
+
+        var data = stripeService.handleWebhook(payload, signature);
+
+        var payment = persistPaymentEntity(data.paymentType());
+
+        orderService.markAsPaid(data.orderId(), payment);
     }
 }
 

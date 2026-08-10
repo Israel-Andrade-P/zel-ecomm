@@ -1,9 +1,9 @@
 package com.zeldev.zel_e_comm.dto.request;
 
-import com.zeldev.zel_e_comm.enumeration.PaymentMethod;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record PaymentRequest(
         @Schema(example = "CREDIT_CARD")
-        PaymentMethod paymentMethod
+        PaymentType paymentMethod
 ) {}

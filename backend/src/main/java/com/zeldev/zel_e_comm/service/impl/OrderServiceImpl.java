@@ -2,10 +2,8 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.OrderRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
-import com.zeldev.zel_e_comm.entity.CartItemEntity;
-import com.zeldev.zel_e_comm.entity.LocationEntity;
-import com.zeldev.zel_e_comm.entity.OrderEntity;
-import com.zeldev.zel_e_comm.entity.UserEntity;
+import com.zeldev.zel_e_comm.entity.*;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import com.zeldev.zel_e_comm.exception.CartIsEmptyException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.OrderRepository;
@@ -77,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void markAsPaid(String orderId) {
+    public void markAsPaid(String orderId, PaymentEntity payment) {
         var order = getOrderEntity(orderId);
 
         if (order.getStatus() == PAID) return;
@@ -91,5 +89,6 @@ public class OrderServiceImpl implements OrderService {
         cart.getCartItems().clear();
 
         order.setStatus(PAID);
+        order.setPayment(payment);
     }
 }

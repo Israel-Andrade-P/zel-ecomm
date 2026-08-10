@@ -281,7 +281,9 @@ export const getStripeClientSecret =
   (currentOrderId) => async (dispatch, getState) => {
     try {
       dispatch({ type: "IS_FETCHING" });
-      const stripePaymentRequest = { orderId: currentOrderId };
+      const stripePaymentRequest = {
+        orderId: currentOrderId,
+      };
       const { data } = await api.post(
         "/payments/stripe/client-secret",
         stripePaymentRequest,

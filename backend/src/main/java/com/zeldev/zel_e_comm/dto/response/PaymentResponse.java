@@ -1,11 +1,11 @@
 package com.zeldev.zel_e_comm.dto.response;
 
-import com.zeldev.zel_e_comm.enumeration.PaymentMethod;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import lombok.Builder;
 
 @Builder
 public record PaymentResponse(
-        PaymentMethod paymentMethod,
+        PaymentType paymentMethod,
         String pgId,
         String pgStatus,
         String pgResponseMessage,

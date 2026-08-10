@@ -1,7 +1,7 @@
 package com.zeldev.zel_e_comm.entity;
 
 import com.zeldev.zel_e_comm.common.BaseEntity;
-import com.zeldev.zel_e_comm.enumeration.PaymentMethod;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import lombok.*;
 public class PaymentEntity extends BaseEntity {
     @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    private PaymentType paymentMethod;
     @OneToOne(mappedBy = "payment")
     private OrderEntity order;
     @Column(name = "pg_id", nullable = false)

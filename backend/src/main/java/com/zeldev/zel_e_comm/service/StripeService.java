@@ -5,11 +5,15 @@ import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
 import com.stripe.net.Webhook;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.zeldev.zel_e_comm.common.StripeWebhookData;
 import com.zeldev.zel_e_comm.dto.response.StripeConfirmationResponse;
 import com.zeldev.zel_e_comm.entity.OrderEntity;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import com.zeldev.zel_e_comm.exception.PaymentProviderException;
+import com.zeldev.zel_e_comm.exception.UnsupportedPaymentMethodException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +30,6 @@ public class StripeService {
     private String stripeApiKey;
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
-
-    private final OrderService orderService;
 
     public PaymentIntent paymentIntent(OrderEntity order) {
         var amountInCents = order.getTotalPrice().multiply(BigDecimal.valueOf(100)).longValueExact();
@@ -70,8 +72,7 @@ public class StripeService {
         }
     }
 
-    //Webhook not being triggered
-    public void handleWebhook(String payload, String signature) {
+    public StripeWebhookData handleWebhook(String payload, String signature) {
         try {
             Event event = Webhook.constructEvent(payload, signature, webhookSecret);
             log.info("Received Stripe event: {} ({})", event.getType(), event.getId());
@@ -83,15 +84,36 @@ public class StripeService {
                         .orElseThrow(() -> new PaymentProviderException("Failed to deserialize Payment Intent"));
                 String paymentIntentId = paymentIntent.getId();
                 String orderId = paymentIntent.getMetadata().get("orderId");
+
+                String stripePaymentMethodId = paymentIntent.getPaymentMethod();
+                PaymentMethod stripePaymentMethod = PaymentMethod.retrieve(stripePaymentMethodId);
+                PaymentType paymentType = mapPaymentMethod(stripePaymentMethod);
+
                 log.info("PaymentIntent {} succeeded for order {}", paymentIntentId, orderId);
 
-                orderService.markAsPaid(orderId);
+                return StripeWebhookData.builder()
+                        .orderId(orderId)
+                        .paymentType(paymentType)
+                        .build();
             }
 
         } catch (SignatureVerificationException e) {
             log.error("Invalid Stripe webhook signature", e);
             throw new PaymentProviderException("Invalid Stripe webhook signature", e);
+        } catch (StripeException e) {
+            log.error("StripeException thrown", e);
+            throw new PaymentProviderException("StripeException thrown", e);
         }
+        return null;
+    }
+
+    private PaymentType mapPaymentMethod(PaymentMethod stripePaymentMethod) {
+        return switch (stripePaymentMethod.getType()) {
+            case "card" -> PaymentType.CREDIT_CARD;
+            case "pix" -> PaymentType.PIX;
+            case "boleto" -> PaymentType.BOLETO;
+            default -> throw new UnsupportedPaymentMethodException("This payment method is not supported");
+        };
     }
 
     @PostConstruct

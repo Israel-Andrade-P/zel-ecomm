@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeldev.zel_e_comm.controller.PaymentController;
 import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
-import com.zeldev.zel_e_comm.enumeration.PaymentMethod;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.JwtService;
 import com.zeldev.zel_e_comm.service.PaymentService;
@@ -42,9 +42,9 @@ public class PayTest {
     )
     void greenPath() throws JsonProcessingException {
         String orderId = "orderId";
-        PaymentRequest request = new PaymentRequest(PaymentMethod.BANK_TRANSFER);
+        PaymentRequest request = new PaymentRequest(PaymentType.BANK_TRANSFER);
         PaymentResponse response = new PaymentResponse(
-                PaymentMethod.BANK_TRANSFER,
+                PaymentType.BANK_TRANSFER,
                 "Id",
                 "status",
                 "message",

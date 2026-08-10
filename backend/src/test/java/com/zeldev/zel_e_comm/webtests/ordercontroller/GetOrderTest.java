@@ -3,7 +3,7 @@ package com.zeldev.zel_e_comm.webtests.ordercontroller;
 import com.zeldev.zel_e_comm.dto.response.OrderItemResponse;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
 import com.zeldev.zel_e_comm.enumeration.OrderStatus;
-import com.zeldev.zel_e_comm.enumeration.PaymentMethod;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -37,7 +37,7 @@ public class GetOrderTest extends OrderControllerBaseTest {
                 OrderStatus.PENDING_PAYMENT,
                 LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 "938923",
-                PaymentMethod.BANK_TRANSFER
+                PaymentType.BANK_TRANSFER
         );
         when(orderService.getOrderResponse(orderId)).thenReturn(response);
 

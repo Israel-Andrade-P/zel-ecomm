@@ -1,9 +1,6 @@
 package com.zeldev.zel_e_comm.controller;
 
-import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
-import com.zeldev.zel_e_comm.dto.request.StripeConfirmationRequest;
 import com.zeldev.zel_e_comm.dto.request.StripePaymentRequest;
-import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
 import com.zeldev.zel_e_comm.dto.response.StripeConfirmationResponse;
 import com.zeldev.zel_e_comm.dto.response.StripePaymentResponse;
 import com.zeldev.zel_e_comm.service.PaymentService;
@@ -22,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @PostMapping("/orders/{orderId}")
-    public ResponseEntity<PaymentResponse> pay(
-            @PathVariable String orderId,
-            @RequestBody PaymentRequest request
-    ) {
-        return ResponseEntity.ok(paymentService.pay(orderId, request));
-    }
+//    @PostMapping("/orders/{orderId}")
+//    public ResponseEntity<PaymentResponse> pay(
+//            @PathVariable String orderId,
+//            @RequestBody PaymentRequest request
+//    ) {
+//        return ResponseEntity.ok(paymentService.pay(orderId, request));
+//    }
 
     @PostMapping("/stripe/client-secret")
     public ResponseEntity<StripePaymentResponse> createPaymentIntent(@RequestBody StripePaymentRequest request) {

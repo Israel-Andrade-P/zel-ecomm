@@ -10,7 +10,7 @@ import org.mockito.ArgumentCaptor;
 
 import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PAID;
 import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PENDING_PAYMENT;
-import static com.zeldev.zel_e_comm.enumeration.PaymentMethod.BANK_TRANSFER;
+import static com.zeldev.zel_e_comm.enumeration.PaymentType.BANK_TRANSFER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;

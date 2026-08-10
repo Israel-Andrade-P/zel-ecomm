@@ -1,7 +1,7 @@
 package com.zeldev.zel_e_comm.dto.response;
 
 import com.zeldev.zel_e_comm.enumeration.OrderStatus;
-import com.zeldev.zel_e_comm.enumeration.PaymentMethod;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -17,5 +17,5 @@ public record OrderResponse(
         OrderStatus status,
         Instant createdAt,
         String locationPublicId,
-        PaymentMethod paymentMethod
+        PaymentType paymentMethod
 ) {}

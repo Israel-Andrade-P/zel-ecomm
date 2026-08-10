@@ -1,15 +1,15 @@
 package com.zeldev.zel_e_comm.util;
 
-import com.zeldev.zel_e_comm.dto.request.PaymentRequest;
 import com.zeldev.zel_e_comm.dto.response.PaymentResponse;
 import com.zeldev.zel_e_comm.entity.PaymentEntity;
+import com.zeldev.zel_e_comm.enumeration.PaymentType;
 
 import java.util.function.Supplier;
 
 public class PaymentUtils {
-    public static PaymentEntity buildPayment(PaymentRequest request) {
+    public static PaymentEntity buildPayment(PaymentType paymentType) {
         PaymentEntity payment = parcialEntity.get();
-        payment.setPaymentMethod(request.paymentMethod());
+        payment.setPaymentMethod(paymentType);
         return payment;
     }
 
