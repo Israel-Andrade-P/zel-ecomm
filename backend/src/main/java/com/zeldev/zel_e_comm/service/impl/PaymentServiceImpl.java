@@ -25,7 +25,7 @@ import static com.zeldev.zel_e_comm.util.PaymentUtils.buildPayment;
 @Transactional
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
-    private OrderService orderService;
+    private final OrderService orderService;
     private final StripeService stripeService;
 
 //    @Override
@@ -72,6 +72,8 @@ public class PaymentServiceImpl implements PaymentService {
     public void handleWebhook(String payload, String signature) {
 
         var data = stripeService.handleWebhook(payload, signature);
+
+        if (data == null) return;
 
         var payment = persistPaymentEntity(data.paymentType());
 
