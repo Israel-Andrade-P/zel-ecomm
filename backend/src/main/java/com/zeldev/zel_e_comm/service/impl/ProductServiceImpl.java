@@ -115,8 +115,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO updateProduct(ProductDTO productDTO, String productId) {
         ProductEntity productDB = findByPublicId(productId);
-        if (productDTO.name() != null && !productDTO.name().isBlank()) {
-            productDB.setName(productDTO.name());
+        if (productDTO.productName() != null && !productDTO.productName().isBlank()) {
+            productDB.setName(productDTO.productName());
         }
         if (productDTO.description() != null && !productDTO.description().isBlank()) {
             productDB.setDescription(productDTO.description());

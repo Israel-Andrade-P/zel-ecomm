@@ -17,7 +17,7 @@ public record ProductDTO(
         @NotEmpty(message = "Name field is mandatory")
         @Size(min = 2, max = 50, message = "Name must be between 2 - 50 characters")
         @Schema(example = "Back Scratcher")
-        String name,
+        String productName,
         @Schema(example = "Perfect for reaching hard spots")
         String description,
         @Schema(example = "cat.txt")

@@ -17,7 +17,7 @@ public class ProductUtils {
 
     public ProductEntity buildProductEntity(ProductDTO request) {
         return ProductEntity.builder()
-                .name(request.name())
+                .name(request.productName())
                 .description(request.description())
                 .price(request.price())
                 .quantity(request.quantity())
@@ -28,7 +28,7 @@ public class ProductUtils {
     public ProductDTO toDTO(ProductEntity entity) {
         return ProductDTO.builder()
                 .productId(entity.getPublicId().toString())
-                .name(entity.getName())
+                .productName(entity.getName())
                 .description(entity.getDescription())
                 .quantity(entity.getQuantity())
                 .price(entity.getPrice())
