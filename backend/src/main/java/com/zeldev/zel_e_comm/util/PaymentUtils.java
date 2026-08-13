@@ -7,8 +7,10 @@ import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import java.util.function.Supplier;
 
 public class PaymentUtils {
-    public static PaymentEntity buildPayment(PaymentType paymentType) {
-        PaymentEntity payment = parcialEntity.get();
+    public static PaymentEntity buildPayment(PaymentType paymentType, String pgId, String pgStatus) {
+        PaymentEntity payment = partialEntity.get();
+        payment.setPgId(pgId);
+        payment.setPgStatus(pgStatus);
         payment.setPaymentMethod(paymentType);
         return payment;
     }
@@ -23,11 +25,9 @@ public class PaymentUtils {
                 .build();
     }
 
-    private static Supplier<PaymentEntity> parcialEntity = () ->
+    private static final Supplier<PaymentEntity> partialEntity = () ->
             PaymentEntity.builder()
-                    .pgId("42069")
-                    .pgName("FakePicPay")
-                    .pgStatus("PAID")
+                    .pgName(PaymentType.STRIPE.name())
                     .pgResponseMessage("Payment successful")
                     .build();
 }

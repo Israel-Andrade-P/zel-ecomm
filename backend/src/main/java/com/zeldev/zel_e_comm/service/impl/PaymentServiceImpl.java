@@ -43,8 +43,8 @@ public class PaymentServiceImpl implements PaymentService {
 //    }
 
     @Override
-    public PaymentEntity persistPaymentEntity(PaymentType paymentType) {
-        return paymentRepository.save(buildPayment(paymentType));
+    public PaymentEntity persistPaymentEntity(PaymentType paymentType, String pgId, String pgStatus) {
+        return paymentRepository.save(buildPayment(paymentType, pgId, pgStatus));
     }
 
     //grab orderId from StripePaymentRequest, don't trust the amount coming from frontend, load order then calculate amount that should be charged
@@ -67,7 +67,6 @@ public class PaymentServiceImpl implements PaymentService {
         return stripeService.checkPaymentIntent(paymentIntentId);
     }
 
-    //TEST CHANGES YOU'VE MADE!!!!
     @Override
     public void handleWebhook(String payload, String signature) {
 
@@ -75,7 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (data == null) return;
 
-        var payment = persistPaymentEntity(data.paymentType());
+        var payment = persistPaymentEntity(data.paymentType(), data.paymentIntentId(), data.status());
 
         orderService.markAsPaid(data.orderId(), payment);
     }

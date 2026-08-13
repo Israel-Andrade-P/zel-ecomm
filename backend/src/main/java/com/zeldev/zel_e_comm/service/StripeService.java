@@ -3,10 +3,9 @@ package com.zeldev.zel_e_comm.service;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Event;
-import com.stripe.model.PaymentIntent;
-import com.stripe.model.PaymentMethod;
+import com.stripe.model.*;
 import com.stripe.net.Webhook;
+import com.stripe.param.CustomerSearchParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.zeldev.zel_e_comm.common.StripeWebhookData;
 import com.zeldev.zel_e_comm.dto.response.StripeConfirmationResponse;
@@ -32,9 +31,17 @@ public class StripeService {
     private String webhookSecret;
 
     public PaymentIntent paymentIntent(OrderEntity order) {
+        var user = order.getUser();
+
         var amountInCents = order.getTotalPrice().multiply(BigDecimal.valueOf(100)).longValueExact();
 
         try {
+            //IMPLEMENTING CUSTOMER STRIPE
+            CustomerSearchParams customerParams = CustomerSearchParams.builder()
+                    .setQuery("email:'" + user.getEmail() + "'")
+                    .build();
+            CustomerSearchResult result = Customer.search(customerParams);
+
             log.info("Creating PaymentIntent for order {}", order.getPublicId());
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                     .setAmount(amountInCents)
@@ -93,6 +100,8 @@ public class StripeService {
 
                 return StripeWebhookData.builder()
                         .orderId(orderId)
+                        .paymentIntentId(paymentIntentId)
+                        .status(paymentIntent.getStatus())
                         .paymentType(paymentType)
                         .build();
             }

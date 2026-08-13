@@ -8,7 +8,7 @@ import com.zeldev.zel_e_comm.enumeration.PaymentType;
 
 public interface PaymentService {
 //    PaymentResponse pay(String orderId, PaymentRequest request);
-    PaymentEntity persistPaymentEntity(PaymentType paymentType);
+    PaymentEntity persistPaymentEntity(PaymentType paymentType, String pgId, String pgStatus);
     StripePaymentResponse createPaymentIntent(StripePaymentRequest request);
     StripeConfirmationResponse confirmPayment(String paymentIntentId);
     void handleWebhook(String payload, String signature);

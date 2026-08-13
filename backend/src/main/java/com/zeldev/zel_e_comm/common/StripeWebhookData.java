@@ -4,5 +4,5 @@ import com.zeldev.zel_e_comm.enumeration.PaymentType;
 import lombok.Builder;
 
 @Builder
-public record StripeWebhookData(String orderId, PaymentType paymentType) {
+public record StripeWebhookData(String orderId, String paymentIntentId, String status, PaymentType paymentType) {
 }
