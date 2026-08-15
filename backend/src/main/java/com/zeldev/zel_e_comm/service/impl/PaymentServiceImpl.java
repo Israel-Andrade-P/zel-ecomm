@@ -70,9 +70,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void handleWebhook(String payload, String signature) {
 
-        var data = stripeService.handleWebhook(payload, signature);
+        var result = stripeService.handleWebhook(payload, signature);
 
-        if (data == null) return;
+        if (result.isEmpty()) return;
+
+        var data = result.get();
 
         var payment = persistPaymentEntity(data.paymentType(), data.paymentIntentId(), data.status());
 
