@@ -34,6 +34,8 @@ function App() {
           <Route path='/' element={<PrivateRoute />}>
             <Route path='/checkout' element={<Checkout />} />
             <Route path='/order-confirm' element={<PaymentConfirmation />} />
+          </Route>
+          <Route path='/' element={<PrivateRoute adminOnly />}>
             <Route path='/admin' element={<AdminLayout />} />
           </Route>
         </Routes>

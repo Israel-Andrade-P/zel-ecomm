@@ -19,7 +19,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.zeldev.zel_e_comm.constants.Constants.ACCOUNT_VERIFIED_MESSAGE;
 import static com.zeldev.zel_e_comm.util.RequestUtils.getResponse;
@@ -61,7 +64,8 @@ public class AuthController {
     @GetMapping("/user")
     public ResponseEntity<LoginResponse> getUserDetails() {
         CustomAuthentication auth = authUtils.getAuthObj();
-        return ResponseEntity.status(OK).body(new LoginResponse(auth.getEmail(), auth.getUsername(), auth.getAuthorities()));
+        List<String> userRoles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+        return ResponseEntity.status(OK).body(new LoginResponse(auth.getEmail(), auth.getUsername(), userRoles));
     }
 
     @PostMapping("/logout")

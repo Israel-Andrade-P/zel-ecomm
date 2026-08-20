@@ -20,9 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.AUTO_CLOSE_SOURCE;
 import static com.zeldev.zel_e_comm.constants.Constants.LOGIN_PATH;
@@ -63,8 +66,9 @@ public class AuthFilter extends AbstractAuthenticationProcessingFilter {
         UserSecurity user = (UserSecurity) authentication.getPrincipal();
         authService.updateLoginAttempt(user.email(), LOGIN_SUCCESS);
         String token = jwtService.createToken(user, Token::getAccess);
+        List<String> userRoles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
-        var loginResponse = new LoginResponse(user.email(), user.getUsername(), user.getAuthorities());
+        var loginResponse = new LoginResponse(user.email(), user.getUsername(), userRoles);
         response.addHeader(HttpHeaders.SET_COOKIE, jwtService.generateJwtCookie(token).toString());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.OK.value());
