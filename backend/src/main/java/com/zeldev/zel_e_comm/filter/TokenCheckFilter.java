@@ -12,33 +12,39 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import static com.zeldev.zel_e_comm.constants.Constants.WHITE_LIST;
 import static com.zeldev.zel_e_comm.enumeration.UserStatus.ACTIVE;
 import static com.zeldev.zel_e_comm.util.UserUtils.fromUserEntity;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class TokenCheckFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private static final Logger logger = LoggerFactory.getLogger(TokenCheckFilter.class);
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/v1/auth")){
+        log.debug("TokenCheckFilter called for URI: {}", request.getRequestURI());
+
+        String requestUri = request.getServletPath();
+
+        if (isPublicApi(requestUri)){
             filterChain.doFilter(request, response);
             return;
         }
-        logger.debug("Custom filter called for URI: {}", request.getRequestURI());
 
         String jwt;
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -53,19 +59,29 @@ public class TokenCheckFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUserWithToken(HttpServletRequest request, String jwt) {
-        if (jwt == null) return;
+        if (jwt == null) {
+            log.error("No token found in the request {}", request.getRequestURI());
+            return;
+        }
 
         TokenData tokenData = jwtService.getTokenData(jwt);
-        if (!tokenData.isValid()) return;
+        if (!tokenData.isValid()) {
+            log.error("Token is invalid due to expiration or it's corrupted");
+            return;
+        }
 
-        UserEntity DBUser = userRepository.findByEmailWithRoles(tokenData.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
-        if (!DBUser.getTokenVersion().equals(tokenData.getTokenVersion()) || DBUser.getStatus() != ACTIVE) return;
+        UserEntity dbUser = userRepository.findByEmailWithRoles(tokenData.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        if (!dbUser.getTokenVersion().equals(tokenData.getTokenVersion()) || dbUser.getStatus() != ACTIVE) return;
 
-        UserSecurity user  = fromUserEntity(DBUser, "");
+        UserSecurity user  = fromUserEntity(dbUser, "");
         var auth = CustomAuthentication.authenticated(user, user.getAuthorities());
         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(auth);
-        logger.info("user roles: {}", auth.getAuthorities());
+        log.info("user roles: {}", auth.getAuthorities());
+    }
+
+    private boolean isPublicApi(String path) {
+        return Arrays.stream(WHITE_LIST).anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 }
 
