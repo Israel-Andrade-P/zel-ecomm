@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.repository;
 
 import com.zeldev.zel_e_comm.entity.UserEntity;
+import com.zeldev.zel_e_comm.enumeration.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,6 +22,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u JOIN FETCH u.roles WHERE u.email=?1")
     Optional<UserEntity> findByEmailWithRoles(String email);
+
+    @Query("SELECT COUNT(u) FROM UserEntity u JOIN u.roles r WHERE r.role = :role")
+    long countByRole(@Param("role") RoleType role);
 }
 
 
