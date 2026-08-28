@@ -7,6 +7,7 @@ import com.zeldev.zel_e_comm.security.CustomAccessDeniedHandler;
 import com.zeldev.zel_e_comm.security.CustomAuthenticationManager;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
+import com.zeldev.zel_e_comm.util.ApiResponseWriter;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +20,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.security.Principal;
 import java.util.function.Supplier;
 
 import static com.zeldev.zel_e_comm.constants.Constants.WHITE_LIST;
@@ -67,8 +67,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthFilter authFilter(CustomAuthenticationManager manager, AuthService authService, JwtService jwtService) {
-        return new AuthFilter(manager, authService, jwtService);
+    public AuthFilter authFilter(CustomAuthenticationManager manager, AuthService authService, JwtService jwtService, ApiResponseWriter responseWriter, JsonMapper jsonMapper) {
+        return new AuthFilter(manager, authService, jwtService, responseWriter, jsonMapper);
     }
 
     @Bean

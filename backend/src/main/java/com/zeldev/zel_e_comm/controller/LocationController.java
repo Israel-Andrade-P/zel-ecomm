@@ -4,6 +4,7 @@ import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.request.LocationRequest;
 import com.zeldev.zel_e_comm.dto.response.LocationResponse;
 import com.zeldev.zel_e_comm.service.LocationService;
+import com.zeldev.zel_e_comm.util.ApiResponseWriter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
-import static com.zeldev.zel_e_comm.util.RequestUtils.getResponse;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -25,6 +25,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Tag(name = "Location APIs", description = "APIs that manage locations")
 public class LocationController {
     private final LocationService locationService;
+    private final ApiResponseWriter responseWriter;
 
     @PostMapping("/locations/add")
     public ResponseEntity<LocationResponse> create(@RequestBody @Valid LocationRequest locationDTO) {
@@ -53,6 +54,6 @@ public class LocationController {
     @PreAuthorize("hasRole('ADMIN') || @locationSecurity.isOwner(#publicId)")
     public ResponseEntity<Response> delete(@PathVariable("id") String publicId, HttpServletRequest request) {
         locationService.deleteLocation(publicId);
-        return ResponseEntity.status(OK).body(getResponse(request, Collections.emptyMap(), "Location deleted", OK));
+        return ResponseEntity.status(OK).body(responseWriter.getResponse(request, Collections.emptyMap(), "Location deleted", OK));
     }
 }

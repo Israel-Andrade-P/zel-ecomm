@@ -4,7 +4,7 @@ import com.zeldev.zel_e_comm.domain.Response;
 import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.service.UserService;
-import com.zeldev.zel_e_comm.util.RequestUtils;
+import com.zeldev.zel_e_comm.util.ApiResponseWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final ApiResponseWriter responseWriter;
 
     @GetMapping("/profile/{username}")
     @PreAuthorize("principal.getUsername().equals(#username) || hasRole('ADMIN')")
@@ -38,7 +39,7 @@ public class UserController {
     @PreAuthorize("principal.getUsername().equals(#username) || hasRole('ADMIN')")
     public ResponseEntity<Response> deleteUser(@PathVariable("username") String username, HttpServletRequest request) {
         String message = userService.deleteUser(username);
-        return ResponseEntity.status(HttpStatus.OK).body(RequestUtils.getResponse(request, Collections.emptyMap(), message, HttpStatus.OK));
+        return ResponseEntity.status(HttpStatus.OK).body(responseWriter.getResponse(request, Collections.emptyMap(), message, HttpStatus.OK));
     }
 
     @GetMapping("/admin/users")

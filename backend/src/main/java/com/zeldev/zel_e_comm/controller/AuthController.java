@@ -2,13 +2,13 @@ package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.domain.CustomAuthentication;
 import com.zeldev.zel_e_comm.domain.Response;
-import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.request.KeyRequest;
 import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.LoginResponse;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.service.AuthService;
 import com.zeldev.zel_e_comm.service.JwtService;
+import com.zeldev.zel_e_comm.util.ApiResponseWriter;
 import com.zeldev.zel_e_comm.util.AuthUtils;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,16 +18,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.zeldev.zel_e_comm.constants.Constants.ACCOUNT_VERIFIED_MESSAGE;
-import static com.zeldev.zel_e_comm.util.RequestUtils.getResponse;
 import static java.util.Collections.emptyMap;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -37,6 +36,7 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
     private final AuthUtils authUtils;
+    private final ApiResponseWriter responseWriter;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody @Valid UserRequest request) {
@@ -48,7 +48,7 @@ public class AuthController {
                                                   @RequestParam(name = "key") String key,
                                                   HttpServletRequest request) {
         authService.verifyAccount(key);
-        return ResponseEntity.ok().body(getResponse(request, emptyMap(), ACCOUNT_VERIFIED_MESSAGE, OK));
+        return ResponseEntity.ok().body(responseWriter.getResponse(request, emptyMap(), ACCOUNT_VERIFIED_MESSAGE, OK));
     }
 
     @PostMapping("/new_key")
