@@ -2,7 +2,7 @@ package com.zeldev.zel_e_comm.webtests.productcontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeldev.zel_e_comm.controller.ProductController;
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductRequest;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.JwtService;
 import com.zeldev.zel_e_comm.service.ProductOrchestrationService;
@@ -34,8 +34,8 @@ public class ProductControllerBaseTest {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
-    protected ProductDTO createDto(String name, Integer quantity) {
-        return new ProductDTO(
+    protected ProductRequest createDto(String name, Integer quantity) {
+        return new ProductRequest(
                 "1",
                 name,
                 "Nice pan",

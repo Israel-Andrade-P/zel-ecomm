@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
-import com.zeldev.zel_e_comm.dto.response.ProductResponse;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +43,7 @@ public class GetProductsBySellerTest extends ProductServiceBaseTest{
         when(authUtils.getLoggedInEmail()).thenReturn(EMAIL);
         when(productRepository.findBySellerEmail(any(String.class), any(Pageable.class))).thenReturn(productPage);
 
-        ProductResponse response = productService.getProductsBySeller(page, size, "name", sortOrder);
+        PageResponse response = productService.getProductsBySeller(page, size, "name", sortOrder);
 
         Pageable pageable = capturePageable();
 

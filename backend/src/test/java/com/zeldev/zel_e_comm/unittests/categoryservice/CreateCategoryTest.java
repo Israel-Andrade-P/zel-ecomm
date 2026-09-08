@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.categoryservice;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
+import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class CreateCategoryTest extends CategoryServiceBaseTest{
                     """
     )
     void greenPath(){
-        CategoryDTO categoryDTO = new CategoryDTO("Accessories");
+        CategoryRequest categoryDTO = new CategoryRequest("Accessories");
 
         when(categoryRepository.save(any(CategoryEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

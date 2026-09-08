@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductRequest;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
@@ -29,7 +29,7 @@ public class CreateTest extends ProductServiceBaseTest{
                     """
     )
     void greenPath() {
-        ProductDTO request = new ProductDTO(
+        ProductRequest request = new ProductRequest(
                 null,
                 "Dish Soap",
                 "wash stuff with it",
@@ -52,7 +52,7 @@ public class CreateTest extends ProductServiceBaseTest{
             return entity;
         });
 
-        ProductDTO response = productService.create(request, category.getName());
+        ProductRequest response = productService.create(request, category.getName());
 
         ArgumentCaptor<ProductEntity> captor = ArgumentCaptor.forClass(ProductEntity.class);
 

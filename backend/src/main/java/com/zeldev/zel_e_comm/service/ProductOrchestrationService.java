@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.service;
 
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductRequest;
+import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +15,8 @@ public class ProductOrchestrationService {
     private final ProductService productService;
     private final CartItemService cartItemService;
 
-    public ProductDTO updateProductAndSyncCarts(ProductDTO dto, String productId) {
-        ProductDTO updated = productService.updateProduct(dto, productId);
+    public ProductResponse updateProductAndSyncCarts(ProductRequest dto, String productId) {
+        ProductResponse updated = productService.updateProduct(dto, productId);
 
         cartItemService.findActiveCartItemsByProductId(UUID.fromString(productId))
                 .forEach(ci -> {
@@ -26,7 +27,7 @@ public class ProductOrchestrationService {
         return updated;
     }
 
-    public ProductDTO deleteCartItemsAfterProduct(String productId) {
+    public ProductResponse deleteCartItemsAfterProduct(String productId) {
         cartItemService.deleteByProductPublicId(UUID.fromString(productId));
         return productService.deleteProduct(productId);
     }

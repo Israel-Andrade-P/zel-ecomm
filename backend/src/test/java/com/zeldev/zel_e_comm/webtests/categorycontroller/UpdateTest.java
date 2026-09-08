@@ -1,7 +1,7 @@
 package com.zeldev.zel_e_comm.webtests.categorycontroller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
+import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class UpdateTest extends CategoryControllerBaseTest{
     )
     void greenPath() throws JsonProcessingException {
         String categoryName = "Gaming Stuff";
-        CategoryDTO categoryDTO = new CategoryDTO("Furniture");
+        CategoryRequest categoryDTO = new CategoryRequest("Furniture");
 
         when(categoryService.updateById(categoryDTO, categoryName)).thenReturn(categoryDTO);
 

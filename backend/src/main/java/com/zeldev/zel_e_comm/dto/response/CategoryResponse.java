@@ -1,17 +1,6 @@
 package com.zeldev.zel_e_comm.dto.response;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
 import lombok.Builder;
 
-import java.util.List;
-
 @Builder
-public record CategoryResponse(
-        List<CategoryDTO> content,
-        Integer pageNumber,
-        Integer pageSize,
-        Long totalElements,
-        Integer totalPages,
-        boolean lastPage) {
-
-}
+public record CategoryResponse(Long id, String name) {}

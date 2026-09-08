@@ -1,7 +1,7 @@
 package com.zeldev.zel_e_comm.webtests.categorycontroller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
+import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class CreateTest extends CategoryControllerBaseTest{
                     """
     )
     void greenPath() throws JsonProcessingException {
-        CategoryDTO categoryDTO = new CategoryDTO("Pet Food");
+        CategoryRequest categoryDTO = new CategoryRequest("Pet Food");
 
         when(categoryService.createCategory(categoryDTO)).thenReturn(categoryDTO);
 
@@ -43,7 +43,7 @@ public class CreateTest extends CategoryControllerBaseTest{
                     """
     )
     void redPath() throws JsonProcessingException {
-        CategoryDTO categoryDTO = new CategoryDTO("P");
+        CategoryRequest categoryDTO = new CategoryRequest("P");
 
         var result = mockMvc.post()
                 .uri(BASE_URI.concat("/admin/categories/create"))

@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.webtests.categorycontroller;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
+import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class DeleteTest extends CategoryControllerBaseTest{
     )
     void greenPath() {
         var categoryId = "categoryId";
-        var deletedCategory = new CategoryDTO("Pet Food");
+        var deletedCategory = new CategoryRequest("Pet Food");
 
         when(categoryService.deleteById(categoryId))
                 .thenReturn(deletedCategory);

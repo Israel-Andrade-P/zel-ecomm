@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
-import com.zeldev.zel_e_comm.dto.response.ProductResponse;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +41,7 @@ public class GetAllProductsTest extends ProductServiceBaseTest {
 
         when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
 
-        ProductResponse response = productService.getAllProducts(page, size, sortBy, sortOrder, category, keyword);
+        PageResponse response = productService.getAllProducts(page, size, sortBy, sortOrder, category, keyword);
 
         Pageable pageable = capturePageable();
 

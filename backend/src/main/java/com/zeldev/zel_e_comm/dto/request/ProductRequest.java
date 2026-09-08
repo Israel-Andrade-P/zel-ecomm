@@ -10,7 +10,7 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record ProductDTO(
+public record ProductRequest(
         @Schema(description = "UUID string", example = "dqwidbifbif948194191")
         String productId,
         @NotNull(message = "Name field is mandatory")

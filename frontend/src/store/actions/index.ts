@@ -338,3 +338,18 @@ export const stripePaymentConfirmation =
       );
     }
   };
+
+export const getAdminAnalytics = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get("/admin/overview");
+    dispatch({ type: "FETCH_ANALYTICS", payload: data });
+    dispatch({ type: "FETCH_SUCCESS" });
+  } catch (err) {
+    dispatch({
+      type: "FETCH_ERROR",
+      payload:
+        err?.response?.data?.message || "Failed to fetch admin analytics",
+    });
+  }
+};

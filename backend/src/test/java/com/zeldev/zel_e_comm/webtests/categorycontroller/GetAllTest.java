@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.webtests.categorycontroller;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
+import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,8 +22,8 @@ public class GetAllTest extends CategoryControllerBaseTest{
     )
     void greenPath() {
         var categories = List.of(
-                new CategoryDTO("Pet Food"),
-                new CategoryDTO("Electronics")
+                new CategoryRequest("Pet Food"),
+                new CategoryRequest("Electronics")
         );
 
         var response = CategoryResponse.builder()

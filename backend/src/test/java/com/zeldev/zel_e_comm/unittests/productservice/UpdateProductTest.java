@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductRequest;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class UpdateProductTest extends ProductServiceBaseTest{
     )
     void shouldUpdate(String name, String description, Integer quantity) {
         String publicId = UUID.randomUUID().toString();
-        var productDto = new ProductDTO(
+        var productDto = new ProductRequest(
                 null,
                 name,
                 description,
@@ -75,7 +75,7 @@ public class UpdateProductTest extends ProductServiceBaseTest{
     void shouldHandleSpecialPriceRecalc(BigDecimal price, Integer discount, boolean shouldRecalc) {
         String publicId = UUID.randomUUID().toString();
 
-        var productDto = new ProductDTO(
+        var productDto = new ProductRequest(
                 null,
                 null,
                 null,
@@ -112,7 +112,7 @@ public class UpdateProductTest extends ProductServiceBaseTest{
 
         assertThrows(ResourceNotFoundException.class, () ->
                 productService.updateProduct(
-                        new ProductDTO(null,null,null,null,null,null,null,null),
+                        new ProductRequest(null,null,null,null,null,null,null,null),
                         publicId));
     }
 }

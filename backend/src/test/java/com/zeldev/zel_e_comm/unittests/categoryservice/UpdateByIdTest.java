@@ -1,8 +1,7 @@
 package com.zeldev.zel_e_comm.unittests.categoryservice;
 
-import com.zeldev.zel_e_comm.dto.request.CategoryDTO;
+import com.zeldev.zel_e_comm.dto.request.CategoryRequest;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,7 @@ public class UpdateByIdTest extends CategoryServiceBaseTest{
                     """
     )
     void greenPath() {
-        CategoryDTO categoryDTO = new CategoryDTO("Cuisine");
+        CategoryRequest categoryDTO = new CategoryRequest("Cuisine");
         CategoryEntity category = new CategoryEntity(CATEGORY_NAME);
 
         when(categoryRepository.findByName(CATEGORY_NAME)).thenReturn(Optional.of(category));
@@ -43,7 +42,7 @@ public class UpdateByIdTest extends CategoryServiceBaseTest{
                     """
     )
     void greenPath2() {
-        CategoryDTO categoryDTO = new CategoryDTO("");
+        CategoryRequest categoryDTO = new CategoryRequest("");
         CategoryEntity category = new CategoryEntity(CATEGORY_NAME);
 
         when(categoryRepository.findByName(CATEGORY_NAME)).thenReturn(Optional.of(category));

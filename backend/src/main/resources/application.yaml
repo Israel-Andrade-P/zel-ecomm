@@ -6,14 +6,13 @@ spring:
     username: zel
     password: cheese
     hikari:
+      ##less db overhead when using @Transactional due to not having to commit every single SQL statement individually rather all in one single commit
       auto-commit: false
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: validate
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
+    ##db connection is returned to conn pool when transaction ends as opposite to being held up all the way to controller(view)
     open-in-view: false
 project:
   path:

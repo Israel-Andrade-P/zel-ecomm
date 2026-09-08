@@ -40,7 +40,7 @@ public class GetOrdersTest extends OrderControllerBaseTest{
         );
         List<OrderResponse> response = List.of(or1);
 
-        when(orderService.getOrders()).thenReturn(response);
+        when(orderService.getOrders(page, size, sortBy, sortOrder)).thenReturn(response);
 
         var result = mockMvc.get()
                 .uri(BASE_URI.concat(PATH))

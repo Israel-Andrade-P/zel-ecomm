@@ -1,17 +1,17 @@
 package com.zeldev.zel_e_comm.dto.response;
 
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
-import lombok.*;
+import lombok.Builder;
 
-import java.util.List;
-
+import java.math.BigDecimal;
 
 @Builder
-public record ProductResponse (
-        List<ProductDTO> content,
-        Integer pageNumber,
-        Integer pageSize,
-        Long totalElements,
-        Integer totalPages,
-        boolean lastPage
-){}
+public record ProductResponse(
+        String productId,
+        String productName,
+        String description,
+        String image,
+        Integer quantity,
+        BigDecimal price,
+        Integer discount,
+        BigDecimal specialPrice
+) {}

@@ -2,8 +2,9 @@ package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.OrderRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.*;
-import com.zeldev.zel_e_comm.enumeration.PaymentType;
+import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.CartIsEmptyException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.OrderRepository;
@@ -12,6 +13,8 @@ import com.zeldev.zel_e_comm.util.AuthUtils;
 import com.zeldev.zel_e_comm.util.OrderUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.zeldev.zel_e_comm.enumeration.OrderStatus.PAID;
-import static com.zeldev.zel_e_comm.util.OrderUtils.buildOrder;
-import static com.zeldev.zel_e_comm.util.OrderUtils.toOrderResponse;
+import static com.zeldev.zel_e_comm.util.OrderUtils.*;
+import static com.zeldev.zel_e_comm.util.PageUtils.getPageable;
 
 @Service
 @RequiredArgsConstructor
@@ -70,8 +73,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public @Nullable List<OrderResponse> getOrders() {
-        return orderRepository.findAll().stream().map(OrderUtils::toOrderResponse).toList();
+    public PageResponse<OrderResponse> getOrders(Integer page, Integer size, String sortBy, String sortOrder) {
+        Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
+
+        Page<OrderEntity> orderPage = orderRepository.findAll(pageDetails);
+
+        List<OrderEntity> orders = orderPage.getContent();
+
+        if (orders.isEmpty()) throw new APIException("No orders placed yet :(");
+
+        return buildOrderPageResponse(orderPage, orders);
     }
 
     @Override

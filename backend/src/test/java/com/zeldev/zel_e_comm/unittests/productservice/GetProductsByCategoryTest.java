@@ -1,6 +1,6 @@
 package com.zeldev.zel_e_comm.unittests.productservice;
 
-import com.zeldev.zel_e_comm.dto.response.ProductResponse;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
@@ -47,7 +47,7 @@ public class GetProductsByCategoryTest extends ProductServiceBaseTest{
         when(categoryService.getByName(category_id)).thenReturn(category);
         when(productRepository.findByCategory_IdOrderByPriceAsc(any(Long.class), any(Pageable.class))).thenReturn(productPage);
 
-        ProductResponse response = productService.getProductsByCategory(category_id, page, size, "name", sortOrder);
+        PageResponse response = productService.getProductsByCategory(category_id, page, size, "name", sortOrder);
 
         Pageable pageable = capturePageable();
 

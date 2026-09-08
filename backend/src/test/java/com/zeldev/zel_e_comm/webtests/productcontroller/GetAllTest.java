@@ -1,7 +1,7 @@
 package com.zeldev.zel_e_comm.webtests.productcontroller;
 
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
-import com.zeldev.zel_e_comm.dto.response.ProductResponse;
+import com.zeldev.zel_e_comm.dto.request.ProductRequest;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -59,9 +59,9 @@ class GetAllTest extends ProductControllerBaseTest{
         verify(productService).getAllProducts(parseInt(PAGE_NUMBER), parseInt(PAGE_SIZE), SORT_ENTITY_BY, SORT_DIR, category, keyword);
     }
 
-    private ProductResponse getResponseDto() {
-        var products = List.of(new ProductDTO("id", "tv", "nice tv", "image.png", 1, new BigDecimal("5000"), 3, new BigDecimal("4800")));
-        return ProductResponse.builder()
+    private PageResponse getResponseDto() {
+        var products = List.of(new ProductRequest("id", "tv", "nice tv", "image.png", 1, new BigDecimal("5000"), 3, new BigDecimal("4800")));
+        return PageResponse.builder()
                 .content(products)
                 .build();
     }

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
-public record CategoryDTO(
+public record CategoryRequest(
         Long id,
         @NotNull(message = "Name field can not be empty")
         @NotEmpty(message = "Name field can not be empty")

@@ -1,12 +1,16 @@
 package com.zeldev.zel_e_comm.util;
 
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
-import com.zeldev.zel_e_comm.entity.*;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
+import com.zeldev.zel_e_comm.entity.LocationEntity;
+import com.zeldev.zel_e_comm.entity.OrderEntity;
+import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.OrderStatus;
+import org.springframework.data.domain.Page;
 
 import java.security.SecureRandom;
 import java.time.ZoneId;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -28,7 +32,19 @@ public class OrderUtils {
                 .orderItems(order.getOrderItems().stream().map(OrderItemUtils::toOrderItemResponse).collect(Collectors.toSet()))
                 .status(order.getStatus())
                 .locationPublicId(order.getLocation().getPublicId().toString())
+                //.paymentMethod(order.getPayment().getPaymentMethod())
                 .createdAt(order.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant())
+                .build();
+    }
+
+    public static PageResponse<OrderResponse> buildOrderPageResponse(Page<OrderEntity> page, List<OrderEntity> orders) {
+        return PageResponse.<OrderResponse>builder()
+                .content(orders.stream().map(OrderUtils::toOrderResponse).toList())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .lastPage(page.isLast())
+                .pageNumber(page.getNumber())
+                .pageSize(page.getSize())
                 .build();
     }
 

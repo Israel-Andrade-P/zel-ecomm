@@ -2,6 +2,7 @@ package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.dto.request.OrderRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.service.OrderService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.zeldev.zel_e_comm.constants.Constants.*;
+import static com.zeldev.zel_e_comm.constants.Constants.SORT_DIR;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,7 +36,12 @@ public class OrderController {
 
     @GetMapping("/admin/orders/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<OrderResponse>> getOrders() {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrders());
+    public ResponseEntity<PageResponse<OrderResponse>> getOrders(
+            @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
+            @RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) Integer size,
+            @RequestParam(name = "sortBy", defaultValue = SORT_ORDER_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrders(page, size, sortBy, sortOrder));
     }
 }

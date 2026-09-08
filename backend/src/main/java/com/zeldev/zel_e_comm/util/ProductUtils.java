@@ -1,7 +1,8 @@
 package com.zeldev.zel_e_comm.util;
 
 import com.zeldev.zel_e_comm.config.AppConfig;
-import com.zeldev.zel_e_comm.dto.request.ProductDTO;
+import com.zeldev.zel_e_comm.dto.request.ProductRequest;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.dto.response.ProductResponse;
 import com.zeldev.zel_e_comm.entity.ProductEntity;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 public class ProductUtils {
     private final AppConfig appConfig;
 
-    public ProductEntity buildProductEntity(ProductDTO request) {
+    public ProductEntity buildProductEntity(ProductRequest request) {
         return ProductEntity.builder()
                 .name(request.productName())
                 .description(request.description())
@@ -25,8 +26,8 @@ public class ProductUtils {
                 .build();
     }
 
-    public ProductDTO toDTO(ProductEntity entity) {
-        return ProductDTO.builder()
+    public ProductResponse toProductResponse(ProductEntity entity) {
+        return ProductResponse.builder()
                 .productId(entity.getPublicId().toString())
                 .productName(entity.getName())
                 .description(entity.getDescription())
@@ -38,9 +39,9 @@ public class ProductUtils {
                 .build();
     }
 
-    public ProductResponse buildProductResponse(Page<ProductEntity> productPage, List<ProductEntity> products) {
-        return ProductResponse.builder()
-                .content(products.stream().map(this::toDTO).toList())
+    public PageResponse<ProductResponse> buildProductPageResponse(Page<ProductEntity> productPage, List<ProductEntity> products) {
+        return PageResponse.<ProductResponse>builder()
+                .content(products.stream().map(this::toProductResponse).toList())
                 .totalPages(productPage.getTotalPages())
                 .totalElements(productPage.getTotalElements())
                 .lastPage(productPage.isLast())
