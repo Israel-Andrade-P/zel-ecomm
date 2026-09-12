@@ -1,9 +1,9 @@
 import api from "../../api/api";
 
-export const fetchProducts = (queryString: string) => async (dispatch) => {
+export const fetchProducts = (queryParams: string) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
-    const { data } = await api.get(`/products?${queryString}`);
+    const { data } = await api.get(`/products?${queryParams}`);
     dispatch({
       type: "FETCH_PRODUCTS",
       payload: data.content,
@@ -274,6 +274,21 @@ export const persistOrderInfo = (addressId) => async (dispatch) => {
       err?.response?.data?.message || "Error setting current order",
       err,
     );
+  }
+};
+
+export const fetchOrders = (queryParams: string) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get(`/admin/orders?${queryParams}`);
+
+    dispatch({ type: "FETCH_ORDERS", payload: data });
+    dispatch({ type: "FETCH_SUCCESS" });
+  } catch (err) {
+    dispatch({
+      type: "FETCH_ERROR",
+      payload: err?.response?.data?.message || "Failed to fetch orders",
+    });
   }
 };
 

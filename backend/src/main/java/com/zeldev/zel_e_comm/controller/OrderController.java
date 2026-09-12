@@ -34,7 +34,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrderResponse(orderId));
     }
 
-    @GetMapping("/admin/orders/all")
+    @GetMapping("/admin/orders")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageResponse<OrderResponse>> getOrders(
             @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,

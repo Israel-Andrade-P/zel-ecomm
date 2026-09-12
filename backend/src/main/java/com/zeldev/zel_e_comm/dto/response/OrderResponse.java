@@ -15,7 +15,7 @@ public record OrderResponse(
         Set<OrderItemResponse> orderItems,
         BigDecimal totalPrice,
         OrderStatus status,
-        Instant createdAt,
+        String createdAt,
         String locationPublicId,
         PaymentType paymentMethod
 ) {}

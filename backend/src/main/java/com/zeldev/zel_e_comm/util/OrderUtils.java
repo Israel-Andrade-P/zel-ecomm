@@ -10,11 +10,14 @@ import org.springframework.data.domain.Page;
 
 import java.security.SecureRandom;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class OrderUtils {
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
     public static OrderEntity buildOrder(UserEntity user, LocationEntity location) {
         return OrderEntity.builder()
                 .publicId(suppliesOrderId.get())
@@ -33,7 +36,7 @@ public class OrderUtils {
                 .status(order.getStatus())
                 .locationPublicId(order.getLocation().getPublicId().toString())
                 //.paymentMethod(order.getPayment().getPaymentMethod())
-                .createdAt(order.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant())
+                .createdAt(order.getCreatedAt().format(DATE_FORMATTER)/*atZone(ZoneId.systemDefault()).toInstant()*/)
                 .build();
     }
 
