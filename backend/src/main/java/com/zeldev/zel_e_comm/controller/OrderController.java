@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.controller;
 
 import com.zeldev.zel_e_comm.dto.request.OrderRequest;
+import com.zeldev.zel_e_comm.dto.request.OrderUpdateRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
 import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.service.OrderService;
@@ -11,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.zeldev.zel_e_comm.constants.Constants.*;
-import static com.zeldev.zel_e_comm.constants.Constants.SORT_DIR;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -43,5 +41,11 @@ public class OrderController {
             @RequestParam(name = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrders(page, size, sortBy, sortOrder));
+    }
+
+    @PatchMapping("/admin/update-status/{order-id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable("order-id") String orderId, @RequestBody OrderUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrderStatus(orderId, request));
     }
 }

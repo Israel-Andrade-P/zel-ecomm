@@ -1,7 +1,7 @@
 import { type GridColDef } from "@mui/x-data-grid";
 import { FaEdit } from "react-icons/fa";
 
-export const adminOrderTableColumns: GridColDef<(typeof rows)[number]>[] = [
+export const adminOrderTableColumns = (onEdit: (item: any) => void): GridColDef[] => [
     {
         sortable: false,
         disableColumnMenu: true,
@@ -81,7 +81,7 @@ export const adminOrderTableColumns: GridColDef<(typeof rows)[number]>[] = [
         renderCell: (params) => {
             return (
                 <div className="flex justify-center items-center space-x-2 h-full pt-2">
-                    <button className="flex items-center bg-blue-500 text-white px-4 h-9 rounded-md" onClick={() => { }}>
+                    <button className="flex items-center bg-blue-500 text-white px-4 h-9 rounded-md" onClick={() => { onEdit(params.row) }}>
                         <FaEdit className="mr-2" />
                         Edit
                     </button>

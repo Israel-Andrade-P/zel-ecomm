@@ -1,7 +1,7 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import { RxCross1 } from "react-icons/rx"
 
-function Model = ({ open, setOpen, children, title = "" }) => {
+const Model = ({ open, setOpen, children, title = "" }) => {
   return (
     <>
       <Dialog open={open} onClose={() => setOpen(false)} className="relative z-10">

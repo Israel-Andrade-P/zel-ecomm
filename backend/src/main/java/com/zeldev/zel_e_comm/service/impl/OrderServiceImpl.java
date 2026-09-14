@@ -1,6 +1,7 @@
 package com.zeldev.zel_e_comm.service.impl;
 
 import com.zeldev.zel_e_comm.dto.request.OrderRequest;
+import com.zeldev.zel_e_comm.dto.request.OrderUpdateRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
 import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.*;
@@ -101,5 +102,18 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(PAID);
         order.setPayment(payment);
+    }
+
+    @Override
+    public OrderResponse updateOrderStatus(String orderId, OrderUpdateRequest request) {
+        //fetch order from db
+
+        //validate status field coming from frontend
+
+        //set status field
+
+        //map to OrderResponse
+
+        return null;
     }
 }

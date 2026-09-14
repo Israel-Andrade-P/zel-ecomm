@@ -2,9 +2,14 @@ import { DataGrid } from "@mui/x-data-grid";
 import { adminOrderTableColumns } from "../../helper/TableColumn";
 import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import Model from "../../shared/Model";
+import UpdateOrderForm from "./UpdateOrderForm";
 
 const OrderTable = ({ orders, pagination }) => {
     const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
+    const [updateOpenModel, setUpdateOpenModel] = useState(false);
+    const [selectedItem, setSelectedItem] = useState("");
+    const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -21,6 +26,11 @@ const OrderTable = ({ orders, pagination }) => {
         }
     })
 
+    const handleEdit = (item) => {
+        setSelectedItem(item);
+        setUpdateOpenModel(true);
+    }
+
     const handlePaginationChange = (paginationModel) => {
         const page = paginationModel.page + 1;
         setCurrentPage(page);
@@ -35,7 +45,7 @@ const OrderTable = ({ orders, pagination }) => {
                 <DataGrid
                     className="w-full"
                     rows={tableRecords}
-                    columns={adminOrderTableColumns}
+                    columns={adminOrderTableColumns(handleEdit)}
                     paginationMode="server"
                     rowCount={pagination?.totalElements || 0}
                     initialState={{
@@ -59,6 +69,16 @@ const OrderTable = ({ orders, pagination }) => {
                     }}
                 />
             </div>
+
+            <Model open={updateOpenModel} setOpen={setUpdateOpenModel} title="Update Order Status">
+                <UpdateOrderForm
+                    open={updateOpenModel}
+                    setOpen={setUpdateOpenModel}
+                    loader={loader}
+                    setLoader={setLoader}
+                    selectedId={selectedItem.id}
+                    selectedItem={selectedItem}></UpdateOrderForm>
+            </Model>
         </div>
     )
 }
