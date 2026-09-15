@@ -9,7 +9,6 @@ const OrderTable = ({ orders, pagination }) => {
     const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
     const [updateOpenModel, setUpdateOpenModel] = useState(false);
     const [selectedItem, setSelectedItem] = useState("");
-    const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -74,8 +73,6 @@ const OrderTable = ({ orders, pagination }) => {
                 <UpdateOrderForm
                     open={updateOpenModel}
                     setOpen={setUpdateOpenModel}
-                    loader={loader}
-                    setLoader={setLoader}
                     selectedId={selectedItem.id}
                     selectedItem={selectedItem}></UpdateOrderForm>
             </Model>

@@ -5,15 +5,14 @@ import com.zeldev.zel_e_comm.dto.request.OrderUpdateRequest;
 import com.zeldev.zel_e_comm.dto.response.OrderResponse;
 import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.*;
+import com.zeldev.zel_e_comm.enumeration.OrderStatus;
 import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.CartIsEmptyException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.OrderRepository;
 import com.zeldev.zel_e_comm.service.*;
 import com.zeldev.zel_e_comm.util.AuthUtils;
-import com.zeldev.zel_e_comm.util.OrderUtils;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,20 +49,11 @@ public class OrderServiceImpl implements OrderService {
 
         orderItemService.createOrderItems(cartItems, order);
 
-        //update product stock
-//        cartItems.forEach(item -> {
-//            productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
-//        });
-
-        //clear cart
-//        cartItems.clear();
-
-        //send back OrderResponse
         return toOrderResponse(order);
     }
 
     @Override
-    public @Nullable OrderResponse getOrderResponse(String orderId) {
+    public OrderResponse getOrderResponse(String orderId) {
         OrderEntity order = getOrderEntity(orderId);
         return toOrderResponse(order);
     }
@@ -105,15 +95,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse updateOrderStatus(String orderId, OrderUpdateRequest request) {
-        //fetch order from db
+    public void updateOrderStatus(String orderId, OrderUpdateRequest request) {
+        var parsedStatus = OrderStatus.parse(request.newStatus());
 
-        //validate status field coming from frontend
+        var order = getOrderEntity(orderId);
 
-        //set status field
-
-        //map to OrderResponse
-
-        return null;
+        order.setStatus(parsedStatus);
     }
 }

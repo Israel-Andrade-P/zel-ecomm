@@ -52,6 +52,13 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    public ResponseEntity<ErrorResponse> handler(InvalidOrderStatusException exp) {
+        return ResponseEntity.status(BAD_REQUEST).body(
+                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
+        );
+    }
+
     @ExceptionHandler(PSQLException.class)
     public ResponseEntity<ErrorResponse> handlePsql(PSQLException exp) {
         if ("23505".equals(exp.getSQLState())) {

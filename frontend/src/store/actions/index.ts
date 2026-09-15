@@ -283,14 +283,36 @@ export const fetchOrders = (queryParams: string) => async (dispatch) => {
     const { data } = await api.get(`/admin/orders?${queryParams}`);
 
     dispatch({ type: "FETCH_ORDERS", payload: data });
-    dispatch({ type: "FETCH_SUCCESS" });
   } catch (err) {
     dispatch({
       type: "FETCH_ERROR",
       payload: err?.response?.data?.message || "Failed to fetch orders",
     });
+  } finally {
+    dispatch({ type: "FETCH_SUCCESS" });
   }
 };
+
+export const updateOrderStatusField =
+  (orderId, orderStatus) => async (dispatch) => {
+    try {
+      dispatch({ type: "IS_FETCHING" });
+      const response = await api.patch(`/admin/update-status/${orderId}`, {
+        newStatus: orderStatus,
+      });
+
+      //await dispatch(fetchOrders());
+    } catch (err) {
+      console.log(error);
+      dispatch({
+        type: "FETCH_ERROR",
+        payload:
+          err?.response?.data?.message || "Failed to update order status",
+      });
+    } finally {
+      dispatch({ type: "FETCH_SUCCESS" });
+    }
+  };
 
 export const getStripeClientSecret =
   (currentOrderId) => async (dispatch, getState) => {

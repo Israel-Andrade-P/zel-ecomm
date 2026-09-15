@@ -21,5 +21,5 @@ public interface OrderService {
 
     void markAsPaid(String orderId, PaymentEntity payment);
 
-    OrderResponse updateOrderStatus(String orderId, OrderUpdateRequest request);
+    void updateOrderStatus(String orderId, OrderUpdateRequest request);
 }

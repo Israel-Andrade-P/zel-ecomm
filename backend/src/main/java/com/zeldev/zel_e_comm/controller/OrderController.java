@@ -45,7 +45,8 @@ public class OrderController {
 
     @PatchMapping("/admin/update-status/{order-id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable("order-id") String orderId, @RequestBody OrderUpdateRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrderStatus(orderId, request));
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable("order-id") String orderId, @RequestBody OrderUpdateRequest request) {
+        orderService.updateOrderStatus(orderId, request);
+        return ResponseEntity.noContent().build();
     }
 }
