@@ -9,7 +9,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 const Home = () => {
     const dispatch = useDispatch();
     const { products } = useSelector((state) => state.products);
-    const { isLoading, errorMessage } = useSelector((state) => state.errors);
+    const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
 
     useEffect(() => {
         dispatch(fetchProducts());

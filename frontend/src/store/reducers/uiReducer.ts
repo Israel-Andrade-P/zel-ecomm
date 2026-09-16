@@ -6,9 +6,9 @@ const initialState = {
   btnLoader: false,
 };
 
-export const errorReducer = (state = initialState, action) => {
+export const uiReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "IS_FETCHING":
+    case "IS_LOADING":
       return {
         ...state,
         isLoading: true,
@@ -16,7 +16,7 @@ export const errorReducer = (state = initialState, action) => {
         btnLoader: true,
       };
 
-    case "FETCH_SUCCESS":
+    case "RESPONSE_SUCCESS":
       return {
         ...state,
         isLoading: false,
@@ -26,7 +26,7 @@ export const errorReducer = (state = initialState, action) => {
         btnLoader: false,
       };
 
-    case "FETCH_ERROR":
+    case "RESPONSE_ERROR":
       return {
         ...state,
         isLoading: false,

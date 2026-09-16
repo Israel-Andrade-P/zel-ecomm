@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { productReducer } from "./productReducer";
-import { errorReducer } from "./errorReducer";
+import { uiReducer } from "./uiReducer.ts";
 import { cartReducer } from "./cartReducer";
 import { authReducer } from "./authReducer";
 import { paymentReducer } from "./paymentReducer";
@@ -23,7 +23,7 @@ const initialState = {
 export const store = configureStore({
   reducer: {
     products: productReducer,
-    errors: errorReducer,
+    uiStates: uiReducer,
     carts: cartReducer,
     auth: authReducer,
     order: orderReducer,

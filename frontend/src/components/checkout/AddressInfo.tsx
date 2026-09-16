@@ -11,7 +11,7 @@ import { deleteUserAddress } from "../../store/actions";
 
 const AddressInfo = ({ addresses }) => {
     const noAddress = !addresses || addresses.length === 0;
-    const { isLoading, btnLoader } = useSelector((state) => state.errors);
+    const { isLoading, btnLoader } = useSelector((state) => state.uiStates);
     const [openAddressModel, setOpenAddressModel] = useState(false);
     const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState("");

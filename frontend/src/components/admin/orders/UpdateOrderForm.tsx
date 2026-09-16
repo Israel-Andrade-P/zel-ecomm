@@ -19,7 +19,7 @@ const ORDER_STATUS = [
 const UpdateOrderForm = ({ setOpen, selectedId, selectedItem }) => {
     const [orderStatus, setOrderStatus] = useState(selectedItem?.status || "PROCESSING");
     const [error, setError] = useState("");
-    const { isLoading, errorMessage } = useSelector((state) => state.errors);
+    const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
     const dispatch = useDispatch();
 
     //OPTIMIZE REDUX AND USESTATE ERROR MANAGEMENT

@@ -2,7 +2,7 @@ import api from "../../api/api";
 
 export const fetchProducts = (queryParams: string) => async (dispatch) => {
   try {
-    dispatch({ type: "IS_FETCHING" });
+    dispatch({ type: "IS_LOADING" });
     const { data } = await api.get(`/products?${queryParams}`);
     dispatch({
       type: "FETCH_PRODUCTS",
@@ -13,11 +13,11 @@ export const fetchProducts = (queryParams: string) => async (dispatch) => {
       totalPages: data.totalPages,
       lastPage: data.lastPage,
     });
-    dispatch({ type: "FETCH_SUCCESS" });
+    dispatch({ type: "RESPONSE_SUCCESS" });
   } catch (error) {
     console.log(error);
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload: error?.response?.data?.message || "Failed to fetch products",
     });
   }
@@ -40,7 +40,7 @@ export const fetchCategories = () => async (dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload: error?.response?.data?.message || "Failed to fetch categories",
     });
   }
@@ -154,17 +154,17 @@ export const addUpdateUserAddress =
       if (publicId) {
         await api.put(`/locations/update/${publicId}`, sendData);
         toast.success("Address updated");
-        dispatch({ type: "FETCH_SUCCESS" });
+        dispatch({ type: "RESPONSE_SUCCESS" });
       } else {
         const { data } = await api.post("/locations/add", sendData);
         toast.success("Address added");
-        dispatch({ type: "FETCH_SUCCESS" });
+        dispatch({ type: "RESPONSE_SUCCESS" });
       }
       dispatch(fetchUserAddresses());
     } catch (err) {
       console.log(err);
       toast.error(err?.response?.data?.message || "Internal Server Error");
-      dispatch({ type: "FETCH_ERROR", payload: null });
+      dispatch({ type: "RESPONSE_ERROR", payload: null });
     } finally {
       setOpen(false);
     }
@@ -172,15 +172,15 @@ export const addUpdateUserAddress =
 
 export const fetchUserAddresses = () => async (dispatch, getState) => {
   try {
-    dispatch({ type: "IS_FETCHING" });
+    dispatch({ type: "IS_LOADING" });
     const { data } = await api.get(`/locations/user`);
 
     dispatch({ type: "USER_ADDRESS", payload: data });
-    dispatch({ type: "FETCH_SUCCESS" });
+    dispatch({ type: "RESPONSE_SUCCESS" });
   } catch (error) {
     console.log(error);
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload:
         error?.response?.data?.message || "Failed to fetch user addresses",
     });
@@ -199,14 +199,14 @@ export const deleteUserAddress =
     try {
       dispatch({ type: "BUTTON_LOADER" });
       await api.delete(`/locations/delete/${publicId}`);
-      dispatch({ type: "FETCH_SUCCESS" });
+      dispatch({ type: "RESPONSE_SUCCESS" });
       toast.success("Address deleted");
       dispatch(fetchUserAddresses());
       dispatch(clearSelectedAddress());
     } catch (error) {
       console.log(error);
       dispatch({
-        type: "FETCH_ERROR",
+        type: "RESPONSE_ERROR",
         payload: error?.response?.data?.message || "An ERROR has occurred",
       });
     } finally {
@@ -234,7 +234,7 @@ export const createUserCart = (cartItems) => async (dispatch, getState) => {
   } catch (error) {
     console.log(error);
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload: error?.response?.data?.message || "Failed to create user's cart",
     });
   }
@@ -242,7 +242,7 @@ export const createUserCart = (cartItems) => async (dispatch, getState) => {
 
 export const getUserCart = () => async (dispatch, getState) => {
   try {
-    dispatch({ type: "IS_FETCHING" });
+    dispatch({ type: "IS_LOADING" });
     const { data } = await api.get("/carts/users/cart");
 
     dispatch({
@@ -252,11 +252,11 @@ export const getUserCart = () => async (dispatch, getState) => {
       cartId: data.publicId,
     });
     localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
-    dispatch({ type: "FETCH_SUCCESS" });
+    dispatch({ type: "RESPONSE_SUCCESS" });
   } catch (error) {
     console.log(error);
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload: error?.response?.data?.message || "Failed to fetch user's cart",
     });
   }
@@ -279,45 +279,43 @@ export const persistOrderInfo = (addressId) => async (dispatch) => {
 
 export const fetchOrders = (queryParams: string) => async (dispatch) => {
   try {
-    dispatch({ type: "IS_FETCHING" });
+    dispatch({ type: "IS_LOADING" });
     const { data } = await api.get(`/admin/orders?${queryParams}`);
 
     dispatch({ type: "FETCH_ORDERS", payload: data });
+    dispatch({ type: "RESPONSE_SUCCESS" });
   } catch (err) {
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload: err?.response?.data?.message || "Failed to fetch orders",
     });
-  } finally {
-    dispatch({ type: "FETCH_SUCCESS" });
   }
 };
 
 export const updateOrderStatusField =
   (orderId, orderStatus) => async (dispatch) => {
     try {
-      dispatch({ type: "IS_FETCHING" });
+      dispatch({ type: "IS_LOADING" });
       const response = await api.patch(`/admin/update-status/${orderId}`, {
         newStatus: orderStatus,
       });
 
+      dispatch({ type: "RESPONSE_SUCCESS" });
       //await dispatch(fetchOrders());
     } catch (err) {
-      console.log(error);
+      console.log(err);
       dispatch({
-        type: "FETCH_ERROR",
+        type: "RESPONSE_ERROR",
         payload:
           err?.response?.data?.message || "Failed to update order status",
       });
-    } finally {
-      dispatch({ type: "FETCH_SUCCESS" });
     }
   };
 
 export const getStripeClientSecret =
   (currentOrderId) => async (dispatch, getState) => {
     try {
-      dispatch({ type: "IS_FETCHING" });
+      dispatch({ type: "IS_LOADING" });
       const stripePaymentRequest = {
         orderId: currentOrderId,
       };
@@ -326,13 +324,16 @@ export const getStripeClientSecret =
         stripePaymentRequest,
       );
       dispatch({ type: "STRIPE_CLIENT_SECRET", payload: data.clientSecret });
-      dispatch({ type: "FETCH_SUCCESS" });
+      dispatch({ type: "RESPONSE_SUCCESS" });
       localStorage.setItem("client-secret", JSON.stringify(data.clientSecret));
     } catch (err) {
       console.log(err);
-      console.log(
-        err?.response?.data?.message || "Failed creating Stripe client secret",
-      );
+      dispatch({
+        type: "RESPONSE_ERROR",
+        payload:
+          err?.response?.data?.message ||
+          "Failed creating Stripe client secret",
+      });
     }
   };
 
@@ -378,13 +379,13 @@ export const stripePaymentConfirmation =
 
 export const getAdminAnalytics = () => async (dispatch, getState) => {
   try {
-    dispatch({ type: "IS_FETCHING" });
+    dispatch({ type: "IS_LOADING" });
     const { data } = await api.get("/admin/overview");
     dispatch({ type: "FETCH_ANALYTICS", payload: data });
-    dispatch({ type: "FETCH_SUCCESS" });
+    dispatch({ type: "RESPONSE_SUCCESS" });
   } catch (err) {
     dispatch({
-      type: "FETCH_ERROR",
+      type: "RESPONSE_ERROR",
       payload:
         err?.response?.data?.message || "Failed to fetch admin analytics",
     });

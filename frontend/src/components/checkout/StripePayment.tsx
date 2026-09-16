@@ -12,7 +12,7 @@ const StripePayment = () => {
     const dispatch = useDispatch();
     const { clientSecret } = useSelector((state) => state.payment);
     const { currentOrderId, orderTotalPrice } = useSelector((state) => state.order);
-    const { isLoading, errorMessage } = useSelector((state) => state.errors);
+    const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
 
     console.log("Order Id: ", currentOrderId);
     console.log("Total Price: ", orderTotalPrice);

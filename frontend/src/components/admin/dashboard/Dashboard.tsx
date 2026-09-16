@@ -9,7 +9,7 @@ import ErrorPage from "../../shared/ErrorPage";
 const Dashboard = () => {
     const dispatch = useDispatch();
     const { analytics: { totalProducts, totalRevenue, totalOrders } } = useSelector((state) => state.admin);
-    const { isLoading, errorMessage } = useSelector((state) => state.errors)
+    const { isLoading, errorMessage } = useSelector((state) => state.uiStates)
 
     useEffect(() => {
         dispatch(getAdminAnalytics());

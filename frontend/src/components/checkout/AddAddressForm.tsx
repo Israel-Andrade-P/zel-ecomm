@@ -8,7 +8,7 @@ import { addUpdateUserAddress } from "../../store/actions";
 import { useEffect } from "react";
 
 const AddAddressForm = ({ address, setOpen }) => {
-    const { btnLoader } = useSelector((state) => state.errors);
+    const { btnLoader } = useSelector((state) => state.uiStates);
     const dispatch = useDispatch();
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({ mode: "onTouched" });
 

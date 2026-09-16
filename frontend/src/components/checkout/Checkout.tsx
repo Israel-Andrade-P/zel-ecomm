@@ -13,7 +13,7 @@ import PaypalPayment from "./PaypalPayment";
 const Checkout = () => {
     const [activeStep, setActiveStep] = useState(0);
     const { address, selectedAddress } = useSelector((state) => state.auth);
-    const { isLoading, errorMessage } = useSelector((state) => state.errors);
+    const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
     const { paymentMethod } = useSelector((state) => state.payment);
     const { cart, totalPrice } = useSelector((state) => state.carts);
     const dispatch = useDispatch();
