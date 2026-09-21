@@ -27,7 +27,7 @@ const Orders = () => {
     if (isOrderEmpty) return (
         <div className="flex flex-col items-center justify-center text-gray-600 py-10">
             <FaShoppingCart size={50} className="mb-3" />
-            <h2 className="text-2xl font-semibold">No orders have been found :(</h2>
+            <h2 className="text-2xl font-semibold">No orders found</h2>
         </div>
     )
 
