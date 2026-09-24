@@ -2,16 +2,50 @@ import { useForm } from "react-hook-form"
 import InputField from "../../shared/InputField";
 import { Button } from "@mui/material";
 import Spinners from "../../shared/Spinners";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TextArea from "../../shared/TextArea";
+import { useEffect } from "react";
+import { updateProduct } from "../../../store/actions";
+import toast from "react-hot-toast";
 
 const AddProductForm = ({ setOpen, product, isUpdate = false }) => {
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({ mode: "onTouched" });
     const { isLoading } = useSelector((state) => state.uiStates);
+    const dispatch = useDispatch();
+
+    const saveProductHandler = async (data) => {
+        if (!isUpdate) {
+
+        } else {
+            const sendData = { ...data, id: product.id }
+
+            const result = await dispatch(updateProduct(sendData));
+
+            if (!result.success) {
+                toast.error(String(result.errorMessage))
+                return;
+            }
+
+            toast.success("Product updated");
+            reset();
+            setOpen(false);
+        }
+    }
+
+    useEffect(() => {
+        if (isUpdate && product) {
+            setValue("productName", product.productName);
+            setValue("price", product.price);
+            setValue("quantity", product.quantity);
+            setValue("discount", product.discount);
+            setValue("specialPrice", product.specialPrice);
+            setValue("description", product.description);
+        }
+    }, [isUpdate, product])
 
     return (
         <div className="py-5 relative h-full">
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(saveProductHandler)}>
                 <div className="flex md:flex-row flex-col gap-4 w-full">
                     <InputField label="Product Name" required id="productName" type="text" message="This field is required*" register={register}
                         placeholder="Name" errors={errors} />

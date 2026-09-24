@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import api from "../../api/api";
 
 export const fetchProducts = (queryParams: string) => async (dispatch) => {
@@ -18,8 +19,34 @@ export const fetchProducts = (queryParams: string) => async (dispatch) => {
     console.log(error);
     dispatch({
       type: "RESPONSE_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch products",
+      payload: error?.response?.data?.reason || "Failed to fetch products",
     });
+  }
+};
+
+export const updateProduct = (productData) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    await api.put(`/manage/products/update/${productData.id}`, productData);
+    dispatch({ type: "RESPONSE_SUCCESS" });
+    dispatch(fetchProducts(""));
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.reason || "Failed to update product";
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: errorMessage,
+    });
+
+    return {
+      success: false,
+      errorMessage: errorMessage,
+    };
   }
 };
 
@@ -41,7 +68,7 @@ export const fetchCategories = () => async (dispatch) => {
     console.log(error);
     dispatch({
       type: "RESPONSE_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch categories",
+      payload: error?.response?.data?.reason || "Failed to fetch categories",
     });
   }
 };
@@ -118,7 +145,7 @@ export const authenticateUser =
       navigate("/");
     } catch (err) {
       console.log(err);
-      toast.error(err?.response?.data?.message || "Internal Server Error");
+      toast.error(err?.response?.data?.reason || "Internal Server Error");
     } finally {
       setLoader(false);
     }
@@ -134,7 +161,7 @@ export const registerUser =
       navigate("/login");
     } catch (err) {
       console.log(err);
-      toast.error(err?.response?.data?.message || "Internal Server Error");
+      toast.error(err?.response?.data?.reason || "Internal Server Error");
     } finally {
       setLoader(false);
     }
@@ -163,7 +190,7 @@ export const addUpdateUserAddress =
       dispatch(fetchUserAddresses());
     } catch (err) {
       console.log(err);
-      toast.error(err?.response?.data?.message || "Internal Server Error");
+      toast.error(err?.response?.data?.reason || "Internal Server Error");
       dispatch({ type: "RESPONSE_ERROR", payload: null });
     } finally {
       setOpen(false);
@@ -182,7 +209,7 @@ export const fetchUserAddresses = () => async (dispatch, getState) => {
     dispatch({
       type: "RESPONSE_ERROR",
       payload:
-        error?.response?.data?.message || "Failed to fetch user addresses",
+        error?.response?.data?.reason || "Failed to fetch user addresses",
     });
   }
 };
@@ -207,7 +234,7 @@ export const deleteUserAddress =
       console.log(error);
       dispatch({
         type: "RESPONSE_ERROR",
-        payload: error?.response?.data?.message || "An ERROR has occurred",
+        payload: error?.response?.data?.reason || "An ERROR has occurred",
       });
     } finally {
       setOpenDeleteModel(false);
@@ -235,7 +262,7 @@ export const createUserCart = (cartItems) => async (dispatch, getState) => {
     console.log(error);
     dispatch({
       type: "RESPONSE_ERROR",
-      payload: error?.response?.data?.message || "Failed to create user's cart",
+      payload: error?.response?.data?.reason || "Failed to create user's cart",
     });
   }
 };
@@ -257,7 +284,7 @@ export const getUserCart = () => async (dispatch, getState) => {
     console.log(error);
     dispatch({
       type: "RESPONSE_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch user's cart",
+      payload: error?.response?.data?.reason || "Failed to fetch user's cart",
     });
   }
 };
@@ -271,7 +298,7 @@ export const persistOrderInfo = (addressId) => async (dispatch) => {
   } catch (err) {
     console.log(err);
     console.log(
-      err?.response?.data?.message || "Error setting current order",
+      err?.response?.data?.reason || "Error setting current order",
       err,
     );
   }
@@ -287,7 +314,7 @@ export const fetchOrders = (queryParams: string) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: "RESPONSE_ERROR",
-      payload: err?.response?.data?.message || "Failed to fetch orders",
+      payload: err?.response?.data?.reason || "Failed to fetch orders",
     });
   }
 };
@@ -306,8 +333,7 @@ export const updateOrderStatusField =
       console.log(err);
       dispatch({
         type: "RESPONSE_ERROR",
-        payload:
-          err?.response?.data?.message || "Failed to update order status",
+        payload: err?.response?.data?.reason || "Failed to update order status",
       });
     }
   };
@@ -331,8 +357,7 @@ export const getStripeClientSecret =
       dispatch({
         type: "RESPONSE_ERROR",
         payload:
-          err?.response?.data?.message ||
-          "Failed creating Stripe client secret",
+          err?.response?.data?.reason || "Failed creating Stripe client secret",
       });
     }
   };
@@ -371,7 +396,7 @@ export const stripePaymentConfirmation =
       });
       console.log(err);
       console.log(
-        err?.response?.data?.message || "Error during payment proccess",
+        err?.response?.data?.reason || "Error during payment proccess",
         err,
       );
     }
@@ -386,8 +411,7 @@ export const getAdminAnalytics = () => async (dispatch, getState) => {
   } catch (err) {
     dispatch({
       type: "RESPONSE_ERROR",
-      payload:
-        err?.response?.data?.message || "Failed to fetch admin analytics",
+      payload: err?.response?.data?.reason || "Failed to fetch admin analytics",
     });
   }
 };
