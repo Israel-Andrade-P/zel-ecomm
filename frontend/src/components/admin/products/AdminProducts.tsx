@@ -13,6 +13,7 @@ const AdminProducts = () => {
     const { products, pagination } = useSelector((state) => state.products);
     const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
     const [openUpdateModel, setOpenUpdateModel] = useState(false);
+    const [openAddModel, setOpenAddModel] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState("");
     const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
     const isProductsEmpty = products?.length === 0;
@@ -51,7 +52,7 @@ const AdminProducts = () => {
     return (
         <div>
             <div className="pt-6 pb-10 flex justify-end">
-                <button className="bg-custom-blue hover:bg-blue-800 text-white font-semibold py-2 px-4 flex items-center gap-2 rounded-md shadow-md
+                <button onClick={() => setOpenAddModel(true)} className="bg-custom-blue hover:bg-blue-800 text-white font-semibold py-2 px-4 flex items-center gap-2 rounded-md shadow-md
                                        transition-colors hover:text-slate-300 duration-300">
                     <MdAddShoppingCart className="text-xl" />
                     Add Product
@@ -95,14 +96,15 @@ const AdminProducts = () => {
                                 }}
                             />
 
-                            <Model open={openUpdateModel} setOpen={setOpenUpdateModel} title="Update Product">
-                                <AddProductForm setOpen={setOpenUpdateModel} product={selectedProduct} isUpdate={openUpdateModel} />
+                            <Model open={openUpdateModel || openAddModel} setOpen={openAddModel ? setOpenAddModel : setOpenUpdateModel}
+                                title={openAddModel ? "Add Product" : "Update Product"}>
+                                <AddProductForm setOpen={openAddModel ? setOpenAddModel : setOpenUpdateModel} product={selectedProduct} isUpdate={openUpdateModel} />
                             </Model>
                         </div>
                     </>
                 )
             }
-        </div>
+        </div >
     )
 }
 
