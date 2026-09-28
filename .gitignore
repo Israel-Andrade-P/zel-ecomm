@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 todo.txt
+.env
 
 ### STS ###
 .apt_generated

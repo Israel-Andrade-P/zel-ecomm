@@ -30,6 +30,8 @@ const AdminProducts = () => {
         }
     })
 
+  
+
     const onEdit = (product) => {
         setSelectedProduct(product);
         setOpenUpdateModel(true);

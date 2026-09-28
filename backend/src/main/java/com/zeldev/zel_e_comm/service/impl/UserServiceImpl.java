@@ -6,11 +6,9 @@ import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.UserStatus;
 import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import com.zeldev.zel_e_comm.repository.UserRepository;
-import com.zeldev.zel_e_comm.service.JwtService;
 import com.zeldev.zel_e_comm.service.UserService;
 import com.zeldev.zel_e_comm.util.UserUtils;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,6 @@ import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final JwtService jwtService;
 
     @Override
     @Transactional(readOnly = true)
