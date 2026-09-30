@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 import api from "../../api/api";
 
 export const fetchProducts = (queryParams: string) => async (dispatch) => {
@@ -50,6 +49,22 @@ export const updateProduct = (productData) => async (dispatch) => {
   }
 };
 
+export const deleteProduct =
+  (publicId) => async (dispatch) => {
+    try {
+      dispatch({ type: "BUTTON_LOADER" });
+      await api.delete(`/manage/products/delete/${publicId}`);
+      dispatch({ type: "RESPONSE_SUCCESS" });
+      dispatch(fetchProducts(""));
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: "RESPONSE_ERROR",
+        payload: error?.response?.data?.reason || "An ERROR has occurred",
+      });
+    }
+  };
+
 export const fetchCategories = () => async (dispatch) => {
   try {
     dispatch({ type: "CATEGORY_LOADER" });
@@ -75,49 +90,49 @@ export const fetchCategories = () => async (dispatch) => {
 
 export const addToCart =
   (data, qnt = 1, toast) =>
-  (dispatch, getState) => {
-    //find product
-    const { products } = getState().products;
-    const product = products.find((item) => item.productId === data.productId);
+    (dispatch, getState) => {
+      //find product
+      const { products } = getState().products;
+      const product = products.find((item) => item.productId === data.productId);
 
-    //quantity check
-    const isInStock = product.quantity >= qnt;
+      //quantity check
+      const isInStock = product.quantity >= qnt;
 
-    if (isInStock) {
-      dispatch({ type: "ADD_TO_CART", payload: { ...data, quantity: qnt } });
-      toast.success(`${data?.name} added to cart`);
-      localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
-    } else {
-      toast.error("Out of stock");
-    }
-  };
+      if (isInStock) {
+        dispatch({ type: "ADD_TO_CART", payload: { ...data, quantity: qnt } });
+        toast.success(`${data?.name} added to cart`);
+        localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+      } else {
+        toast.error("Out of stock");
+      }
+    };
 
 export const increaseItemQnt =
   (data, toast, currentQuantity, setCurrentQuantity) =>
-  (dispatch, getState) => {
-    const { products } = getState().products;
+    (dispatch, getState) => {
+      const { products } = getState().products;
 
-    if (!products) {
-      toast.error("Products are still loading");
-      return;
-    }
+      if (!products) {
+        toast.error("Products are still loading");
+        return;
+      }
 
-    const product = products.find((item) => item.productId === data.productId);
+      const product = products.find((item) => item.productId === data.productId);
 
-    const isInStock = product.quantity >= currentQuantity + 1;
+      const isInStock = product.quantity >= currentQuantity + 1;
 
-    if (isInStock) {
-      const newQnt = currentQuantity + 1;
-      setCurrentQuantity(newQnt);
-      dispatch({
-        type: "ADD_TO_CART",
-        payload: { ...data, quantity: newQnt },
-      });
-      localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
-    } else {
-      toast.error("Item not in stock");
-    }
-  };
+      if (isInStock) {
+        const newQnt = currentQuantity + 1;
+        setCurrentQuantity(newQnt);
+        dispatch({
+          type: "ADD_TO_CART",
+          payload: { ...data, quantity: newQnt },
+        });
+        localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+      } else {
+        toast.error("Item not in stock");
+      }
+    };
 
 export const decreaseItemQnt = (data, newQnt) => (dispatch, getState) => {
   dispatch({

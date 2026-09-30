@@ -1,5 +1,5 @@
 import { MdAddShoppingCart } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Spinners from "../../shared/Spinners";
 import { FaBoxOpen } from "react-icons/fa";
 import { DataGrid } from "@mui/x-data-grid";
@@ -8,12 +8,15 @@ import { useState } from "react";
 import useProductFilter from "../../../hooks/useProductFilter";
 import Model from "../../shared/Model";
 import AddProductForm from "./AddProductForm";
+import DeleteModel from "../../shared/DeleteModel";
 
 const AdminProducts = () => {
     const { products, pagination } = useSelector((state) => state.products);
     const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
-    const [openUpdateModel, setOpenUpdateModel] = useState(false);
+  const dispatch = useDispatch();
     const [openAddModel, setOpenAddModel] = useState(false);
+    const [openUpdateModel, setOpenUpdateModel] = useState(false);
+    const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState("");
     const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
     const isProductsEmpty = products?.length === 0;
@@ -36,10 +39,16 @@ const AdminProducts = () => {
         setSelectedProduct(product);
         setOpenUpdateModel(true);
     }
-    const onDelete = (product) => { }
+    const onDelete = (product) => {
+    setSelectedProduct(product);
+    setOpenDeleteModel(true);
+  }
     const onImageUpload = (product) => { }
     const onProductView = (product) => { }
     const handlePaginationChange = (pagination) => { }
+  const onDeleteHandler = () => {
+    dispatch();
+  }
 
     useProductFilter();
 
@@ -102,6 +111,7 @@ const AdminProducts = () => {
                                 title={openAddModel ? "Add Product" : "Update Product"}>
                                 <AddProductForm setOpen={openAddModel ? setOpenAddModel : setOpenUpdateModel} product={selectedProduct} isUpdate={openUpdateModel} />
                             </Model>
+                            <DeleteModel open={openDeleteModel} setOpen={setOpenDeleteModel} title={"Delete Product"} onDeleteHandler={() => {}} loader={false}/>
                         </div>
                     </>
                 )

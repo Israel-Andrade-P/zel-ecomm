@@ -27,6 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class ProductController {
     private final ProductService productService;
     private final ProductOrchestrationService orchestrationService;
+    
 
     @PostMapping("/seller/categories/{category_name}/product")
     @PreAuthorize("hasRole('SELLER')")

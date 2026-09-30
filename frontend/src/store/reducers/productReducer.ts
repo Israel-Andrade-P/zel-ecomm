@@ -1,6 +1,6 @@
 const initialState = {
   products: [],
-  categories: null,
+  categories: [],
   pagination: {},
 };
 
