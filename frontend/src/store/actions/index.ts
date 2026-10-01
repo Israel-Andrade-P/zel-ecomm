@@ -56,12 +56,20 @@ export const deleteProduct =
       await api.delete(`/manage/products/delete/${publicId}`);
       dispatch({ type: "RESPONSE_SUCCESS" });
       dispatch(fetchProducts(""));
+    return {
+      success: true,
+    };
     } catch (error) {
       console.log(error);
+    const errorMessage = error?.response?.data?.reason || "An ERROR has occurred";
       dispatch({
         type: "RESPONSE_ERROR",
-        payload: error?.response?.data?.reason || "An ERROR has occurred",
+        payload: errorMessage,
       });
+    return {
+      success: false,
+      errorMessage: errorMessage,
+    }
     }
   };
 
