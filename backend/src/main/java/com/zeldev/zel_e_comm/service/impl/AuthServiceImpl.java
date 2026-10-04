@@ -66,6 +66,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void updateLoginAttempt(String email, LoginType loginType) {
         var user = getUserEntityByEmail(email);
+
         switch (loginType) {
             case LOGIN_ATTEMPT -> {
                 if (userCache.get(user.getEmail()) == null) {
@@ -121,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Set<RoleEntity> getRoles() {
-        var role = roleRepository.findByRoleName(RoleType.SELLER)
+        var role = roleRepository.findByRoleName(RoleType.USER)
                 .orElseThrow(() -> new RoleDoesntExistException("This role doesn't exist"));
         Set<RoleEntity> roles = new HashSet<>();
         roles.add(role);

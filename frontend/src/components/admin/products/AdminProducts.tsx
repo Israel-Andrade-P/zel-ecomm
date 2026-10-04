@@ -11,6 +11,7 @@ import AddProductForm from "./AddProductForm";
 import DeleteModel from "../../shared/DeleteModel";
 import { deleteProduct } from "../../../store/actions";
 import toast from "react-hot-toast";
+import ImageUploadForm from "./ImageUploadForm";
 
 const AdminProducts = () => {
   const { products, pagination } = useSelector((state) => state.products);
@@ -19,6 +20,7 @@ const AdminProducts = () => {
   const [openAddModel, setOpenAddModel] = useState(false);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const [openDeleteModel, setOpenDeleteModel] = useState(false);
+  const [openImageUploadModel, setOpenImageUploadModel] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
   const isProductsEmpty = products?.length === 0;
@@ -35,10 +37,6 @@ const AdminProducts = () => {
     }
   })
 
-  console.log("Current product: ", selectedProduct);
-  
-
-
   const onEdit = (product) => {
     setSelectedProduct(product);
     setOpenUpdateModel(true);
@@ -47,13 +45,16 @@ const AdminProducts = () => {
     setSelectedProduct(product);
     setOpenDeleteModel(true);
   }
-  const onImageUpload = (product) => { }
+  const onImageUpload = (product) => {
+    setOpenImageUploadModel(true);
+    setSelectedProduct(product);
+  }
   const onProductView = (product) => { }
   const handlePaginationChange = (pagination) => { }
   const onDeleteHandler = async () => {
     const result = await dispatch(deleteProduct(selectedProduct?.id));
 
-    if(!result.success) {
+    if (!result.success) {
       toast.error("Failed deleting product")
       return;
     }
@@ -117,7 +118,14 @@ const AdminProducts = () => {
                 isUpdate={openUpdateModel} />
             </Model>
 
-              <DeleteModel open={openDeleteModel} setOpen={setOpenDeleteModel} loader={btnLoader} title="Delete Product" onDeleteHandler={onDeleteHandler}/>
+            <Model open={openImageUploadModel}
+              setOpen={setOpenImageUploadModel}
+              title={"Add Image"} >
+              <ImageUploadForm setOpen={setOpenImageUploadModel} product={selectedProduct} />
+            </Model>
+
+
+            <DeleteModel open={openDeleteModel} setOpen={setOpenDeleteModel} loader={btnLoader} title="Delete Product" onDeleteHandler={onDeleteHandler} />
           </>
         )}
     </div>
