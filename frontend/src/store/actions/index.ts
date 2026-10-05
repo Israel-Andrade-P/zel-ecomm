@@ -73,6 +73,32 @@ export const deleteProduct =
     }
   };
 
+export const uploadProductImage = (productId, formData) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    await api.put(`/manage/products/${productId}/image`, formData);
+    dispatch({ type: "RESPONSE_SUCCESS" });
+    dispatch(fetchProducts(""));
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.reason || "Failed to upload image";
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: errorMessage,
+    });
+
+    return {
+      success: false,
+      errorMessage: errorMessage,
+    };
+  }
+};
+
 export const fetchCategories = () => async (dispatch) => {
   try {
     dispatch({ type: "CATEGORY_LOADER" });
