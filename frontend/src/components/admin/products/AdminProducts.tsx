@@ -12,6 +12,8 @@ import DeleteModel from "../../shared/DeleteModel";
 import { deleteProduct } from "../../../store/actions";
 import toast from "react-hot-toast";
 import ImageUploadForm from "./ImageUploadForm";
+import ProductViewModel from "../../shared/ProductViewModel";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 const AdminProducts = () => {
   const { products, pagination } = useSelector((state) => state.products);
@@ -21,9 +23,16 @@ const AdminProducts = () => {
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const [openDeleteModel, setOpenDeleteModel] = useState(false);
   const [openImageUploadModel, setOpenImageUploadModel] = useState(false);
+  const [openProductView, setOpenProductView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
   const isProductsEmpty = products?.length === 0;
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const pathname = useLocation().pathname;
+
   const tableRecords = products?.map((item) => {
     return {
       id: item.productId,
@@ -49,8 +58,16 @@ const AdminProducts = () => {
     setOpenImageUploadModel(true);
     setSelectedProduct(product);
   }
-  const onProductView = (product) => { }
-  const handlePaginationChange = (pagination) => { }
+  const onProductView = (product) => {
+    setSelectedProduct(product);
+    setOpenProductView(true);
+  }
+  const handlePaginationChange = (paginationModel) => {
+    const page = paginationModel.page + 1;
+    setCurrentPage(page);
+    params.set("page", page.toString());
+    navigate(`${pathname}?${params}`);
+  }
   const onDeleteHandler = async () => {
     const result = await dispatch(deleteProduct(selectedProduct?.id));
 
@@ -126,6 +143,8 @@ const AdminProducts = () => {
 
 
             <DeleteModel open={openDeleteModel} setOpen={setOpenDeleteModel} loader={btnLoader} title="Delete Product" onDeleteHandler={onDeleteHandler} />
+
+            <ProductViewModel open={openProductView} setOpen={setOpenProductView} product={selectedProduct} isAvailable={true} />
           </>
         )}
     </div>

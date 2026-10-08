@@ -47,7 +47,7 @@ public class SecurityConfig {
                 req -> req
                         .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
+                        .requestMatchers("/api/v1/seller/**").hasAnyRole("ADMIN", "SELLER")
                         .requestMatchers("/api/v1/manage/products/**").hasAnyRole("ADMIN", "SELLER")
                         .requestMatchers("/api/v1/profile/{username}/**").access(
                                 AuthorizationManagers.anyOf(

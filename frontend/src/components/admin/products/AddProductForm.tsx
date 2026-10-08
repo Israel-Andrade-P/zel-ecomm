@@ -5,7 +5,7 @@ import Spinners from "../../shared/Spinners";
 import { useDispatch, useSelector } from "react-redux";
 import TextArea from "../../shared/TextArea";
 import { useEffect, useState } from "react";
-import { fetchCategories, updateProduct } from "../../../store/actions";
+import { addNewProduct, fetchCategories, updateProduct } from "../../../store/actions";
 import toast from "react-hot-toast";
 import SelectTextField from "../../shared/SelectTextField";
 import ErrorPage from "../../shared/ErrorPage";
@@ -16,10 +16,24 @@ const AddProductForm = ({ setOpen, product, isUpdate = false }) => {
   const { categories } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const [selectedtCategory, setSelectedtCategory] = useState("");
+  console.log("Selected Category:", selectedtCategory);
+  
 
   const saveProductHandler = async (data) => {
     if (!isUpdate) {
+      
+      const sendData = { ...data, id: product.id }
 
+      const result = await dispatch(addNewProduct(sendData, selectedtCategory.name));
+
+      if (!result.success) {
+        toast.error(String(result.errorMessage))
+        return;
+      }
+
+      toast.success("Product added");
+      reset();
+      setOpen(false);
     } else {
       const sendData = { ...data, id: product.id }
 
@@ -96,7 +110,7 @@ const AddProductForm = ({ setOpen, product, isUpdate = false }) => {
               isLoading ? (<div className="flex gap-2 items-center">
                 <Spinners />
                 Loading...
-              </div>) : ("Update")
+              </div>) : (isUpdate ? "Update" : "Add")
             }
           </Button>
         </div>

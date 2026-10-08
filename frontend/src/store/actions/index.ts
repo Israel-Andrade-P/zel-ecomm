@@ -23,12 +23,38 @@ export const fetchProducts = (queryParams: string) => async (dispatch) => {
   }
 };
 
+export const addNewProduct = (sendData, categoryName: string) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    await api.post(`/seller/categories/${categoryName}/product`, sendData)
+    dispatch({ type: "RESPONSE_SUCCESS" });
+    await dispatch(fetchProducts(""));
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.reason || "Failed to add product";
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: errorMessage,
+    });
+
+    return {
+      success: false,
+      errorMessage: errorMessage,
+    };
+  }
+}
+
 export const updateProduct = (productData) => async (dispatch) => {
   try {
     dispatch({ type: "IS_LOADING" });
     await api.put(`/manage/products/update/${productData.id}`, productData);
     dispatch({ type: "RESPONSE_SUCCESS" });
-    dispatch(fetchProducts(""));
+    await dispatch(fetchProducts(""));
 
     return {
       success: true,
@@ -56,20 +82,20 @@ export const deleteProduct =
       await api.delete(`/manage/products/delete/${publicId}`);
       dispatch({ type: "RESPONSE_SUCCESS" });
       dispatch(fetchProducts(""));
-    return {
-      success: true,
-    };
+      return {
+        success: true,
+      };
     } catch (error) {
       console.log(error);
-    const errorMessage = error?.response?.data?.reason || "An ERROR has occurred";
+      const errorMessage = error?.response?.data?.reason || "An ERROR has occurred";
       dispatch({
         type: "RESPONSE_ERROR",
         payload: errorMessage,
       });
-    return {
-      success: false,
-      errorMessage: errorMessage,
-    }
+      return {
+        success: false,
+        errorMessage: errorMessage,
+      }
     }
   };
 

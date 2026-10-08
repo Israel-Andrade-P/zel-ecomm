@@ -30,7 +30,7 @@ public class ProductController {
     
 
     @PostMapping("/seller/categories/{category_name}/product")
-    @PreAuthorize("hasRole('SELLER')")
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
     public ResponseEntity<ProductResponse> addProduct(
             @Parameter(description = "ID of category product belongs to")
             @RequestBody @Valid ProductRequest request,
