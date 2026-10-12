@@ -16,7 +16,7 @@ import ProductViewModel from "../../shared/ProductViewModel";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 const AdminProducts = () => {
-  const { products, pagination } = useSelector((state) => state.products);
+  const { products, productsPagination } = useSelector((state) => state.products);
   const { isLoading, btnLoader, errorMessage } = useSelector((state) => state.uiStates);
   const dispatch = useDispatch();
   const [openAddModel, setOpenAddModel] = useState(false);
@@ -25,7 +25,7 @@ const AdminProducts = () => {
   const [openImageUploadModel, setOpenImageUploadModel] = useState(false);
   const [openProductView, setOpenProductView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
+  const [currentPage, setCurrentPage] = useState(productsPagination?.pageNumber + 1 || 1);
   const isProductsEmpty = products?.length === 0;
 
   const navigate = useNavigate();
@@ -118,12 +118,12 @@ const AdminProducts = () => {
                 columns={adminProductTableColumns(onEdit, onDelete, onImageUpload, onProductView)}
                 onPaginationModelChange={handlePaginationChange}
                 disableColumnResize
-                paginationModel={{ pageSize: pagination?.pageSize || 10, page: currentPage - 1, }}
-                pageSizeOptions={[pagination?.pageSize || 10]}
+                paginationModel={{ pageSize: productsPagination?.pageSize || 10, page: currentPage - 1, }}
+                pageSizeOptions={[productsPagination?.pageSize || 10]}
                 pagination
                 checkboxSelection
                 disableRowSelectionOnClick
-                paginationOptions={{ showFirstButton: true, showLastButton: true, hideNextButton: currentPage === pagination?.totalPages, }}
+                paginationOptions={{ showFirstButton: true, showLastButton: true, hideNextButton: currentPage === productsPagination?.totalPages, }}
               />
             </div>
 

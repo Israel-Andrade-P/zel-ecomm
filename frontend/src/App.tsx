@@ -17,7 +17,7 @@ import AdminLayout from './components/admin/AdminLayout'
 import Dashboard from './components/admin/dashboard/Dashboard'
 import AdminProducts from './components/admin/products/AdminProducts'
 import Sellers from './components/admin/sellers/Sellers'
-import Category from './components/admin/categories/Category'
+import Category from './components/admin/categories/Categories'
 import Orders from './components/admin/orders/Orders'
 
 function App() {

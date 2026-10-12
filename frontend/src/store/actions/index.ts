@@ -125,10 +125,62 @@ export const uploadProductImage = (productId, formData) => async (dispatch) => {
   }
 };
 
-export const fetchCategories = () => async (dispatch) => {
+export const addNewCategory = (sendData) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    await api.post("/admin/categories/create", sendData)
+    dispatch({ type: "RESPONSE_SUCCESS" });
+    await dispatch(fetchCategories(""));
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.reason || "Failed to add category";
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: errorMessage,
+    });
+
+    return {
+      success: false,
+      errorMessage: errorMessage,
+    };
+  }
+}
+
+export const updateCategory = (categoryData, categoryName: string) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    await api.put(`/admin/categories/update/${categoryName}`, categoryData);
+    dispatch({ type: "RESPONSE_SUCCESS" });
+    await dispatch(fetchCategories(""));
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.reason || "Failed to update category";
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: errorMessage,
+    });
+
+    return {
+      success: false,
+      errorMessage: errorMessage,
+    };
+  }
+};
+
+export const fetchCategories = (queryParams: string) => async (dispatch) => {
   try {
     dispatch({ type: "CATEGORY_LOADER" });
-    const { data } = await api.get(`/categories`);
+    const { data } = await api.get(`/categories?${queryParams}`);
     dispatch({
       type: "FETCH_CATEGORIES",
       payload: data.content,

@@ -10,7 +10,7 @@ import Paginations from "../shared/Paginations";
 
 const Products = () => {
   const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
-  const { products, categories, pagination } = useSelector((state) => state.products);
+  const { products, categories, productsPagination } = useSelector((state) => state.products);
   useProductFilter();
 
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const Products = () => {
               }
             </div>
             <div className="flex justify-center pt-10">
-              <Paginations totalPages={pagination?.totalPages} totalItems={pagination?.totalElements} />
+              <Paginations totalPages={pagination?.totalPages} totalItems={productsPagination?.totalElements} />
             </div>
           </div>
         )}
