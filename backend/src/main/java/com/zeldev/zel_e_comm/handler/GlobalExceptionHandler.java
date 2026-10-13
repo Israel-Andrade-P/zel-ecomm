@@ -104,6 +104,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_GATEWAY).body(
                 new ErrorResponse(502, BAD_GATEWAY, exp.getMessage())
         );
+    } 
+
+  @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handler(CategoryAlreadyExistsException exp) {
+        return ResponseEntity.status(BAD_REQUEST).body(
+                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
+        );
+    }
+
+  @ExceptionHandler(FieldIsRequiredException.class)
+    public ResponseEntity<ErrorResponse> handler(FieldIsRequiredException exp) {
+        return ResponseEntity.status(BAD_REQUEST).body(
+                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
+        );
     }
 
     @ExceptionHandler(IllegalStateException.class)

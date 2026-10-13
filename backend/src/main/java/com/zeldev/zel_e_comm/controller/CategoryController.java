@@ -41,7 +41,7 @@ public class CategoryController {
     }
 
     @PutMapping("/admin/categories/update/{name}")
-    public ResponseEntity<CategoryResponse> update(@RequestBody CategoryRequest request, @PathVariable("name") String name) {
+    public ResponseEntity<CategoryResponse> update(@RequestBody @Valid CategoryRequest request, @PathVariable("name") String name) {
         return ResponseEntity.status(OK).body(service.updateById(request, name));
     }
 }

@@ -5,6 +5,8 @@ import com.zeldev.zel_e_comm.dto.response.CategoryResponse;
 import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.entity.CategoryEntity;
 import com.zeldev.zel_e_comm.exception.APIException;
+import com.zeldev.zel_e_comm.exception.CategoryAlreadyExistsException;
+import com.zeldev.zel_e_comm.exception.FieldIsRequiredException;
 import com.zeldev.zel_e_comm.exception.ResourceNotFoundException;
 import com.zeldev.zel_e_comm.repository.CategoryRepository;
 import com.zeldev.zel_e_comm.service.CategoryService;
@@ -58,13 +60,19 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public CategoryResponse updateById(CategoryRequest request, String name) {
-    var categoryDB = getByName(name);
     log.info("Category Update Request: {}", request);
-    log.info("Category From DB: {}", categoryDB);
-    if (!request.name().isBlank() && !request.name().equals(categoryDB.getName())) {
-      categoryDB.setName(request.name());
-      log.info("Category {} updated to {}", categoryDB.getName(), request.name());
+    if (request.name() == null || request.name().isBlank()) {
+      throw new FieldIsRequiredException("Field required");
     }
+
+    var categoryDB = getByName(name);
+    log.info("Category From DB: {}", categoryDB);
+
+    if (request.name().equals(categoryDB.getName()))
+      throw new CategoryAlreadyExistsException(String.format("Category %s already exists", request.name()));
+
+    log.info("Category {} updating to {}", categoryDB.getName(), request.name());
+    categoryDB.setName(request.name());
 
     return toResponse(categoryDB);
   }
