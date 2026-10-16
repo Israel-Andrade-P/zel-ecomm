@@ -3,6 +3,7 @@ package com.zeldev.zel_e_comm.handler;
 import com.zeldev.zel_e_comm.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,113 +19,119 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handler(ResourceNotFoundException exp) {
-        return ResponseEntity.status(NOT_FOUND).body(
-                new ErrorResponse(404, NOT_FOUND, exp.getMessage())
-        );
-    }
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handler(ResourceNotFoundException exp) {
+    return ResponseEntity.status(NOT_FOUND).body(
+        new ErrorResponse(404, NOT_FOUND, exp.getMessage()));
+  }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handler(UserNotFoundException exp) {
-        return ResponseEntity.status(NOT_FOUND).body(
-                new ErrorResponse(404, NOT_FOUND, exp.getMessage())
-        );
-    }
+  @ExceptionHandler(UserNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handler(UserNotFoundException exp) {
+    return ResponseEntity.status(NOT_FOUND).body(
+        new ErrorResponse(404, NOT_FOUND, exp.getMessage()));
+  }
 
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<ErrorResponse> handler(APIException exp) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  @ExceptionHandler(APIException.class)
+  public ResponseEntity<ErrorResponse> handler(APIException exp) {
+    return ResponseEntity.badRequest().body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handler(MethodArgumentNotValidException exp) {
-        Map<String, String> errors = new HashMap<>();
-        exp.getBindingResult().getAllErrors().forEach(err -> {
-            var fieldName = ((FieldError) err).getField();
-            var message = err.getDefaultMessage();
-            errors.putIfAbsent(fieldName, message);
-        });
-        return ResponseEntity.status(BAD_REQUEST).body(
-                new ErrorResponse(400, BAD_REQUEST, "Invalid fields", errors)
-        );
-    }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handler(MethodArgumentNotValidException exp) {
+    Map<String, String> errors = new HashMap<>();
+    exp.getBindingResult().getAllErrors().forEach(err -> {
+      var fieldName = ((FieldError) err).getField();
+      var message = err.getDefaultMessage();
+      errors.putIfAbsent(fieldName, message);
+    });
+    return ResponseEntity.status(BAD_REQUEST).body(
+        new ErrorResponse(400, BAD_REQUEST, "Invalid fields", errors));
+  }
 
-    @ExceptionHandler(InvalidOrderStatusException.class)
-    public ResponseEntity<ErrorResponse> handler(InvalidOrderStatusException exp) {
-        return ResponseEntity.status(BAD_REQUEST).body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  @ExceptionHandler(InvalidOrderStatusException.class)
+  public ResponseEntity<ErrorResponse> handler(InvalidOrderStatusException exp) {
+    return ResponseEntity.status(BAD_REQUEST).body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
 
-    @ExceptionHandler(PSQLException.class)
-    public ResponseEntity<ErrorResponse> handlePsql(PSQLException exp) {
-        if ("23505".equals(exp.getSQLState())) {
-            return ResponseEntity
-                    .status(CONFLICT)
-                    .body(new ErrorResponse(409, CONFLICT, "Entity already exists"));
-        }
-        return ResponseEntity
-                .status(INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Unexpected database error"));
+  @ExceptionHandler(PSQLException.class)
+  public ResponseEntity<ErrorResponse> handlePsql(PSQLException exp) {
+    if ("23505".equals(exp.getSQLState())) {
+      return ResponseEntity
+          .status(CONFLICT)
+          .body(new ErrorResponse(409, CONFLICT, "Entity already exists"));
     }
-
-    @ExceptionHandler(ConfirmationKeyExpiredException.class)
-    public ResponseEntity<ErrorResponse> handler(ConfirmationKeyExpiredException exp) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
+    if ("23503".equals(exp.getSQLState())) {
+      return ResponseEntity
+          .status(CONFLICT)
+          .body(new ErrorResponse(409, CONFLICT,
+              "Cannot delete this category while products are assigned to it"));
     }
+    return ResponseEntity
+        .status(INTERNAL_SERVER_ERROR)
+        .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Unexpected database error"));
+  }
 
-    @ExceptionHandler(InsufficientStockException.class)
-    public ResponseEntity<ErrorResponse> handler(InsufficientStockException exp) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  // @ExceptionHandler(DataIntegrityViolationException.class)
+  // public ResponseEntity<ErrorResponse> handlePsql(DataIntegrityViolationException exp) {
+  //   if ("23505".equals(exp.getSQLState())) {
+  //     return ResponseEntity
+  //         .status(CONFLICT)
+  //         .body(new ErrorResponse(409, CONFLICT, "Entity already exists"));
+  //   }
+  //   return ResponseEntity
+  //       .status(INTERNAL_SERVER_ERROR)
+  //       .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Unexpected database error"));
+  // }
 
-    @ExceptionHandler(CartIsEmptyException.class)
-    public ResponseEntity<ErrorResponse> handler(CartIsEmptyException exp) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  @ExceptionHandler(ConfirmationKeyExpiredException.class)
+  public ResponseEntity<ErrorResponse> handler(ConfirmationKeyExpiredException exp) {
+    return ResponseEntity.badRequest().body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
 
-    @ExceptionHandler(AlreadyPaidException.class)
-    public ResponseEntity<ErrorResponse> handler(AlreadyPaidException exp) {
-        return ResponseEntity.badRequest().body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  @ExceptionHandler(InsufficientStockException.class)
+  public ResponseEntity<ErrorResponse> handler(InsufficientStockException exp) {
+    return ResponseEntity.badRequest().body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
 
-    @ExceptionHandler(PaymentProviderException.class)
-    public ResponseEntity<ErrorResponse> handler(PaymentProviderException exp) {
-        return ResponseEntity.status(BAD_GATEWAY).body(
-                new ErrorResponse(502, BAD_GATEWAY, exp.getMessage())
-        );
-    } 
+  @ExceptionHandler(CartIsEmptyException.class)
+  public ResponseEntity<ErrorResponse> handler(CartIsEmptyException exp) {
+    return ResponseEntity.badRequest().body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
+
+  @ExceptionHandler(AlreadyPaidException.class)
+  public ResponseEntity<ErrorResponse> handler(AlreadyPaidException exp) {
+    return ResponseEntity.badRequest().body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
+
+  @ExceptionHandler(PaymentProviderException.class)
+  public ResponseEntity<ErrorResponse> handler(PaymentProviderException exp) {
+    return ResponseEntity.status(BAD_GATEWAY).body(
+        new ErrorResponse(502, BAD_GATEWAY, exp.getMessage()));
+  }
 
   @ExceptionHandler(CategoryAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handler(CategoryAlreadyExistsException exp) {
-        return ResponseEntity.status(BAD_REQUEST).body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  public ResponseEntity<ErrorResponse> handler(CategoryAlreadyExistsException exp) {
+    return ResponseEntity.status(BAD_REQUEST).body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
 
   @ExceptionHandler(FieldIsRequiredException.class)
-    public ResponseEntity<ErrorResponse> handler(FieldIsRequiredException exp) {
-        return ResponseEntity.status(BAD_REQUEST).body(
-                new ErrorResponse(400, BAD_REQUEST, exp.getMessage())
-        );
-    }
+  public ResponseEntity<ErrorResponse> handler(FieldIsRequiredException exp) {
+    return ResponseEntity.status(BAD_REQUEST).body(
+        new ErrorResponse(400, BAD_REQUEST, exp.getMessage()));
+  }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
-        log.error("Illegal application state: {}", ex.getMessage());
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
+    log.error("Illegal application state: {}", ex.getMessage());
 
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Server error"));
-    }
+    return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+        .body(new ErrorResponse(500, INTERNAL_SERVER_ERROR, "Server error"));
+  }
 }

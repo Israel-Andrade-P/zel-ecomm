@@ -87,7 +87,7 @@ export const deleteProduct =
       };
     } catch (error) {
       console.log(error);
-      const errorMessage = error?.response?.data?.reason || "An ERROR has occurred";
+      const errorMessage = error?.response?.data?.reason || "Product not deleted";
       dispatch({
         type: "RESPONSE_ERROR",
         payload: errorMessage,
@@ -175,7 +175,30 @@ export const updateCategory = (categoryData, categoryName: string) => async (dis
       errorMessage: errorMessage,
     };
   }
-};
+}
+
+export const deleteCategory = (categoryName: string) => async (dispatch) => {
+    try {
+      dispatch({ type: "BUTTON_LOADER" });
+      await api.delete(`/admin/categories/delete/${categoryName}`);
+      dispatch({ type: "RESPONSE_SUCCESS" });
+      dispatch(fetchCategories(""));
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error?.response?.data?.reason || "Category not deleted";
+      dispatch({
+        type: "RESPONSE_ERROR",
+        payload: errorMessage,
+      });
+      return {
+        success: false,
+        errorMessage: errorMessage,
+      }
+    }
+  };
 
 export const fetchCategories = (queryParams: string) => async (dispatch) => {
   try {
