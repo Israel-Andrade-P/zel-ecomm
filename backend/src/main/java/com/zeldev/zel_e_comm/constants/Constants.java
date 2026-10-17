@@ -4,6 +4,7 @@ public class Constants {
     public static final String PAGE_NUMBER = "0";
     public static final String PAGE_SIZE = "30";
     public static final String SORT_ENTITY_BY = "name";
+    public static final String SORT_USER_BY = "username";
     public static final String SORT_ORDER_BY = "createdAt";
     public static final String SORT_DIR = "asc";
     public static final Integer EXPIRATION = 30;

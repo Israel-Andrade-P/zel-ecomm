@@ -2,13 +2,17 @@ package com.zeldev.zel_e_comm.util;
 
 import com.zeldev.zel_e_comm.domain.UserSecurity;
 import com.zeldev.zel_e_comm.dto.request.UserRequest;
+import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
 import com.zeldev.zel_e_comm.entity.RoleEntity;
 import com.zeldev.zel_e_comm.entity.UserEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
 
 import static com.zeldev.zel_e_comm.enumeration.UserStatus.ACTIVE;
 
@@ -54,4 +58,17 @@ public class UserUtils {
                 userEntity.getTokenVersion()
         );
     }
+
+    public static PageResponse<UserResponse> buildUserPageResponse(Page<UserEntity> userPage, List<UserEntity> users) {
+        return PageResponse.<UserResponse>builder()
+                .content(users.stream().map(user -> toDTO(user)).toList())
+                .totalPages(userPage.getTotalPages())
+                .totalElements(userPage.getTotalElements())
+                .lastPage(userPage.isLast())
+                .pageNumber(userPage.getNumber())
+                .pageSize(userPage.getSize())
+                .build();
+    }
+
+
 }
