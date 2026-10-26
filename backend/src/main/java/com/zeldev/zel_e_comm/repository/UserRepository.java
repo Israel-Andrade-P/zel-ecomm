@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.zeldev.zel_e_comm.entity.UserEntity;
 import com.zeldev.zel_e_comm.enumeration.RoleType;
+import com.zeldev.zel_e_comm.enumeration.UserStatus;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
   @Query("SELECT u FROM UserEntity u WHERE u.email=?1 ")
@@ -30,8 +31,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
   long countByRole(@Param("role") RoleType role);
 
   @Query(
-    value = "SELECT u FROM UserEntity u WHERE EXISTS (SELECT r FROM u.roles r WHERE r.role = :role)",
-    countQuery = "SELECT COUNT(u) FROM UserEntity u WHERE EXISTS (SELECT r FROM u.roles r WHERE r.role = :role)"
+    value = "SELECT u FROM UserEntity u WHERE u.status = :status AND EXISTS (SELECT r FROM u.roles r WHERE r.role = :role)",
+    countQuery = "SELECT COUNT(u) FROM UserEntity u WHERE u.status = :status AND EXISTS (SELECT r FROM u.roles r WHERE r.role = :role)"
   )
-  Page<UserEntity> findByRole(@Param("role") RoleType role, Pageable pageable);
+  Page<UserEntity> findByRole(@Param("role") RoleType role, @Param("status") UserStatus status, Pageable pageable);
 }

@@ -6,6 +6,7 @@ import { authReducer } from "./authReducer";
 import { paymentReducer } from "./paymentReducer";
 import { orderReducer } from "./orderReducer";
 import { adminReducer } from "./adminReducer.ts";
+import { userReducer } from "./userReducer.ts";
 
 const user = localStorage.getItem("auth")
   ? JSON.parse(localStorage.getItem("auth"))
@@ -22,6 +23,7 @@ const initialState = {
 
 export const store = configureStore({
   reducer: {
+    users: userReducer,
     products: productReducer,
     uiStates: uiReducer,
     carts: cartReducer,

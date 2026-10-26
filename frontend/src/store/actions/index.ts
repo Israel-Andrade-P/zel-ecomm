@@ -323,6 +323,30 @@ export const logUserOut = (navigate) => (dispatch) => {
   navigate("/login");
 };
 
+export const fetchSellers = (queryParams: string) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    const { data } = await api.get(`/admin/sellers?${queryParams}`);
+    dispatch({
+      type: "FETCH_SELLERS",
+      payload: data.content,
+      pageNumber: data.pageNumber,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      lastPage: data.lastPage,
+    });
+    dispatch({ type: "RESPONSE_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: error?.response?.data?.reason || "Failed to fetch sellers",
+    });
+  }
+};
+
+
 export const addUpdateUserAddress =
   (sendData, toast, publicId, setOpen) => async (dispatch, getState) => {
     dispatch({ type: "BUTTON_LOADER" });

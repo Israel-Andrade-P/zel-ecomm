@@ -1,3 +1,5 @@
+import { updatePagination } from "../../utils/pages";
+
 const initialState = {
   products: [],
   categories: [],
@@ -24,11 +26,3 @@ export const productReducer = (state = initialState, action) => {
   }
 };
 
-const updatePagination = (pagination, action) => ({
-  ...pagination,
-  pageNumber: action.pageNumber,
-  pageSize: action.pageSize,
-  totalElements: action.totalElements,
-  totalPages: action.totalPages,
-  lastPage: action.lastPage,
-});

@@ -1,5 +1,16 @@
 package com.zeldev.zel_e_comm.service.impl;
 
+import static com.zeldev.zel_e_comm.util.PageUtils.getPageable;
+import static com.zeldev.zel_e_comm.util.UserUtils.buildUserPageResponse;
+import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zeldev.zel_e_comm.dto.request.UserRequest;
 import com.zeldev.zel_e_comm.dto.response.PageResponse;
 import com.zeldev.zel_e_comm.dto.response.UserResponse;
@@ -10,20 +21,8 @@ import com.zeldev.zel_e_comm.exception.APIException;
 import com.zeldev.zel_e_comm.exception.UserNotFoundException;
 import com.zeldev.zel_e_comm.repository.UserRepository;
 import com.zeldev.zel_e_comm.service.UserService;
-import com.zeldev.zel_e_comm.util.UserUtils;
+
 import lombok.RequiredArgsConstructor;
-
-import org.jspecify.annotations.Nullable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.zeldev.zel_e_comm.util.UserUtils.buildUserPageResponse;
-import static com.zeldev.zel_e_comm.util.UserUtils.toDTO;
-import static com.zeldev.zel_e_comm.util.PageUtils.getPageable;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
   public PageResponse<UserResponse> getAllSellers(Integer page, Integer size, String sortBy, String sortOrder) {
     Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
 
-    Page<UserEntity> userPage = userRepository.findByRole(RoleType.SELLER, pageDetails);
+    Page<UserEntity> userPage = userRepository.findByRole(RoleType.SELLER, UserStatus.ACTIVE, pageDetails);
 
     List<UserEntity> users = userPage.getContent();
     if (users.isEmpty())

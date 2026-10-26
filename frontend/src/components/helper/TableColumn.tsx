@@ -269,3 +269,58 @@ export const adminCategoryTableColumns = (onEdit: (item: any) => void, onDelete:
     },
   },
 ];
+
+export const adminUserTableColumns = (): GridColDef[] => [
+  {
+    sortable: false,
+    disableColumnMenu: true,
+    field: "username",
+    headerName: "username",
+    flex: 1,
+    minWidth: 180,
+    headerAlign: "center",
+    editable: false,
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border",
+    renderHeader: (params) => <span className="text-center">Username</span>
+  },
+  {
+    sortable: false,
+    disableColumnMenu: true,
+    field: "email",
+    headerName: "email",
+    flex: 1,
+    minWidth: 180,
+    headerAlign: "center",
+    editable: false,
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border",
+    renderHeader: (params) => <span className="text-center">Email</span>
+  },
+  {
+    sortable: false,
+    disableColumnMenu: true,
+    field: "dob",
+    headerName: "dob",
+    flex: 1,
+    minWidth: 180,
+    headerAlign: "center",
+    editable: false,
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border",
+    renderHeader: (params) => <span className="text-center">Date of Birth</span>
+  },
+  {
+    sortable: false,
+    disableColumnMenu: true,
+    field: "telephone",
+    headerName: "telephone",
+    flex: 1,
+    minWidth: 180,
+    headerAlign: "center",
+    editable: false,
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border",
+    renderHeader: (params) => <span className="text-center">Telephone</span>
+  },
+];
