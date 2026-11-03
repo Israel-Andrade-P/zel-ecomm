@@ -3,73 +3,89 @@ import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { BiUser } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaUserShield } from "react-icons/fa";
 import { IoExitOutline } from "react-icons/io5";
 import BackDrop from "../shared/BackDrop";
 import { logUserOut } from "../../store/actions";
 
 const UserMenu = () => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const { user } = useSelector((state) => state.auth);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  console.log("User:", user);
+  
+  const isAdmin = user && user?.roles.includes("ROLE_ADMIN");
 
-    const logoutHandler = () => {
-        dispatch(logUserOut(navigate))
-    };
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-    return (
-        <div className="relative z-30">
-            <div className="sm:border sm:border-slate-400 flex flex-row items-center gap-1 rounded-full cursor-pointer hover:shadow-md transition text-slate-700"
-                onClick={handleClick}>
-                <Avatar alt="Menu" src="" />
-            </div>
-            <Menu
-                sx={{ width: "400px" }}
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                    sx: { width: 160 },
-                }}
-            >
-                <Link to="/profile">
-                    <MenuItem className="flex gap-2" onClick={handleClose}>
-                        <BiUser className="text-xl" />
-                        <span className="text-[16px] font-bold mt-1">
-                            {user?.username}
-                        </span>
-                    </MenuItem>
-                </Link>
-                <Link to="/profile/orders">
-                    <MenuItem className="flex gap-2" onClick={handleClose}>
-                        <FaShoppingCart className="text-xl" />
-                        <span className="font-semibold">
-                            Order
-                        </span>
-                    </MenuItem>
-                </Link>
-                <MenuItem className="flex gap-2" onClick={logoutHandler}>
-                    <div className="font-semibold w-full flex gap-2 items-center bg-button-gradient px-4 py-1 text-white rounded-sm">
-                        <IoExitOutline className="text-xl" />
-                        <span className="font-bold text-[16px] mt-1">
-                            Logout
-                        </span>
-                    </div>
-                </MenuItem>
-            </Menu>
-            {open && <BackDrop />}
-        </div>
-    );
+  const logoutHandler = () => {
+    dispatch(logUserOut(navigate))
+  };
+
+  return (
+    <div className="relative z-30">
+      <div className="sm:border sm:border-slate-400 flex flex-row items-center gap-1 rounded-full cursor-pointer hover:shadow-md transition text-slate-700"
+        onClick={handleClick}>
+        <Avatar alt="Menu" src="" />
+      </div>
+      <Menu
+        sx={{ width: "400px" }}
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+          sx: { width: 160 },
+        }}
+      >
+        <Link to="/profile">
+          <MenuItem className="flex gap-2" onClick={handleClose}>
+            <BiUser className="text-xl" />
+            <span className="text-[16px] font-bold mt-1">
+              {user?.username}
+            </span>
+          </MenuItem>
+        </Link>
+        <Link to="/profile/orders">
+          <MenuItem className="flex gap-2" onClick={handleClose}>
+            <FaShoppingCart className="text-xl" />
+            <span className="font-semibold">
+              Order
+            </span>
+          </MenuItem>
+        </Link>
+        {
+          isAdmin && (
+            <Link to="/admin">
+              <MenuItem className="flex gap-2" onClick={handleClose}>
+                <FaUserShield className="text-xl" />
+                <span className="font-semibold">
+                  Admin
+                </span>
+              </MenuItem>
+            </Link>
+          )
+        }
+        <MenuItem className="flex gap-2" onClick={logoutHandler}>
+          <div className="font-semibold w-full flex gap-2 items-center bg-button-gradient px-4 py-1 text-white rounded-sm">
+            <IoExitOutline className="text-xl" />
+            <span className="font-bold text-[16px] mt-1">
+              Logout
+            </span>
+          </div>
+        </MenuItem>
+      </Menu>
+      {open && <BackDrop />}
+    </div>
+  );
 };
 
 export default UserMenu;

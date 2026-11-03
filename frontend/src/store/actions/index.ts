@@ -178,27 +178,27 @@ export const updateCategory = (categoryData, categoryName: string) => async (dis
 }
 
 export const deleteCategory = (categoryName: string) => async (dispatch) => {
-    try {
-      dispatch({ type: "BUTTON_LOADER" });
-      await api.delete(`/admin/categories/delete/${categoryName}`);
-      dispatch({ type: "RESPONSE_SUCCESS" });
-      dispatch(fetchCategories(""));
-      return {
-        success: true,
-      };
-    } catch (error) {
-      console.log(error);
-      const errorMessage = error?.response?.data?.reason || "Category not deleted";
-      dispatch({
-        type: "RESPONSE_ERROR",
-        payload: errorMessage,
-      });
-      return {
-        success: false,
-        errorMessage: errorMessage,
-      }
+  try {
+    dispatch({ type: "BUTTON_LOADER" });
+    await api.delete(`/admin/categories/delete/${categoryName}`);
+    dispatch({ type: "RESPONSE_SUCCESS" });
+    dispatch(fetchCategories(""));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+    const errorMessage = error?.response?.data?.reason || "Category not deleted";
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: errorMessage,
+    });
+    return {
+      success: false,
+      errorMessage: errorMessage,
     }
-  };
+  }
+};
 
 export const fetchCategories = (queryParams: string) => async (dispatch) => {
   try {
@@ -318,6 +318,7 @@ export const registerUser =
   };
 
 export const logUserOut = (navigate) => (dispatch) => {
+  // await api.post("/auth/logout", sendData);
   dispatch({ type: "LOG_OUT" });
   localStorage.removeItem("auth");
   navigate("/login");
