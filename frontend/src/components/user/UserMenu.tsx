@@ -7,6 +7,7 @@ import { FaShoppingCart, FaUserShield } from "react-icons/fa";
 import { IoExitOutline } from "react-icons/io5";
 import BackDrop from "../shared/BackDrop";
 import { logUserOut } from "../../store/actions";
+import { isAdminUser, isSellerUser } from "../../utils/auth";
 
 const UserMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -16,7 +17,8 @@ const UserMenu = () => {
   const navigate = useNavigate();
   console.log("User:", user);
   
-  const isAdmin = user && user?.roles.includes("ROLE_ADMIN");
+  const isAdmin = isAdminUser(user);
+  const isSeller = isSellerUser(user);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -63,12 +65,12 @@ const UserMenu = () => {
           </MenuItem>
         </Link>
         {
-          isAdmin && (
-            <Link to="/admin">
+          (isAdmin || isSeller) && (
+            <Link to={isAdmin ? "/admin" : "/admin/orders"}>
               <MenuItem className="flex gap-2" onClick={handleClose}>
                 <FaUserShield className="text-xl" />
                 <span className="font-semibold">
-                  Admin
+                  {isAdmin ? "Admin" : "Seller"}
                 </span>
               </MenuItem>
             </Link>

@@ -29,77 +29,97 @@ import static com.zeldev.zel_e_comm.util.PageUtils.getPageable;
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
-    private final OrderRepository orderRepository;
-    private final CartService cartService;
-    private final LocationService locationService;
-    private final OrderItemService orderItemService;
-    private final ProductService productService;
-    private final AuthUtils authUtils;
+  private final OrderRepository orderRepository;
+  private final CartService cartService;
+  private final LocationService locationService;
+  private final OrderItemService orderItemService;
+  private final ProductService productService;
+  private final AuthUtils authUtils;
 
-    @Override
-    public OrderResponse createOrder(OrderRequest request) {
-        UserEntity user = authUtils.getLoggedInUser();
-        Set<CartItemEntity> cartItems = cartService.getCartByEmail(user.getEmail()).getCartItems();
-        if (cartItems.isEmpty()) throw new CartIsEmptyException("Cart is empty");
+  @Override
+  public OrderResponse createOrder(OrderRequest request) {
+    UserEntity user = authUtils.getLoggedInUser();
+    Set<CartItemEntity> cartItems = cartService.getCartByEmail(user.getEmail()).getCartItems();
+    if (cartItems.isEmpty())
+      throw new CartIsEmptyException("Cart is empty");
 
-        LocationEntity location = locationService.getByPublicIdAndUserEmail(request.locationPublicId(), user.getEmail());
+    LocationEntity location = locationService.getByPublicIdAndUserEmail(request.locationPublicId(), user.getEmail());
 
-        OrderEntity order = buildOrder(user, location);
-        orderRepository.save(order);
+    OrderEntity order = buildOrder(user, location);
+    orderRepository.save(order);
 
-        orderItemService.createOrderItems(cartItems, order);
+    orderItemService.createOrderItems(cartItems, order);
 
-        return toOrderResponse(order);
-    }
+    return toOrderResponse(order);
+  }
 
-    @Override
-    public OrderResponse getOrderResponse(String orderId) {
-        OrderEntity order = getOrderEntity(orderId);
-        return toOrderResponse(order);
-    }
+  @Override
+  public OrderResponse getOrderResponse(String orderId) {
+    OrderEntity order = getOrderEntity(orderId);
+    return toOrderResponse(order);
+  }
 
-    @Override
-    public OrderEntity getOrderEntity(String orderId) {
-        return orderRepository.findByPublicId(orderId).orElseThrow(() -> new ResourceNotFoundException(orderId, "Order"));
-    }
+  @Override
+  public OrderEntity getOrderEntity(String orderId) {
+    return orderRepository.findByPublicId(orderId).orElseThrow(() -> new ResourceNotFoundException(orderId, "Order"));
+  }
 
-    @Override
-    public PageResponse<OrderResponse> getOrders(Integer page, Integer size, String sortBy, String sortOrder) {
-        Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
+  @Override
+  public PageResponse<OrderResponse> getOrders(Integer page, Integer size, String sortBy, String sortOrder) {
+    Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
 
-        Page<OrderEntity> orderPage = orderRepository.findAll(pageDetails);
+    Page<OrderEntity> orderPage = orderRepository.findAll(pageDetails);
 
-        List<OrderEntity> orders = orderPage.getContent();
+    List<OrderEntity> orders = orderPage.getContent();
 
-        if (orders.isEmpty()) throw new APIException("No orders placed yet :(");
+    if (orders.isEmpty())
+      throw new APIException("No orders placed yet :(");
 
-        return buildOrderPageResponse(orderPage, orders);
-    }
+    return buildOrderPageResponse(orderPage, orders);
+  }
 
-    @Override
-    public void markAsPaid(String orderId, PaymentEntity payment) {
-        var order = getOrderEntity(orderId);
+  @Override
+  public PageResponse<OrderResponse> getSellerOrders(Integer page, Integer size, String sortBy, String sortOrder) {
+    UserEntity user = authUtils.getLoggedInUser();
 
-        if (order.getStatus() == PAID) return;
+    Pageable pageDetails = getPageable(page, size, sortBy, sortOrder);
 
-        var cart = cartService.getCartByEmail(order.getUser().getEmail());
+    Page<OrderEntity> orderPage = orderRepository.findSellerOrders(user.getId(), pageDetails);
 
-        order.getOrderItems().forEach(item -> {
-            productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
-        });
+    List<OrderEntity> orders = orderPage.getContent();
 
-        cart.getCartItems().clear();
+    if (orders.isEmpty())
+      throw new APIException("No orders placed yet :(");
 
-        order.setStatus(PAID);
-        order.setPayment(payment);
-    }
+    return buildOrderPageResponse(orderPage, orders);
+  }
 
-    @Override
-    public void updateOrderStatus(String orderId, OrderUpdateRequest request) {
-        var parsedStatus = OrderStatus.parse(request.newStatus());
+  @Override
+  public void markAsPaid(String orderId, PaymentEntity payment) {
+    var order = getOrderEntity(orderId);
 
-        var order = getOrderEntity(orderId);
+    if (order.getStatus() == PAID)
+      return;
 
-        order.setStatus(parsedStatus);
-    }
+    var cart = cartService.getCartByEmail(order.getUser().getEmail());
+
+    order.getOrderItems().forEach(item -> {
+      productService.decreaseStock(item.getProduct().getPublicId(), item.getQuantity());
+    });
+
+    cart.getCartItems().clear();
+
+    order.setStatus(PAID);
+    order.setPayment(payment);
+  }
+
+  @Override
+  public void updateOrderStatus(String orderId, OrderUpdateRequest request) {
+    var parsedStatus = OrderStatus.parse(request.newStatus());
+
+    var order = getOrderEntity(orderId);
+
+    order.setStatus(parsedStatus);
+  }
+
 }
