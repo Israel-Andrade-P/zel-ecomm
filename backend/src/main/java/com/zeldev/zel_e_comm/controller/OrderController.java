@@ -43,6 +43,17 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrders(page, size, sortBy, sortOrder));
     }
 
+    @GetMapping("/seller/orders")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<PageResponse<OrderResponse>> getSellerOrders(
+            @RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) Integer page,
+            @RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) Integer size,
+            @RequestParam(name = "sortBy", defaultValue = SORT_ORDER_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = SORT_DIR, required = false) String sortOrder
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getSellerOrders(page, size, sortBy, sortOrder));
+    }
+
     @PatchMapping("/admin/update-status/{order-id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateOrderStatus(@PathVariable("order-id") String orderId, @RequestBody OrderUpdateRequest request) {

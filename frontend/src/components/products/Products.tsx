@@ -42,7 +42,7 @@ const Products = () => {
               }
             </div>
             <div className="flex justify-center pt-10">
-              <Paginations totalPages={pagination?.totalPages} totalItems={productsPagination?.totalElements} />
+              <Paginations totalPages={productsPagination?.totalPages} totalItems={productsPagination?.totalElements} />
             </div>
           </div>
         )}
