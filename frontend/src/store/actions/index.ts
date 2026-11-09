@@ -479,10 +479,11 @@ export const persistOrderInfo = (addressId) => async (dispatch) => {
   }
 };
 
-export const fetchOrders = (queryParams: string) => async (dispatch) => {
+export const fetchOrders = (queryParams: string, isAdmin: boolean) => async (dispatch) => {
   try {
     dispatch({ type: "IS_LOADING" });
-    const { data } = await api.get(`/admin/orders?${queryParams}`);
+    const endpoint = isAdmin ? "/admin/orders" : "/seller/orders"
+    const { data } = await api.get(`${endpoint}?${queryParams}`);
 
     dispatch({ type: "FETCH_ORDERS", payload: data });
     dispatch({ type: "RESPONSE_SUCCESS" });
