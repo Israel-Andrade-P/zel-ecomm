@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import SelectTextField from "../../shared/SelectTextField";
 import ErrorPage from "../../shared/ErrorPage";
 
-const AddProductForm = ({ setOpen, product, isUpdate = false }) => {
+const AddProductForm = ({ setOpen, product, isUpdate = false, mode }) => {
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({ mode: "onTouched" });
   const { isLoading, categoryLoader, errorMessage } = useSelector((state) => state.uiStates);
   const { categories } = useSelector((state) => state.products);
@@ -24,7 +24,7 @@ const AddProductForm = ({ setOpen, product, isUpdate = false }) => {
       
       const sendData = { ...data, id: product.id }
 
-      const result = await dispatch(addNewProduct(sendData, selectedtCategory.name));
+      const result = await dispatch(addNewProduct(sendData, selectedtCategory.name, mode));
 
       if (!result.success) {
         toast.error(String(result.errorMessage))
@@ -37,7 +37,7 @@ const AddProductForm = ({ setOpen, product, isUpdate = false }) => {
     } else {
       const sendData = { ...data, id: product.id }
 
-      const result = await dispatch(updateProduct(sendData));
+      const result = await dispatch(updateProduct(sendData, mode));
 
       if (!result.success) {
         toast.error(String(result.errorMessage))

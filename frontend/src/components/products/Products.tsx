@@ -11,7 +11,7 @@ import Paginations from "../shared/Paginations";
 const Products = () => {
   const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
   const { products, categories, productsPagination } = useSelector((state) => state.products);
-  useProductFilter();
+  useProductFilter("public");
 
   const dispatch = useDispatch();
 

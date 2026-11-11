@@ -22,17 +22,17 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
   boolean existsByIdAndUserEmail(String orderId, String loggedInEmail);
 
   @Query(value = """
-      SELECT DISTINCT o.*
-      FROM orders o
-      JOIN order_items oi ON oi.order_id = o.id
-      JOIN products p ON p.id = oi.product_id
-      WHERE p.seller_id = :sellerId
+      SELECT DISTINCT o
+      FROM OrderEntity o
+      JOIN o.orderItems oi
+      JOIN oi.product p
+      WHERE p.seller.id = :sellerId
       """, countQuery = """
       SELECT COUNT(DISTINCT o.id)
-      FROM orders o
-      JOIN order_items oi ON oi.order_id = o.id
-      JOIN products p ON p.id = oi.product_id
-      WHERE p.seller_id = :sellerId
-      """, nativeQuery = true)
+      FROM OrderEntity o
+      JOIN o.orderItems oi
+      JOIN oi.product p
+      WHERE p.seller.id = :sellerId
+      """)
   Page<OrderEntity> findSellerOrders(@Param ("sellerId") Long sellerId, Pageable pageDetails);
 }

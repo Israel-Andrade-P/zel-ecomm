@@ -1,12 +1,13 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { fetchProducts } from "../store/actions";
+import { fetchProducts, fetchSellerProducts } from "../store/actions";
 
-const useProductFilter = () => {
+type ProductMode = "public" | "seller"
+
+const useProductFilter = (mode: ProductMode) => {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.products);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -34,10 +35,14 @@ const useProductFilter = () => {
     const queryString = params.toString();
     console.log("Query:", queryString);
 
-    dispatch(fetchProducts(queryString));
-  }, [dispatch, searchParams]);
+    if (mode === "seller") {
+      dispatch(fetchSellerProducts(queryString));
+      return;
+    } else {
+      dispatch(fetchProducts(queryString));
+    }
 
-  console.log(products);
+  }, [dispatch, searchParams, mode]);
 };
 
 export default useProductFilter;

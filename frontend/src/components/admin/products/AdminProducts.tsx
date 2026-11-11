@@ -14,11 +14,23 @@ import toast from "react-hot-toast";
 import ImageUploadForm from "./ImageUploadForm";
 import ProductViewModel from "../../shared/ProductViewModel";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { isSellerUser } from "../../../utils/auth";
 
 const AdminProducts = () => {
-  const { products, productsPagination } = useSelector((state) => state.products);
+  const { user } = useSelector((state) => state.auth);
+  const {
+    products: publicProducts,
+    productsPagination: publicPagination,
+    sellerProducts,
+    sellerProductsPagination
+  } = useSelector((state) => state.products);
   const { isLoading, btnLoader, errorMessage } = useSelector((state) => state.uiStates);
   const dispatch = useDispatch();
+
+  const mode = isSellerUser(user) ? "seller" : "public";
+  const products = mode === "seller" ? sellerProducts : publicProducts;
+  const productsPagination = mode === "seller" ? sellerProductsPagination : publicPagination;
+
   const [openAddModel, setOpenAddModel] = useState(false);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const [openDeleteModel, setOpenDeleteModel] = useState(false);
@@ -26,6 +38,7 @@ const AdminProducts = () => {
   const [openProductView, setOpenProductView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [currentPage, setCurrentPage] = useState(productsPagination?.pageNumber + 1 || 1);
+
   const isProductsEmpty = products?.length === 0;
 
   const navigate = useNavigate();
@@ -69,7 +82,7 @@ const AdminProducts = () => {
     navigate(`${pathname}?${params}`);
   }
   const onDeleteHandler = async () => {
-    const result = await dispatch(deleteProduct(selectedProduct?.id));
+    const result = await dispatch(deleteProduct(selectedProduct?.id, mode));
 
     if (!result.success) {
       toast.error("Failed deleting product")
@@ -80,7 +93,7 @@ const AdminProducts = () => {
     setOpenDeleteModel(false);
   }
 
-  useProductFilter();
+  useProductFilter(mode);
 
   if (isLoading) return (
 
@@ -132,13 +145,15 @@ const AdminProducts = () => {
               title={openAddModel ? "Add Product" : "Update Product"} >
               <AddProductForm setOpen={openAddModel ? setOpenAddModel : setOpenUpdateModel}
                 product={selectedProduct}
-                isUpdate={openUpdateModel} />
+                isUpdate={openUpdateModel}
+                mode={mode}
+              />
             </Model>
 
             <Model open={openImageUploadModel}
               setOpen={setOpenImageUploadModel}
-              title={"Add Image"} >
-              <ImageUploadForm setOpen={setOpenImageUploadModel} product={selectedProduct} />
+              title={"Add Image"}>
+              <ImageUploadForm setOpen={setOpenImageUploadModel} product={selectedProduct} mode={mode} />
             </Model>
 
 

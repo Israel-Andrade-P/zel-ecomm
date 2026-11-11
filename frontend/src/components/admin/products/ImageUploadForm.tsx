@@ -6,7 +6,7 @@ import Spinners from "../../shared/Spinners";
 import toast from "react-hot-toast";
 import { uploadProductImage } from "../../../store/actions";
 
-const ImageUploadForm = ({ setOpen, product }) => {
+const ImageUploadForm = ({ setOpen, product, mode }) => {
   const { isLoading, errorMessage } = useSelector((state) => state.uiStates);
   const dispatch = useDispatch();
   const fileInputRef = useRef();
@@ -39,7 +39,7 @@ const ImageUploadForm = ({ setOpen, product }) => {
     }
     const formData = new FormData();
     formData.append("image", selectedFile);
-    const result = await dispatch(uploadProductImage(product.id, formData));
+    const result = await dispatch(uploadProductImage(product.id, formData, mode));
 
     if (!result.success) {
         toast.error(String(result.errorMessage))

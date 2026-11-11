@@ -23,12 +23,44 @@ export const fetchProducts = (queryParams: string) => async (dispatch) => {
   }
 };
 
-export const addNewProduct = (sendData, categoryName: string) => async (dispatch, getState) => {
+export const fetchSellerProducts = (queryParams: string) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_LOADING" });
+    const { data } = await api.get(`/seller/products?${queryParams}`);
+    dispatch({
+      type: "FETCH_SELLER_PRODUCTS",
+      payload: data.content,
+      pageNumber: data.pageNumber,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      lastPage: data.lastPage,
+    });
+    dispatch({ type: "RESPONSE_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "RESPONSE_ERROR",
+      payload: error?.response?.data?.reason || "Failed to fetch products",
+    });
+  }
+};
+
+export type ProductMode = "public" | "seller";
+
+const refreshProducts = (mode: ProductMode) => (dispatch) => {
+  if (mode === "seller") {
+    return dispatch(fetchSellerProducts(""));
+  }
+  return dispatch(fetchProducts(""));
+};
+
+export const addNewProduct = (sendData, categoryName: string, mode: ProductMode) => async (dispatch, getState) => {
   try {
     dispatch({ type: "IS_LOADING" });
     await api.post(`/seller/categories/${categoryName}/product`, sendData)
     dispatch({ type: "RESPONSE_SUCCESS" });
-    await dispatch(fetchProducts(""));
+    await dispatch(refreshProducts(mode));
 
     return {
       success: true,
@@ -49,12 +81,12 @@ export const addNewProduct = (sendData, categoryName: string) => async (dispatch
   }
 }
 
-export const updateProduct = (productData) => async (dispatch) => {
+export const updateProduct = (productData, mode: ProductMode) => async (dispatch) => {
   try {
     dispatch({ type: "IS_LOADING" });
     await api.put(`/manage/products/update/${productData.id}`, productData);
     dispatch({ type: "RESPONSE_SUCCESS" });
-    await dispatch(fetchProducts(""));
+    await dispatch(refreshProducts(mode));
 
     return {
       success: true,
@@ -76,12 +108,12 @@ export const updateProduct = (productData) => async (dispatch) => {
 };
 
 export const deleteProduct =
-  (publicId) => async (dispatch) => {
+  (publicId, mode: ProductMode) => async (dispatch) => {
     try {
       dispatch({ type: "BUTTON_LOADER" });
       await api.delete(`/manage/products/delete/${publicId}`);
       dispatch({ type: "RESPONSE_SUCCESS" });
-      dispatch(fetchProducts(""));
+      await dispatch(refreshProducts(mode));
       return {
         success: true,
       };
@@ -99,12 +131,12 @@ export const deleteProduct =
     }
   };
 
-export const uploadProductImage = (productId, formData) => async (dispatch) => {
+export const uploadProductImage = (productId, formData, mode: ProductMode) => async (dispatch) => {
   try {
     dispatch({ type: "IS_LOADING" });
     await api.put(`/manage/products/${productId}/image`, formData);
     dispatch({ type: "RESPONSE_SUCCESS" });
-    dispatch(fetchProducts(""));
+    await dispatch(refreshProducts(mode));
 
     return {
       success: true,
